@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.LicenseMapper">
+
+
+    <sql id="Base_Column_List">
+        systemSN,license,startTime,endTime,type,status
+    </sql>
+
+    <select id="query" resultType="com.metoo.nspm.entity.nspm.License">
+      SELECT * FROM metoo_license
+    </select>
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.License">
+      UPDATE metoo_license
+        <set>
+          <if test="systemSN != null">
+              systemSN = #{systemSN},
+          </if>
+            <if test="from != null">
+                `from` = #{from},
+            </if>
+            <if test="license != null">
+                license = #{license},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+        </set>
+        <where>
+            <if test = "id != null">
+                id=#{id}
+            </if>
+        </where>
+    </update>
+
+
+</mapper>

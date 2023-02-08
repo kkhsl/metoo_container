@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.IssuedMapper">
+
+    <select id="getObjByType" parameterType="java.lang.Integer" resultType="com.metoo.nspm.entity.nspm.Task">
+        SELECT * FROM metoo_task where type=#{type}
+    </select>
+
+    <select id="query" resultType="com.metoo.nspm.entity.nspm.Task">
+        SELECT * FROM metoo_task
+    </select>
+
+    <insert id="save" parameterType="com.metoo.nspm.entity.nspm.Task" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO metoo_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            total,`type`, finished
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            #{total}, #{type},   #{finished}
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.Task">
+        update metoo_task
+        <set>
+            total =  #{total},
+            `type` = #{type},
+            finished = #{finished}
+        </set>
+        where id=#{id}
+    </update>
+
+</mapper>

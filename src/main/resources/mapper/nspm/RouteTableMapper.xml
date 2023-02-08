@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.zabbix.RouteTableMapper">
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.nspm.RouteTable">
+        <id column="id" property="id"></id>
+        <result column="ip" property="ip"></result>
+        <result column="mac" property="mac"></result>
+        <result column="mask" property="mask"></result>
+        <result column="ip_segment" property="ipSegment"></result>
+        <result column="interface_name" property="interfaceName"></result>
+        <result column="device_name" property="deviceName"></result>
+        <result column="ip_address" property="ipAddress"></result>
+        <result column="device_uuid" property="deviceUuid"></result>
+        <result column="remote_device" property="remoteDevice"></result>
+        <result column="remote_interface" property="remoteInterface"></result>
+        <result column="remote_uuid" property="remoteUuid"></result>
+        <result column="remote_devices" property="remoteDevices"></result>
+        <result column="status" property="status"></result>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, ip, mac, mask, ip_segment, `index`, device_name, interface_name, ip_address, device_uuid,
+          remote_device, remote_interface, remote_uuid, remote_devices, status
+    </sql>
+
+
+    <select id="selectObjByIp" parameterType="java.lang.String" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM rsms_ip
+        where ip = #{ip}
+    </select>
+
+    <select id="selectObjByMac" parameterType="java.lang.String" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM rsms_rout_table
+        where mac = #{mac}
+    </select>
+
+    <select id="selectObjByMap" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM rsms_rout_table
+        <where>
+            <if test="ipSegment != null">
+                AND ip_segment = #{ipSegment}
+            </if>
+            <if test="ipSelf != null">
+                AND ip != #{ipSelf}
+            </if>
+            <if test="index != null">
+                AND `index` = #{index}
+            </if>
+            <if test="mac != null">
+                AND mac = #{mac}
+            </if>
+            <if test="mask != null">
+                AND mask = #{mask}
+            </if>
+            <if test="deviceName != null">
+                AND device_name = #{deviceName}
+            </if>
+            <if test="interfaceName != null">
+                AND interface_name = #{interfaceName}
+            </if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="com.metoo.nspm.entity.nspm.RouteTable">
+        INSERT INTO rsms_rout_table
+        <trim prefix="(" suffixOverrides="," suffix=")">
+            <if test="addTime != null">
+                 addTime,
+            </if>
+            <if test="ip != null">
+                ip,
+            </if>
+            <if test="ipSegment != null">
+                ip_segment,
+            </if>
+            <if test="mac != null">
+                mac,
+            </if>
+            <if test="mask != null">
+                mask,
+            </if>
+            <if test="index != null">
+                `index`,
+            </if>
+            <if test="interfaceName != null">
+                interface_name,
+            </if>
+            <if test="deviceName != null">
+                device_name,
+            </if>
+            <if test="deviceUuid != null">
+                device_uuid,
+            </if>
+            <if test="ipAddress != null">
+                ip_address,
+            </if>
+            <if test="remoteDevice != null">
+                remote_device,
+            </if>
+            <if test="remoteInterface != null">
+                remote_interface,
+            </if>
+            <if test="remoteUuid != null">
+                remote_uuid,
+            </if>
+            <if test="remoteDevices != null">
+                remote_devices,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+        </trim>
+        <trim prefix="VALUES(" suffixOverrides="," suffix=")">
+            <if test="addTime != null">
+                #{addTime},
+            </if>
+            <if test="ip != null">
+                #{ip},
+            </if>
+            <if test="ipSegment != null">
+                #{ipSegment},
+            </if>
+            <if test="mac != null">
+                #{mac},
+            </if>
+            <if test="mask != null">
+                #{mask},
+            </if>
+            <if test="index != null">
+                #{index},
+            </if>
+            <if test="interfaceName != null">
+               #{interfaceName},
+            </if>
+            <if test="deviceName != null">
+                #{deviceName},
+            </if>
+            <if test="deviceUuid != null">
+                #{deviceUuid},
+            </if>
+            <if test="ipAddress != null">
+                #{ipAddress},
+            </if>
+            <if test="remoteDevice != null">
+                #{remoteDevice},
+            </if>
+            <if test="remoteInterface != null">
+                #{remoteInterface},
+            </if>
+            <if test="remoteUuid != null">
+                #{remoteUuid},
+            </if>
+            <if test="remoteDevices != null">
+                #{remoteDevices},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.RouteTable">
+        UPDATE rsms_rout_table
+        <set>
+            <if test="addTime != null">
+                addTime = #{addTime},
+            </if>
+            <if test="ip != null">
+                ip = #{ip},
+            </if>
+            <if test="ipSegment != null">
+                ipSegment = #{ipSegment},
+            </if>
+            <if test="mac != null">
+                mac = #{mac},
+            </if>
+            <if test="mask != null">
+                mask = #{mask},
+            </if>
+            <if test="index != null">
+                index = #{index},
+            </if>
+            <if test="interfaceName != null">
+                interface_name = #{interfaceName},
+            </if>
+            <if test="deviceName != null">
+                device_name = #{deviceName},
+            </if>
+            <if test="deviceUuid != null">
+                device_uuid = #{deviceUuid},
+            </if>
+            <if test="ipAddress != null">
+                ipAddress = #{ipAddress},
+            </if>
+            <if test="remoteDevice != null">
+                remote_device = #{remoteDevice},
+            </if>
+            <if test="remoteInterface != null">
+                remote_interface = #{remoteInterface},
+            </if>
+            <if test="remoteUuid != null">
+                remote_uuid = #{remoteUuid},
+            </if>
+            <if test="remoteDevices != null">
+                remote_devices = #{remoteDevices},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+        </set>
+        where id = #{id, jdbcType=BIGINT}
+    </update>
+
+    <update id="truncateTable">
+        TRUNCATE TABLE rsms_rout_table
+    </update>
+
+</mapper>

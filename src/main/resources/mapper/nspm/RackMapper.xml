@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.RackMapper">
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.nspm.Rack">
+        <id column="id" property="id"></id>
+        <result column="name" property="name"></result>
+        <result column="size" property="size"></result>
+        <result column="rear" property="rear"></result>
+        <result column="plant_room_id" property="plantRoomId"></result>
+        <result column="plant_room_name" property="plantRoomName"></result>
+        <result column="user_id" property="userId"></result>
+        <result column="description" property="description"></result>
+        <result column="number" property="number"></result>
+        <result column="asset_number" property="asset_number"></result>
+        <result column="change_reasons" property="change_reasons"></result>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, addTime, `name`, size, rear, plant_room_id, user_id, description, `number`,
+        asset_number, change_reasons, plant_room_name
+    </sql>
+
+    <select id="getObjById" parameterType="java.lang.Long" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM rsms_rack
+        WHERE id = #{id, jdbcType=BIGINT}
+    </select>
+
+    <select id="selectObjByName" parameterType="java.lang.String" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM rsms_rack
+        WHERE name = #{name}
+    </select>
+
+    <select id="findBySelect" parameterType="com.metoo.nspm.dto.RackDTO" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM rsms_rack
+        <where>
+           <if test="userId != null and userId != '' ">
+                AND user_id = #{userId}
+            </if>
+            <if test="plantRoomId != null and plantRoomId != ''">
+                AND plant_room_id = #{plantRoomId}
+            </if>
+        </where>
+        <if test = "orderBy != null and orderBy != ''">
+            ORDER BY ${orderBy}
+        </if>
+        <if test = "orderType != null and orderType != ''">
+            ${orderType}
+        </if>
+    </select>
+
+    <select id="query" parameterType="com.metoo.nspm.entity.nspm.Rack" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM rsms_rack
+        <where>
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+            <if test="plantRoomId != null and plantRoomId != ''">
+                AND plant_room_id = #{plantRoomId}
+            </if>
+            <if test="id != null and id != ''">
+                AND id != #{id}
+            </if>
+            <if test="change_reasons != null and change_reasons != ''">
+                AND change_reasons = #{change_reasons}
+            </if>
+            <if test="asset_number != null and asset_number != ''">
+                AND asset_number = #{asset_number}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectObjByMap" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM rsms_rack
+        <where>
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+            <if test="plantRoomId != null and plantRoomId != ''">
+                AND plant_room_id = #{plantRoomId}
+            </if>
+            <if test="change_reasons != null and change_reasons != ''">
+                AND change_reasons = #{change_reasons}
+            </if>
+            <if test="asset_number != null and asset_number != ''">
+                AND asset_number = #{asset_number}
+            </if>
+            <if test="name != null and name != ''">
+                AND `name` = #{name}
+            </if>
+            <if test="rackName != null and rackName != ''">
+                AND `name` = #{rackName}
+            </if>
+            <if test="rackId != null and rackId != ''">
+                AND id != #{rackId}
+            </if>
+            <if test="plantRoomId != null and plantRoomId != ''">
+                AND plant_room_id = #{plantRoomId}
+            </if>
+        </where>
+        order by addTime desc
+    </select>
+
+    <insert id="save" parameterType="com.metoo.nspm.entity.nspm.Rack" keyColumn="id" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO rsms_rack
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="addTime != null">
+                addTime,
+            </if>
+            <if test="name != null">
+                `name`,
+            </if>
+            <if test="size != null">
+                `size`,
+            </if>
+            <if test="rear != null">
+                rear,
+            </if>
+            <if test="plantRoomId != null">
+                plant_room_id,
+            </if>
+            <if test="plantRoomName != null">
+                plant_room_name,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="number != null">
+                `number`,
+            </if>
+            <if test="asset_number != null">
+                `asset_number`,
+            </if>
+            <if test="change_reasons != null">
+                `change_reasons`,
+            </if>
+        </trim>
+        <trim prefix="VALUES(" suffixOverrides="," suffix=")">
+            <if test="addTime != null">
+                #{addTime},
+            </if>
+            <if test="name != null">
+                #{name},
+            </if>
+            <if test="size != null">
+                #{size},
+            </if>
+            <if test="rear != null">
+                #{rear},
+            </if>
+            <if test="plantRoomId != null">
+                #{plantRoomId},
+            </if>
+            <if test="plantRoomName != null">
+                #{plantRoomName},
+            </if>
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="description != null">
+                #{description},
+            </if>
+            <if test="number != null">
+                #{number},
+            </if>
+            <if test="asset_number != null">
+                #{asset_number},
+            </if>
+            <if test="change_reasons != null">
+                #{change_reasons},
+            </if>
+        </trim>
+    </insert>
+    
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO  rsms_rack(addTime, `name`, asset_number, plant_room_id, plant_room_name, `size`, user_id)
+        VALUES
+        <foreach collection ="list" item="item" separator ="," >
+            (
+                #{item.addTime},
+                #{item.name},
+                #{item.asset_number},
+                #{item.plantRoomId},
+                #{item.plantRoomName},
+                #{item.size},
+                #{item.userId}
+            )
+        </foreach>
+    </insert>
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.Rack">
+        UPDATE rsms_rack
+        <set>
+            <if test="addTime != null">
+                addTime =  #{addTime},
+            </if>
+            <if test="name != null">
+                `name` = #{name},
+            </if>
+            <if test="size != null">
+                `size` = #{size},
+            </if>
+            <if test="rear != null">
+                rear = #{rear},
+            </if>
+            <if test="plantRoomId != ''">
+                plant_room_id = #{plantRoomId},
+            </if>
+            <if test="plantRoomName != ''">
+                plant_room_name = #{plantRoomName},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+            <if test="number != null">
+                `number` = #{number},
+            </if>
+            <if test="asset_number != null">
+                asset_number = #{asset_number},
+            </if>
+            <if test="change_reasons != null">
+                change_reasons = #{change_reasons},
+            </if>
+        </set>
+        <where>
+            <if test="id != null">
+                id=#{id}
+            </if>
+        </where>
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE
+        FROM rsms_rack
+        where id = #{id, jdbcType=BIGINT}
+    </delete>
+
+    <delete id="batchDel" parameterType="java.lang.String">
+        DELETE FROM rsms_rack
+        WHERE id in (${ids})
+    </delete>
+</mapper>

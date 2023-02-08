@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.DeviceTypeMapper">
+
+    <resultMap id="Join_Result_Map" type="com.metoo.nspm.entity.nspm.DeviceType">
+        <id column="id" property="id"></id>
+        <result column="addTime" property="addTime"></result>
+        <result column="deleteStatus" property="deleteStatus"></result>
+        <result column="name" property="name"></result>
+        <result column="count" property="count"></result>
+        <result column="type" property="type"></result>
+        <collection property="networkElementList" javaType="list"
+                    ofType="com.metoo.nspm.entity.nspm.NetworkElement">
+            <id column="ne_id" property="id"/>
+            <result column="ip" property="ip"></result>
+            <result column="device_name" property="deviceName"></result>
+            <result column="group_id" property="groupId"></result>
+            <result column="group_name" property="groupName"></result>
+            <result column="device_type_id" property="deviceTypeId"></result>
+            <result column="device_type_name" property="deviceTypeName"></result>
+            <result column="vendor_id" property="vendorId"></result>
+            <result column="vendor_name" property="vendorName"></result>
+            <result column="description" property="description"></result>
+            <result column="user_id" property="userId"></result>
+            <result column="user_name" property="userName"></result>
+            <result column="uuid" property="uuid"></result>
+        </collection>
+    </resultMap>
+
+    <sql id="Join_Column_List">
+        dt.id, dt.addTime, dt.deleteStatus, dt.name, n.id n_id, n.*,
+        (
+			SELECT COUNT(*)
+			FROM metoo_ne n
+			WHERE dt.id = n.`device_type_id`
+	 ) count
+    </sql>
+
+    <select id="selectObjById" parameterType="java.lang.Long" resultType="com.metoo.nspm.entity.nspm.DeviceType">
+        SELECT * FROM rsms_device_type
+        where id = #{id}
+    </select>
+
+    <select id="selectObjByName" parameterType="java.lang.String" resultType="com.metoo.nspm.entity.nspm.DeviceType">
+        SELECT * FROM rsms_device_type
+        where name = #{name}
+    </select>
+
+    <select id="selectConditionQuery" resultType="com.metoo.nspm.entity.nspm.DeviceType">
+        select * from rsms_device_type
+    </select>
+
+    <select id="selectObjByMap" resultType="com.metoo.nspm.entity.nspm.DeviceType">
+        SELECT *
+        FROM rsms_device_type
+        <where>
+            <if test="types != null">
+                AND `type` in
+                <foreach collection="types" index = "index" item="item" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCountByLeftJoin" resultType="com.metoo.nspm.entity.nspm.DeviceType">
+        SELECT
+            dt.*, IF(d.device_type_id IS NULL,0,COUNT(*)) `count`
+        FROM
+            rsms_device_type dt
+        LEFT JOIN
+            rsms_device d
+        ON
+            d.device_type_id = dt.id
+        GROUP BY
+            dt.id
+    </select>
+
+    <select id="selectDeviceTypeAndNeByJoin" resultType="com.metoo.nspm.entity.nspm.DeviceType">
+        SELECT
+            dt.*, COUNT(*) `count`
+        FROM
+            rsms_device_type dt
+         JOIN
+            metoo_ne ne
+        ON
+            ne.device_type_id = dt.id
+        GROUP BY
+            dt.id
+    </select>
+
+    <select id="selectCountByJoin" resultMap="Join_Result_Map">
+        SELECT
+            <include refid="Join_Column_List"/>
+         FROM rsms_device_type dt
+         LEFT JOIN
+            metoo_ne n
+        ON
+            n.device_type_id = dt.id;
+    </select>
+
+    <select id="statistics" resultType="com.metoo.nspm.vo.DeviceTypeVO">
+        SELECT
+              t.*, IF(d.device_type_id IS NULL,0, d.`online`) `online`,
+	          IF(w.device_type_id IS NULL,0, w.overProtection) overProtection
+            FROM (
+            SELECT
+              dt.*, IF(d.device_type_id IS NULL,0,COUNT(*)) `count`
+            FROM
+             rsms_device_type dt
+            LEFT JOIN
+             rsms_device d
+            ON
+              d.device_type_id = dt.id
+            GROUP BY
+             dt.id
+            )t
+            LEFT JOIN
+            (
+                SELECT
+                  *, IF(device_type_id IS NULL,0,COUNT(*)) `online`
+                FROM
+                  rsms_device
+                WHERE
+                  status = 1
+                GROUP BY
+                  device_type_id
+            ) d
+            ON
+            t.id = d.device_type_id
+            LEFT JOIN
+            (
+                SELECT
+                  *, COUNT(*) `overProtection`
+                FROM rsms_device
+                WHERE
+                  to_days(warranty_time) - to_days(purchase_time) &lt; 60
+                GROUP BY device_type_id)w
+            ON
+            w.device_type_id = t.id
+    </select>
+
+</mapper>

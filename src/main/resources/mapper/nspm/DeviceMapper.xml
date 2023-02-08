@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.DeviceMapper">
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.nspm.Device">
+        <id property="id" column="id"></id>
+        <result property="name" column="name"></result>
+        <result property="index" column="index"></result>
+        <collection property="vendorList" ofType="com.metoo.nspm.entity.nspm.Vendor" columnPrefix="mtv_" >
+            <result column="name" property="name"></result>
+        </collection>
+    </resultMap>
+
+    <select id="selectObjById"  parameterType="java.lang.Long" resultMap="Base_Result_Map">
+        SELECT
+          *
+        FROM
+          metoo_device
+        WHERE
+          id = #{id}
+    </select>
+
+    <select id="selectConditionQuery" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT * FROM metoo_device
+        ORDER BY `index` ASC
+    </select>
+</mapper>

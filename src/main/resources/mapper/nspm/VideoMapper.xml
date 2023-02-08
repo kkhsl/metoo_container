@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.VideoMapper">
+
+    <!-- 描述如何从数据库结果集中加载对象，是最复杂也是最强大的元素 -->
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.nspm.Video">
+        <id property="id" column="id" jdbcType="BIGINT" ></id>
+        <result property="name" column="name" jdbcType="VARCHAR" javaType="String"></result>
+        <result property="describe" column="decribe"></result>
+    </resultMap>
+
+    <!-- 可被其它语句引用的可重用语句块 -->
+    <sql id="Base_Column_List">
+      id, `name`, beginTime, endTime, `type`,sequence, path, extend, roomProgramId, userId, user_name,
+       grade_id, `decribe`, display, status, liveRoomId, genre
+    </sql>
+
+    <resultMap id="Unite_Map" type="com.metoo.nspm.entity.nspm.Video">
+        <id property="id" column="mv_id" jdbcType="BIGINT" ></id>
+        <result property="addTime" column="mv_addTime"></result>
+        <result property="name" column="mv_name" jdbcType="VARCHAR" javaType="String"></result>
+        <result property="beginTime" column="mv_beginTime"></result>
+        <result property="endTime" column="mv_endTime"></result>
+        <result property="type" column="mv_type"></result>
+        <result property="sequence" column="mv_sequence"></result>
+        <result property="path" column="mv_path"></result>
+        <result property="rtmp" column="mv_rtmp"></result>
+        <result property="extend" column="mv_extend"></result>
+        <result property="roomProgramId" column="mv_roomProgramId"></result>
+        <result property="userId" column="mv_userId"></result>
+        <result property="userName" column="mv_userName"></result>
+        <result property="describe" column="mv_describe"></result>
+        <result property="display" column="mv_display"></result>
+        <result property="status" column="mv_status"></result>
+        <result property="message" column="mv_message"></result>
+        <result property="liveRoomId" column="mv_liveRoomId"></result>
+        <result property="genre" column="mv_genre"></result>
+        <!-- 关联对象 -->
+        <association property="accessory" javaType="com.metoo.nspm.entity.nspm.Accessory">
+            <!--关联条件的ID-->
+            <id column="accessory_id" property="id"></id>
+            <result column="ma_name" property="a_name"></result>
+            <result column="ma_path" property="a_path"></result>
+        </association>
+
+        <association property="video" javaType="com.metoo.nspm.entity.nspm.Accessory">
+            <!--关联条件的ID-->
+            <id column="video_id" property="id"></id>
+            <result column="maa_name" property="a_name"></result>
+            <result column="maa_path" property="a_path"></result>
+        </association>
+
+        <association property="grade" column="grade_id" javaType="com.metoo.nspm.entity.nspm.Grade">
+            <!--关联条件的ID-->
+            <id column="grade_id" property="id"></id>
+            <result column="mg_name" property="name"></result>
+        </association>
+
+        <association property="liveRoom" javaType="com.metoo.nspm.entity.nspm.LiveRoom">
+            <!--关联条件的ID-->
+            <id column="mlr_id" property="id"></id>
+            <result column="mlr_title" property="title"></result>
+        </association>
+
+      <!--  <association property="course" column="course_id" javaType="Course"
+                     select="selectCourse">
+        </association>-->
+
+        <association property="course" column="course_id"
+                     javaType="com.metoo.nspm.entity.nspm.Course" resultMap="courseResult">
+
+        </association>
+    </resultMap>
+    
+    <resultMap id="courseResult" type="com.metoo.nspm.entity.nspm.Course">
+        <id property="id" column="course_id" jdbcType="BIGINT"></id>
+        <result property="name" column="mc_name"></result>
+    </resultMap>
+
+    <sql id="unite_Column_List">
+        mv.id mv_id, mv.addTime mv_addTime, mv.`name` mv_name,mv.beginTime mv_beginTime, mv.endTime mv_endTime, mv.type mv_type,
+        mv.sequence mv_sequence, mv.path mv_path, mv.extend mv_extend, mv.liveRoomId mv_liveRoomId,
+        mv.roomProgramId mv_roomProgramId, mv.userId mv_userId,mv.user_name mv_userName, mv.decribe mv_describe,
+        mv.`status` mv_status, mv.message mv_message, mv.display mv_display, mv.rtmp mv_rtmp,
+        mv.genre mv_genre,
+        ma.id accessory_id, ma.`name` `ma_name`, ma.path ma_path,
+        maa.id video_id, maa.`name` maa_name, maa.path maa_path,
+        mg.id grade_id,mg.`name` mg_name,
+        mc.id course_id, mc.name mc_name,
+        mlr.id mlr_id, mlr.title mlr_title
+    </sql>
+
+    <select id="selectAll" resultMap="Unite_Map">
+        SELECT <include refid="unite_Column_List" />
+        FROM metoo_video mv
+        LEFT JOIN metoo_accessory ma on mv.accessory_id=ma.id
+        LEFT JOIN metoo_grade mg on mv.grade_id=mg.id
+        LEFT JOIN metoo_accessory maa on mv.video_id=maa.id
+        LEFT JOIN metoo_course mc on mv.course_id=mc.id
+        ORDER BY mv.addTime DESC
+    </select>
+
+    <select id="query" parameterType="com.metoo.nspm.req.VideoReq" resultMap="Unite_Map">
+        SELECT <include refid="unite_Column_List" />
+        FROM metoo_video mv
+        LEFT JOIN metoo_accessory ma on mv.accessory_id=ma.id
+        LEFT JOIN metoo_grade mg on mv.grade_id=mg.id
+        LEFT JOIN metoo_accessory maa on mv.video_id=maa.id
+        LEFT JOIN metoo_course mc on mv.course_id=mc.id
+        LEFT JOIN metoo_live_room mlr ON mlr.id = mv.liveRoomId
+        <where>
+            <if test="name != null">
+                AND mv.name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="userId != null">
+                AND mv.userId = #{userId, jdbcType=BIGINT}
+            </if>
+            <if test="display != null">
+                AND mv.display = #{display}
+            </if>
+            <if test="status != null">
+                AND mv.status = #{status}
+            </if>
+            <if test="beginTime != null and endTime != null">
+                AND mv.addTime BETWEEN #{beginTime} AND #{endTime}
+            </if>
+            <if test = "type != null">
+                AND mv.type = #{type}
+            </if>
+            <!--<if test = "type == 0 ">
+                AND mv.liveRoomId != ''
+            </if>
+            <if test = "type == 1 ">
+                AND mv.roomProgramId != ''
+            </if>-->
+            <if test = "sequence != null">
+                AND mv.sequence = #{sequence}
+            </if>
+            <if test = "lecturer != null">
+                AND mv.lecturer = #{lecturer}
+            </if>
+            <if test = "genre != null">
+                AND mv.genre = #{genre}
+            </if>
+            <if test = "isEnable != null">
+                AND mlr.isEnable = #{isEnable}
+            </if>
+            AND mv.deleteStatus = 0
+        </where>
+        <if test = "orderBy != null and orderBy != ''">
+            ORDER BY  mv.${orderBy}
+        </if>
+        <if test = "orderType != null and orderType != ''">
+            ${orderType}
+        </if>
+    </select>
+
+    <select id="findObjByMap" parameterType="map" resultMap="Unite_Map">
+        SELECT <include refid="unite_Column_List" />
+        FROM metoo_video mv
+        LEFT JOIN metoo_accessory ma on mv.accessory_id=ma.id
+        LEFT JOIN metoo_grade mg on mv.grade_id=mg.id
+        LEFT JOIN metoo_accessory maa on mv.video_id=maa.id
+        LEFT JOIN metoo_course mc on mv.course_id=mc.id
+        LEFT JOIN metoo_live_room mlr ON mlr.id = mv.liveRoomId
+        <where>
+            <if test="deleteStatus != null">
+                AND mv.deleteStatus = #{deleteStatus}
+            </if>
+            <if test="userId">
+                AND mv.userId = #{userId, jdbcType=BIGINT}
+            </if>
+            <if test="display != null">
+                AND mv.display = #{display}
+            </if>
+            <if test="status != null">
+                AND mv.status = #{status}
+            </if>
+            <if test="beginTime != null and endTime != null">
+                AND mv.addTime BETWEEN #{beginTime} AND #{endTime}
+            </if>
+            <if test = "type != null">
+                AND mv.type = #{type}
+            </if>
+            <if test = "liveRoomId != null">
+                AND mv.liveRoomId = #{liveRoomId}
+            </if>
+            <if test = "genre != null">
+                AND mv.genre = #{genre}
+            </if>
+            <if test = "course_id != null">
+                AND mv.course_id = #{course_id}
+            </if>
+            <if test = "grade_id != null">
+                AND mv.grade_id = #{grade_id}
+            </if>
+        </where>
+        <if test = "orderBy != null">
+            ORDER BY mv.${orderBy}
+        </if>
+        <if test = "orderType != null">
+            ${orderType}
+        </if>
+    </select>
+
+    <select id="get" parameterType="java.lang.Long" resultType="com.metoo.nspm.entity.nspm.Video" >
+        SELECT <include refid="Base_Column_List" />
+        FROM metoo_video mv
+        WHERE mv.id=#{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="videoUnit" parameterType="java.lang.Long" resultMap="Unite_Map" >
+        SELECT <include refid="unite_Column_List" />
+        FROM metoo_video mv
+        LEFT JOIN metoo_accessory ma on mv.accessory_id=ma.id
+        LEFT JOIN metoo_grade mg on mv.grade_id=mg.id
+        LEFT JOIN metoo_accessory maa on mv.video_id=maa.id
+        LEFT JOIN metoo_course mc on mv.course_id=mc.id
+        LEFT JOIN metoo_live_room mlr ON mlr.id = mv.liveRoomId
+        WHERE mv.id=#{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="findObjBuLiveRoomId" parameterType="java.lang.Long" resultType="com.metoo.nspm.entity.nspm.Video">
+        SELECT <include refid="Base_Column_List"/>
+        FROM metoo_video
+        WHERE liveRoomId = #{id, jdbcType=BIGINT}
+        ORDER BY sequence DESC
+
+    </select>
+
+
+
+    <insert id="insert" parameterType="com.metoo.nspm.entity.nspm.Video" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO metoo_video
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="addTime != null">
+                addTime,
+            </if>
+            <if test="deleteStatus != null">
+                deleteStatus,
+            </if>
+            <if test="name != null">
+                `name`,
+            </if>
+            <if test="beginTime != null">
+                beginTime,
+            </if>
+            <if test="endTime != null">
+                endTime,
+            </if>
+            <if test="type != null">
+                `type`,
+            </if>
+            <if test="sequence != null">
+                sequence,
+            </if>
+            <if test="extend != null">
+                extend,
+            </if>
+            <if test="roomProgramId != null">
+                roomProgramId,
+            </if>
+            <if test="userId != null">
+                userId,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="grade != null">
+                grade_id,
+            </if>
+            <if test="describe != null">
+                `decribe`,
+            </if>
+            <if test="display != null">
+                display,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="message != null">
+                message,
+            </if>
+            <if test="rtmp != null">
+                rtmp,
+            </if>
+            <if test=" accessory != null ">
+                accessory_id,
+            </if>
+            <if test=" video != null ">
+                video_id,
+            </if>
+            <if test="course != null ">
+                course_id,
+            </if>
+            <if test="lecturer != null ">
+                lecturer,
+            </if>
+            <if test="liveRoomId != null ">
+                liveRoomId,
+            </if>
+            <if test="genre != null ">
+                genre,
+            </if>
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            <if test="addTime != null">
+                #{addTime},
+            </if>
+            <if test="deleteStatus != null">
+                #{deleteStatus},
+            </if>
+            <if test="name != null">
+                #{name},
+            </if>
+            <if test="beginTime != null">
+                #{beginTime},
+            </if>
+            <if test="endTime != null">
+                #{endTime},
+            </if>
+            <if test="type != null">
+                #{type},
+            </if>
+            <if test="sequence != null">
+                #{sequence},
+            </if>
+            <if test="extend != null">
+                #{extend},
+            </if>
+            <if test="roomProgramId != null">
+                #{roomProgramId},
+            </if>
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="userName != null">
+                #{userName},
+            </if>
+            <if test="grade != null">
+                #{grade.id},
+            </if>
+            <if test="describe != null">
+                #{describe},
+            </if>
+            <if test="display != null">
+                #{display},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+            <if test="message != null">
+                #{message},
+            </if>
+            <if test="rtmp != null">
+                #{rtmp},
+            </if>
+            <if test="accessory != null ">
+                #{accessory.id},
+            </if>
+            <if test="video != null ">
+                #{video.id},
+            </if>
+            <if test="course != null ">
+                #{course.id},
+            </if>
+            <if test="lecturer != null ">
+                #{lecturer},
+            </if>
+            <if test="liveRoomId != null ">
+                #{liveRoomId},
+            </if>
+            <if test="genre != null ">
+                #{genre},
+            </if>
+        </trim>
+    </insert>
+
+    <resultMap id="Video_List" type="com.metoo.nspm.entity.nspm.Video">
+        <id property="id" column="id" jdbcType="BIGINT" ></id>
+        <result property="name" column="name" jdbcType="VARCHAR" javaType="String"></result>
+        <result property="describe" column="decribe"></result>
+
+    </resultMap>
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.Video">
+        UPDATE metoo_video
+        <set>
+            <if test = "deleteStatus != null">
+                deleteStatus=#{deleteStatus},
+            </if>
+            <if test="name != null">
+                `name`=#{name},
+            </if>
+            <if test="beginTime != null">
+                beginTime=#{beginTime},
+            </if>
+            <if test="endTime != null">
+                endTime=#{endTime},
+            </if>
+            <if test="type != null">
+                `type`=#{type},
+            </if>
+            <if test="sequence != null">
+                sequence = #{sequence},
+            </if>
+            <if test="extend != null">
+                extend=#{extend},
+            </if>
+            <if test="roomProgramId != null">
+                roomProgramId=#{roomProgramId},
+            </if>
+            <if test="userId != null">
+                userId=#{userId},
+            </if>
+            <if test="userName != null">
+                user_name=#{userName},
+            </if>
+            <if test="grade != null">
+                grade_id=#{grade.id},
+            </if>
+            <if test="describe != null">
+                `decribe`=#{describe},
+            </if>
+            <if test="display != null">
+                display=#{display},
+            </if>
+            <if test="status != null">
+                status=#{status},
+            </if>
+            <if test="message">
+                message=#{message},
+            </if>
+            <if test="rtmp != null">
+                rtmp=#{rtmp},
+            </if>
+            <if test="accessory != null ">
+                accessory_id= #{accessory.id},
+            </if>
+            <if test="video != null ">
+                video_id=#{video.id},
+            </if>
+            <if test="course != '' ">
+                course_id=#{course.id},
+            </if>
+            <if test="lecturer != null ">
+                lecturer = #{lecturer},
+            </if>
+            <if test="liveRoomId != '' ">
+                liveRoomId = #{liveRoomId},
+            </if>
+            <if test="genre != null ">
+                genre = #{genre},
+            </if>
+        </set>
+        <where>
+            <if test = "id != null">
+                id=#{id}
+            </if>
+        </where>
+    </update>
+
+    <delete id="delete" parameterType="Long">
+        DELETE FROM metoo_video
+        WHERE id=#{id}
+    </delete>
+</mapper>

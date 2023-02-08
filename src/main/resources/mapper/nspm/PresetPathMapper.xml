@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.PresetPathMapper">
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.nspm.PresetPath">
+        <id column="id" property="id"></id>
+        <result column="name" property="name"></result>
+        <result column="topology_id" property="topologyId"></result>
+        <result column="topology_name" property="topologyName"></result>
+        <result column="content" property="content"></result>
+        <result column="user_id" property="userId"></result>
+        <result column="user_name" property="userName"></result>
+        <result column="src_ip" property="srcIp"></result>
+        <result column="src_mask" property="srcMask"></result>
+        <result column="dest_ip" property="destIp"></result>
+        <result column="dest_mask" property="destMask"></result>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, `name`, topology_id, topology_name, content, user_id, user_name,
+        src_ip, src_mask, dest_ip, dest_mask
+    </sql>
+
+    <select id="selectObjById" parameterType="java.lang.Long" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List" />
+        FROM metoo_preset_path
+        WHERE
+          id = #{id}
+    </select>
+
+    <select id="selectObjByMap" parameterType="com.metoo.nspm.dto.PresetPathDTO" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List" />
+        FROM metoo_preset_path
+        <where>
+            <if test="id != null and id != ''">
+                AND `id` = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                  AND `name` = #{name}
+            </if>
+            <if test="userId != null and userId != ''">
+                  AND user_id = #{userId}
+            </if>
+            <if test="topologyId != null and topologyId != ''">
+                AND topology_id = #{topologyId}
+            </if>
+            <if test="presetPathId != null and presetPathId != ''">
+                  AND id != #{presetPathId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectConditionQuery" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List" />
+        FROM metoo_preset_path
+        <where>
+            <if test="name != null and name != ''">
+                AND `name` = #{name}
+            </if>
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="com.metoo.nspm.entity.nspm.PresetPath">
+        INSERT INTO metoo_preset_path
+        <trim prefix="(" suffixOverrides="," suffix=")">
+            <if test="addTime != null">
+                `addTime`,
+            </if>
+            <if test="name != null and name != ''">
+                `name`,
+            </if>
+            <if test="topologyId != ''">
+                `topology_id`,
+            </if>
+            <if test="topologyName != ''">
+                `topology_name`,
+            </if>
+            <if test="userId != null and userId != ''">
+                user_id,
+            </if>
+            <if test="userName != null and userName != ''">
+                `user_name`,
+            </if>
+            <if test="content != null and content != ''">
+                `content`,
+            </if>
+            <if test="srcIp != null and srcIp != ''">
+                `src_ip`,
+            </if>
+            <if test="srcMask != null and srcMask != ''">
+                `src_mask`,
+            </if>
+            <if test="destIp != null and destIp != ''">
+                `dest_ip`,
+            </if>
+            <if test="destMask != null and destMask != ''">
+                `dest_mask`,
+            </if>
+        </trim>
+        <trim prefix="VALUES(" suffixOverrides="," suffix=")">
+            <if test="addTime != null">
+                  #{addTime},
+            </if>
+            <if test="name != null and name != ''">
+                  #{name},
+            </if>
+            <if test="topologyId != ''">
+                  #{topologyId},
+            </if>
+            <if test="topologyName != ''">
+                  #{topologyName},
+            </if>
+            <if test="userId != null and userId != ''">
+                  #{userId},
+            </if>
+            <if test="userName != null and userName != ''">
+                  #{userName},
+            </if>
+            <if test="content != null and content != ''">
+                  #{content},
+            </if>
+            <if test="srcIp != null and srcIp != ''">
+                 #{srcIp},
+            </if>
+            <if test="srcMask != null and srcMask != ''">
+                 #{srcMask},
+            </if>
+            <if test="destIp != null and destIp != ''">
+                 #{destIp},
+            </if>
+            <if test="destMask != null and destMask != ''">
+                  #{destMask},
+            </if>
+        </trim>
+    </insert>
+
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.PresetPath">
+        UPDATE metoo_preset_path
+        <set>
+            <if test="addTime != null">
+                `addTime` = #{addTime},
+            </if>
+            <if test="name != null and name != ''">
+                 `name` = #{name},
+            </if>
+            <if test="topologyId != ''">
+                  `topology_id` = #{topologyId},
+            </if>
+            <if test="topologyName != ''">
+                  `topology_name` = #{topologyName},
+            </if>
+            <if test="userId != null and userId != ''">
+                  user_id = #{userId},
+            </if>
+            <if test="userName != null and userName != ''">
+                  `user_name` = #{userName},
+            </if>
+            <if test="content != null and content != ''">
+                  `content` = #{content},
+            </if>
+            <if test="srcIp != null and srcIp != ''">
+                `src_ip` = #{srcIp},
+            </if>
+            <if test="srcMask != null and srcMask != ''">
+                `src_mask` = #{srcMask},
+            </if>
+            <if test="destIp != null and destIp != ''">
+                `dest_ip` = #{destIp},
+            </if>
+            <if test="destMask != null and destMask != ''">
+                `dest_mask` = #{destMask},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE FROM metoo_preset_path
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

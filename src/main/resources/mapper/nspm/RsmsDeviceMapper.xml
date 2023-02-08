@@ -1,0 +1,576 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.RsmsDeviceMapper">
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.nspm.RsmsDevice">
+        <id column="id" property="id"></id>
+        <result column="device_type_id" property="deviceTypeId"></result>
+        <result column="plant_room_id" property="plantRoomId"></result>
+        <result column="plant_room_name" property="plantRoomName"></result>
+        <result column="user_id" property="userId"></result>
+        <result column="rack_id" property="rackId"></result>
+        <result column="rack_name" property="rackName"></result>
+        <result column="device_type_name" property="deviceTypeName"></result>
+        <result column="change_reasons" property="changeReasons"></result>
+        <result column="vendor_id" property="vendorId"></result>
+        <result column="vendor_name" property="vendorName"></result>
+        <result column="group_id" property="groupId"></result>
+        <result column="group_name" property="groupName"></result>
+        <result column="uuid" property="uuid"></result>
+        <result column="project_id" property="projectId"></result>
+        <result column="project_name" property="projectName"></result>
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        id, addTime, `name`, ip, device_type_id, plant_room_id, user_id, rack_id, start,
+        `size`, description, device_type_name, plant_room_name, rack_name,rear, asset_number, host_name,
+        status, model, purchase_time, warranty_time, price, serial_number, duty, change_reasons, vendor_id,
+        vendor_name, group_id, group_name, uuid, project_id, project_name
+    </sql>
+
+    <sql id="Join_Column_List">
+        rd.id, rd.addTime, rd.name, rd.ip, rd.device_type_id, rd.plant_room_id, rd.user_id, rd.rack_id, rd.start,
+        rd.size, rd.description, rd.device_type_name,
+        rpr.name plant_room_name, rr.name rack_name, rd.rear, rd.asset_number, rd.host_name,
+        rd.status, rd.model, rd.purchase_time, rd.warranty_time, rd.price, rd.serial_number, rd.duty, rd.change_reasons,
+		rd.vendor_id, rd.vendor_name, rd.group_id, mg.branchName group_name, uuid,
+		mp.id project_id, mp.name project_name
+    </sql>
+
+    <select id="getObjById" parameterType="java.lang.Long" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM
+          rsms_device
+        where id = #{id, jdbcType=BIGINT}
+    </select>
+
+    <select id="getObjByUuid" parameterType="java.lang.String" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM
+        rsms_device
+        where uuid = #{uuid}
+    </select>
+
+    <select id="getObjAndProjectById" parameterType="java.lang.Long" resultMap="Base_Result_Map">
+        SELECT
+        rd.id, rd.addTime, rd.name, rd.ip, rd.device_type_id, rd.plant_room_id, rd.user_id, rd.rack_id, rd.start,
+        rd.size, rd.description, rd.device_type_name,
+        rd.rear, rd.asset_number, rd.host_name,
+        rd.status, rd.model, rd.purchase_time, rd.warranty_time, rd.price, rd.serial_number, rd.duty,
+        rd.change_reasons,
+		rd.vendor_id, rd.vendor_name, rd.group_id, rd.group_name, uuid,
+		mp.id project_id, mp.name project_name
+        FROM
+         rsms_device rd
+        LEFT JOIN
+          metoo_project mp
+        ON
+          rd.project_id = mp.id
+        where
+        rd.id = #{id, jdbcType=BIGINT}
+    </select>
+
+
+    <select id="selectConditionQuery" parameterType="com.metoo.nspm.dto.RsmsDeviceDTO" resultMap="Base_Result_Map">
+            SELECT
+               <include refid="Join_Column_List"/>
+            FROM
+              rsms_device rd
+            LEFT JOIN
+             rsms_plant_room rpr
+            ON
+              rd.plant_room_id = rpr.id
+            LEFT JOIN
+              rsms_rack rr
+            ON
+             rd.rack_id = rr.id
+            LEFT JOIN
+             metoo_project mp
+            ON
+              rd.project_id = mp.id
+           LEFT JOIN
+              metoo_group mg
+          ON
+              rd.group_id = mg.id
+        <where>
+            <if test="filter != null and filter != ''">
+                AND rd.name LIKE CONCAT('%', #{filter}, '%')
+                OR rd.ip LIKE CONCAT('%', #{filter}, '%')
+                OR rd.asset_number LIKE CONCAT('%', #{filter}, '%')
+                OR rd.serial_number LIKE CONCAT('%', #{filter}, '%')
+            </if>
+            <if test="userId != null and userId != ''">
+                AND rd.user_id = #{userId}
+            </if>
+            <if test="rackId != null and rackId != ''">
+                AND rd.rack_id = #{rackId}
+            </if>
+            <if test="rear != null and rear != ''">
+                AND rd.rear = #{rear}
+            </if>
+            <if test="start != null and start == 0">
+                AND rd.start &gt; #{start}
+            </if>
+            <if test="size != null and size == 0">
+                AND rd.size &gt; #{size}
+            </if>
+            <if test="name != null and name != ''">
+                AND rd.name = #{name}
+            </if>
+            <if test="status != null">
+                AND rd.status = #{status}
+            </if>
+            <if test="ip != null and ip != ''">
+                AND rd.ip = #{ip}
+            </if>
+            <if test="asset_number != null and asset_number != ''">
+                AND rd.asset_number = #{asset_number}
+            </if>
+            <if test="serial_number != null and serial_number != ''">
+                AND rd.serial_number = #{serial_number}
+            </if>
+            <if test="plantRoomId != null and plantRoomId != ''">
+                AND rd.plant_room_id = #{plantRoomId}
+            </if>
+            <if test="rackId != null and rackId != ''">
+                AND rd.rack_id = #{rackId}
+            </if>
+            <if test="deviceTypeId != null and deviceTypeId != ''">
+                AND rd.device_type_id = #{deviceTypeId}
+            </if>
+            <if test="projectId != null and projectId != ''">
+                AND rd.project_id = #{projectId}
+            </if>
+            <if test="vendorId != null">
+                AND rd.vendor_id = #{vendorId}
+            </if>
+            <if test="groupId != null and groupId != ''">
+                AND rd.group_id = #{groupId}
+            </if>
+            <if test="groupIds != null and groupIds != ''">
+                AND rd.group_id in
+                <foreach collection="groupIds" index = "index" item="item" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="start_purchase_time != null and end_purchase_time != null">
+                AND rd.purchase_time BETWEEN #{start_purchase_time} AND #{end_purchase_time}
+            </if>
+            <if test="start_warranty_time != null and end_warranty_time != null">
+                AND rd.warranty_time BETWEEN #{start_warranty_time} AND #{end_warranty_time}
+            </if>
+        </where>
+        <if test = "orderBy != null and orderBy != ''">
+            ORDER BY ${orderBy}
+        </if>
+        <if test = "orderType != null and orderType != ''">
+            ${orderType}
+        </if>
+    </select>
+
+    <select id="selectNameByMap" parameterType="java.util.Map" resultType="com.metoo.nspm.vo.RsmsDeviceVo">
+        SELECT rsms_device.id, rsms_device.`name`
+        FROM
+          rsms_device
+        LEFT JOIN
+            rsms_device_type
+            on rsms_device.device_type_id = rsms_device_type.id
+        <where>
+            <if test="rsms_device_type != null">
+                AND rsms_device_type.type = #{rsms_device_type}
+            </if>
+            <if test="userId != null">
+                AND rsms_device.user_id = #{userId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectObjByMap" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT
+          <include refid="Base_Column_List" />
+        FROM
+          rsms_device
+        <where>
+            <if test="id != null and id != ''">
+                AND id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                AND `name` = #{name}
+            </if>
+            <if test="host_name != null and host_name != ''">
+                AND `host_name` = #{host_name}
+            </if>
+            <if test="ip != null and ip != ''">
+                AND ip = #{ip}
+            </if>
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+            <if test="rear != null">
+                AND rear = #{rear}
+            </if>
+            <if test="start != null and start == 0">
+                AND `start` &gt; #{start}
+            </if>
+            <if test="size != null and size == 0">
+                AND `size` &gt; #{size}
+            </if>
+            <if test="rackId != null and rackId != ''">
+                AND rack_id = #{rackId}
+            </if>
+            <if test="plantRoomId != null and plantRoomId != ''">
+                AND plant_room_id = #{plantRoomId}
+            </if>
+            <if test="deviceId != null and deviceId != ''">
+                AND id != #{deviceId}
+            </if>
+            <if test="asset_number != null and asset_number != ''">
+                AND asset_number = #{asset_number}
+            </if>
+        </where>
+        ORDER BY start ASC
+    </select>
+
+    <insert id="save" parameterType="com.metoo.nspm.entity.nspm.RsmsDevice" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO rsms_device
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="addTime != null">
+                addTime,
+            </if>
+            <if test="name != null and name != ''">
+                `name`,
+            </if>
+            <if test="ip != null and ip != ''">
+                ip,
+            </if>
+            <if test="deviceTypeId != ''">
+                device_type_id,
+            </if>
+            <if test="deviceTypeName != ''">
+                device_type_name,
+            </if>
+            <if test="plantRoomId != ''">
+                plant_room_id,
+            </if>
+            <if test="plantRoomName != ''">
+                plant_room_name,
+            </if>
+            <if test="userId != null and userId != ''">
+                user_id,
+            </if>
+            <if test="rackId != ''">
+                rack_id,
+            </if>
+            <if test="rackName != ''">
+                rack_name,
+            </if>
+            <if test="rear != null">
+                rear,
+            </if>
+            <if test="start != null and start != ''">
+                start,
+            </if>
+            <if test="size != null and size != ''">
+                `size`,
+            </if>
+            <if test="description != null and description != ''">
+                description,
+            </if>
+            <if test="asset_number != null and asset_number != ''">
+                asset_number,
+            </if>
+            <if test="host_name != null and host_name != ''">
+                host_name,
+            </if>
+            <if test="status != null and status != ''">
+                status,
+            </if>
+            <if test="model != null and model != ''">
+                model,
+            </if>
+            <if test="purchase_time != null">
+                purchase_time,
+            </if>
+            <if test="warranty_time != null">
+                warranty_time,
+            </if>
+            <if test="price != null and price != ''">
+                price,
+            </if>
+            <if test="serial_number != null and serial_number != ''">
+                serial_number,
+            </if>
+            <if test="duty != null and duty != ''">
+                duty,
+            </if>
+            <if test="changeReasons != null and changeReasons != ''">
+                change_reasons,
+            </if>
+            <if test="vendorId != null and vendorId != ''">
+                vendor_id,
+            </if>
+            <if test="vendorName != null and vendorName != ''">
+                vendor_name,
+            </if>
+            <if test="groupId != null and groupId != ''">
+                group_id,
+            </if>
+            <if test="groupName != null and groupName != ''">
+                group_name,
+            </if>
+            <if test="uuid != null and uuid != ''">
+                uuid,
+            </if>
+            <if test="projectId != null and projectId != ''">
+                project_id,
+            </if>
+            <if test="projectName != null and projectName != ''">
+                project_name,
+            </if>
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            <if test="addTime != null">
+                #{addTime},
+            </if>
+            <if test="name != null and name != ''">
+                #{name},
+            </if>
+            <if test="ip != null and ip != ''">
+                #{ip},
+            </if>
+            <if test="deviceTypeId != ''">
+                #{deviceTypeId},
+            </if>
+            <if test="deviceTypeName != ''">
+                #{deviceTypeName},
+            </if>
+            <if test="plantRoomId != ''">
+                #{plantRoomId},
+            </if>
+            <if test="plantRoomName != ''">
+                #{plantRoomName},
+            </if>
+            <if test="userId != null and userId != ''">
+                #{userId},
+            </if>
+            <if test="rackId != ''">
+                #{rackId},
+            </if>
+            <if test="rackName != ''">
+                #{rackName},
+            </if>
+            <if test="rear != null">
+                #{rear},
+            </if>
+            <if test="start != null and start != ''">
+                #{start},
+            </if>
+            <if test="size != null and size != ''">
+                #{size},
+            </if>
+            <if test="description != null and description != ''">
+                #{description},
+            </if>
+            <if test="asset_number != null and asset_number != ''">
+                #{asset_number},
+            </if>
+            <if test="host_name != null and host_name != ''">
+                #{host_name},
+            </if>
+            <if test="status != null and status != ''">
+                #{status},
+            </if>
+            <if test="model != null and model != ''">
+                #{model},
+            </if>
+            <if test="purchase_time != null">
+                #{purchase_time},
+            </if>
+            <if test="warranty_time != null">
+                #{warranty_time},
+            </if>
+            <if test="price != null and price != ''">
+                #{price},
+            </if>
+            <if test="serial_number != null and serial_number != ''">
+                #{serial_number},
+            </if>
+            <if test="duty != null and duty != ''">
+                #{duty},
+            </if>
+            <if test="changeReasons != null and changeReasons != ''">
+                #{changeReasons},
+            </if>
+            <if test="vendorId != null and vendorId != ''">
+                #{vendorId},
+            </if>
+            <if test="vendorName != null and vendorName != ''">
+                #{vendorName},
+            </if>
+            <if test="groupId != null and groupId != ''">
+                #{groupId},
+            </if>
+            <if test="groupName != null and groupName != ''">
+                #{groupName},
+            </if>
+            <if test="uuid != null and uuid != ''">
+                #{uuid},
+            </if>
+            <if test="projectId != null and projectId != ''">
+                #{projectId},
+            </if>
+            <if test="projectName != null and projectName != ''">
+                #{projectName},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.RsmsDevice">
+        UPDATE rsms_device
+        <set>
+            <if test="addTime != null">
+                addTime = #{addTime},
+            </if>
+            <if test="name != null">
+                `name` = #{name},
+            </if>
+            <if test="ip != null">
+                ip = #{ip},
+            </if>
+            <if test="deviceTypeId != null">
+                device_type_id = #{deviceTypeId},
+            </if>
+            <if test="deviceTypeName != null">
+                device_type_name = #{deviceTypeName},
+            </if>
+            <if test="plantRoomId != ''">
+                plant_room_id = #{plantRoomId},
+            </if>
+            <if test="plantRoomName != ''">
+                plant_room_name = #{plantRoomName},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="rackId != ''">
+                rack_id = #{rackId},
+            </if>
+            <if test="rackName != ''">
+                rack_name = #{rackName},
+            </if>
+            <if test="rear != null and rear != ''">
+                rear = #{rear},
+            </if>
+            <if test="start != null">
+                start = #{start},
+            </if>
+            <if test="size != null">
+                `size` = #{size},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+            <if test="asset_number != null">
+                asset_number = #{asset_number},
+            </if>
+            <if test="host_name != null">
+                host_name = #{host_name},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="model != null">
+                model = #{model},
+            </if>
+            <if test="purchase_time != null">
+                purchase_time = #{purchase_time},
+            </if>
+            <if test="warranty_time != null">
+                warranty_time =  #{warranty_time},
+            </if>
+            <if test="price != null">
+                price = #{price},
+            </if>
+            <if test="serial_number != null">
+                serial_number = #{serial_number},
+            </if>
+            <if test="duty != null">
+                duty = #{duty},
+            </if>
+            <if test="changeReasons != ''">
+                change_reasons = #{changeReasons},
+            </if>
+            <if test="vendorId != ''">
+                vendor_id = #{vendorId},
+            </if>
+            <if test="vendorName != ''">
+                vendor_name = #{vendorName},
+            </if>
+            <if test="groupId != ''">
+                group_id = #{groupId},
+            </if>
+            <if test="groupName != ''">
+                group_name = #{groupName},
+            </if>
+            <if test="uuid != null and uuid != ''">
+                uuid = #{uuid},
+            </if>
+            <if test="projectId != null and projectId != ''">
+                project_id = #{projectId},
+            </if>
+            <if test="projectName != null and projectName != ''">
+                project_name = #{projectName},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE
+        FROM rsms_device
+        where id = #{id, jdbcType=BIGINT}
+    </delete>
+
+    <delete id="batchDel" parameterType="java.lang.String">
+        DELETE FROM rsms_device
+        WHERE id in (${ids})
+    </delete>
+
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO  rsms_device(addTime, uuid, `name`, host_name, asset_number, status, ip,
+         device_type_id, device_type_name, group_id, group_name,  vendor_id, vendor_name,
+         model, project_id, project_name, plant_room_id, plant_room_name, rack_id, rack_name, start, `size`,
+         duty, user_id, purchase_time, warranty_time)
+        VALUES
+        <foreach collection ="list" item="item" separator ="," >
+            (
+                #{item.addTime},
+                #{item.uuid},
+                #{item.name},
+                #{item.host_name},
+                #{item.asset_number},
+                #{item.status},
+                #{item.ip},
+                #{item.deviceTypeId},
+                #{item.deviceTypeName},
+                #{item.groupId},
+                #{item.groupName},
+                #{item.vendorId},
+                #{item.vendorName},
+                #{item.model},
+                #{item.projectId},
+                #{item.projectName},
+                #{item.plantRoomId},
+                #{item.plantRoomName},
+                #{item.rackId},
+                #{item.rackName},
+                #{item.start},
+                #{item.size},
+                #{item.duty},
+                #{item.userId},
+                #{item.purchase_time},
+                #{item.warranty_time}
+            )
+        </foreach>
+    </insert>
+</mapper>

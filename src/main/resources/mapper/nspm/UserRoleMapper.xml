@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.UserRoleMapper">
+
+    <!-- 添加用户角色关联信息 -->
+    <insert id="batchAddUserRole" parameterType="java.util.List" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO
+        metoo_user_role
+        (user_id,role_id)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.user_id,jdbcType=BIGINT},#{item.role_id,jdbcType=BIGINT})
+        </foreach>
+    </insert>
+
+   <!-- <delete id="deleteUserByRoleId" parameterType="java.lang.Long">
+        DELETE
+        FROM metoo_user_role
+        WHERE id
+        IN
+        <foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
+            #{item.id}
+        </foreach>
+    </delete>-->
+
+    <delete id="deleteUserByRoleId" parameterType="java.lang.Long">
+        DELETE
+        FROM metoo_user_role
+        WHERE user_id
+        IN(
+         SELECT user_id
+				FROM (SELECT mur.user_id
+          FROM metoo_user_role mur
+          WHERE mur.user_id=#{id, jdbcType=BIGINT}) metoo_mur
+        )
+    </delete>
+
+</mapper>

@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.PolicyMapper">
+
+    <select id="getObjById" parameterType="java.lang.String" resultType="com.metoo.nspm.entity.nspm.Policy">
+        SELECT * FROM metoo_policy
+        WHERE id = #{id}
+    </select>
+
+    <select id="getObjByParentId" parameterType="java.lang.String" resultType="com.metoo.nspm.entity.nspm.Policy">
+        SELECT * FROM metoo_policy
+        WHERE parentId = #{parentId} and deviceUuid = #{deviceUuid}
+    </select>
+
+    <select id="getObjOrderNo" parameterType="java.lang.String" resultType="com.metoo.nspm.entity.nspm.Policy">
+        SELECT * FROM metoo_policy
+        WHERE orderNo = #{orderNo}
+    </select>
+
+    <select id="getObjByMap" resultType="com.metoo.nspm.entity.nspm.Policy">
+        SELECT * FROM metoo_policy
+        WHERE parentName = #{parentName} or `name` = #{name} and deviceUuid = #{deviceUuid}
+    </select>
+
+
+
+    <delete id="delete" parameterType="com.metoo.nspm.entity.nspm.Policy">
+        DELETE FROM metoo_policy
+        WHERE parentName = #{parentName} or `name` = #{name} and deviceUuid = #{deviceUuid}
+    </delete>
+
+    <insert id="save" parameterType="java.util.Map" keyProperty="id" useGeneratedKeys="true" >
+        INSERT INTO metoo_policy
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test = "policyId != null and policyId != ''">
+                policyId,
+            </if>
+            <if test = "policyName != null and policyName != ''">
+                policyName,
+            </if>
+            <if test = "type != null and type != ''">
+                `type`,
+            </if>
+            <if test = "policyType != null and policyType != ''">
+                policyType,
+            </if>
+            <if test = "lineNum != null  and lineNum != ''">
+                lineNum,
+            </if>
+            <if test = "srcDomain != null and srcDomain != ''">
+                srcDomain,
+            </if>
+            <if test = "srcIp != null and srcIp != ''">
+                srcIp,
+            </if>
+            <if test = "dstDomain != null and dstDomain != ''">
+                dstDomain,
+            </if>
+            <if test = "dstIp != null and dstIp != ''">
+                dstIp,
+            </if>
+            <if test = "service != null and service != ''">
+                service,
+            </if>
+            <if test = "time != null and time != ''">
+                `time`,
+            </if>
+            <if test = "action != null and action != ''">
+                `action`,
+            </if>
+            <if test = "description != null and description != ''">
+                description,
+            </if>
+            <if test = "parentId != null and parentId != ''">
+              parentId,
+            </if>
+            <if test = "optimizeType != null and optimizeType != ''">
+                optimizeType,
+            </if>
+            <if test = "deviceUuid != null and deviceUuid != ''">
+                deviceUuid,
+            </if>
+            <if test = "name != null and name != ''">
+                `name`,
+            </if>
+            <if test = "typeDesc != null and typeDesc != ''">
+                typeDesc,
+            </if>
+            <if test = "lineNumbers != null and lineNumbers != ''">
+                lineNumbers,
+            </if>
+            <if test = "content != null and content != ''">
+                content,
+            </if>
+            <if test = "index != null and index != ''">
+                `index`,
+            </if>
+
+            <if test = "parentName != null and parentName != ''">
+                parentName,
+            </if>
+            <if test = "invisible != null and invisible != ''">
+                invisible,
+            </if>
+            <if test = "deviceName != null and deviceName != ''">
+                deviceName,
+            </if>
+            <if test = "deviceType != null and deviceType != ''">
+                deviceType,
+            </if>
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            <if test = "policyId != null and policyId != ''">
+                #{policyId},
+            </if>
+            <if test = "policyName != null and policyName != ''">
+                #{policyName},
+            </if>
+            <if test = "type != null and type != ''">
+                #{type},
+            </if>
+            <if test = "policyType != null and policyType != ''">
+                #{policyType},
+            </if>
+            <if test = "lineNum != null and lineNum != ''">
+                #{lineNum},
+            </if>
+            <if test = "srcDomain != null and srcDomain != ''">
+                #{srcDomain},
+            </if>
+            <if test = "srcIp != null and srcIp != ''">
+                #{srcIp},
+            </if>
+            <if test = "dstDomain != null and dstDomain != ''">
+                #{dstDomain},
+            </if>
+            <if test = "dstIp != null and dstIp != ''">
+                #{dstIp},
+            </if>
+            <if test = "service != null and service != ''">
+                #{service},
+            </if>
+            <if test = "time != null and time != ''">
+                #{time},
+            </if>
+            <if test = "action != null and action != ''">
+                #{action},
+            </if>
+            <if test = "description != null and description != ''">
+                #{description},
+            </if>
+            <if test = "parentId != null and parentId != ''">
+                #{parentId},
+            </if>
+            <if test = "optimizeType != null and optimizeType != ''">
+                #{optimizeType},
+            </if>
+            <if test = "deviceUuid != null and deviceUuid != ''">
+                #{deviceUuid},
+            </if>
+            <if test = "name != null and name != ''">
+                #{name},
+            </if>
+            <if test = "typeDesc != null and typeDesc != ''">
+                #{typeDesc},
+            </if>
+            <if test = "lineNumbers != null and lineNumbers != ''">
+                #{lineNumbers},
+            </if>
+            <if test = "content != null and content != ''">
+                #{content},
+            </if>
+            <if test = "index != null and index != ''">
+                #{index},
+            </if>
+            <if test = "parentName != null and parentName != ''">
+                #{parentName},
+            </if>
+            <if test = "invisible != null and invisible != ''">
+            #{invisible},
+          </if>
+            <if test = "deviceName != null and deviceName != ''">
+                #{deviceName},
+            </if>
+            <if test = "deviceType != null and deviceType != ''">
+                #{deviceType},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+              UPDATE metoo_policy
+              <set>
+                  <if test="item.orderNo != null">
+                      orderNo = #{item.orderNo},
+                  </if>
+                  <if test="item.invisible == null">
+                      invisible = null,
+                  </if>
+              </set>
+            WHERE   parentName = #{item.parentName} or `name` = #{item.name} AND deviceUuid = #{item.deviceUuid}
+        </foreach>
+    </update>
+
+</mapper>

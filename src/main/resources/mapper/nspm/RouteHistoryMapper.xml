@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.zabbix.RouteHistoryMapper">
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.nspm.Route">
+        <id column="id" property="id"></id>
+        <result column="mask" property="mask"></result>
+        <result column="destination" property="destination"></result>
+        <result column="cost" property="cost"></result>
+        <result column="flags" property="flags"></result>
+        <result column="proto" property="proto"></result>
+        <result column="next_hop" property="nextHop"></result>
+        <result column="interface_name" property="interfaceName"></result>
+        <result column="device_name" property="deviceName"></result>
+        <result column="device_uuid" property="deviceUuid"></result>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, mask, destination, cost, proto, flags, next_hop, interface_name, device_name, device_uuid
+    </sql>
+
+    <sql id="INET_Column_List">
+        id, addTime, mask, INET_NTOA(destination) AS destination, cost, proto, flags, INET_NTOA(next_hop) next_hop, interface_name, device_name, device_uuid
+    </sql>
+
+    <sql id="Copy_Column_List">
+         addTime, mask, destination, cost, proto, flags, next_hop, interface_name, device_name, device_uuid
+    </sql>
+
+    <select id="selectObjById" parameterType="java.lang.Long" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM rsms_rout_history
+        WHERE
+          id = #{id, jdbcType=BIGINT}
+    </select>
+
+    <select id="selectConditionQuery" parameterType="com.metoo.nspm.dto.zabbix.RoutDTO" resultMap="Base_Result_Map">
+        SELECT
+          <include refid="INET_Column_List" />
+        FROM rsms_rout_history
+        <where>
+            <if test="destination != null and destination != ''">
+                AND destination = #{destination}
+            </if>
+            <if test="deviceUuid != null and deviceUuid != ''">
+                AND device_uuid = #{deviceUuid}
+            </if>
+            <if test="interfaceName != null and interfaceName != ''">
+                AND  `interface_name` = #{interfaceName}
+            </if>
+            <if test="time != null">
+                AND addTime = (
+                SELECT addTime FROM rsms_rout_history WHERE addTime &lt;= #{time} ORDER BY addTime DESC limit 1
+                )
+            </if>
+        </where>
+        <if test = "orderBy != null and orderBy != ''">
+            ORDER BY ${orderBy}
+        </if>
+        <if test = "orderType != null and orderType != ''">
+            ${orderType}
+        </if>
+    </select>
+
+    <select id="selectObjByMap" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT
+          <include refid="Base_Column_List" />
+        FROM rsms_rout_history
+        <where>
+            <if test="time != null">
+                AND addTime = (
+                SELECT addTime FROM rsms_rout_history WHERE addTime &lt;= #{time} ORDER BY addTime DESC limit 1
+                )
+            </if>
+            <if test="mask != null">
+                AND mask = #{mask}
+            </if>
+            <if test="destination != null">
+                AND destination = #{destination}
+            </if>
+            <if test="cost != null">
+                AND cost = #{cost}
+            </if>
+            <if test="flags != null">
+                AND flags = #{flags}
+            </if>
+            <if test="proto != null">
+                AND proto = #{proto}
+            </if>
+            <if test="nextHop != null">
+                AND next_hop = #{nextHop}
+            </if>
+            <if test="deviceName != null">
+                AND device_name = #{deviceName}
+            </if>
+            <if test="interfaceName != null">
+                AND interface_name = #{interfaceName}
+            </if>
+            <if test="deviceUuid != null and deviceUuid != ''">
+                AND device_uuid = #{deviceUuid}
+            </if>
+            <if test="network != null and broadcast != null">
+                AND destination
+                BETWEEN
+                  #{network}
+                AND
+                  #{broadcast}
+            </if>
+            <if test = "descMask != null">
+                AND mask &lt;= #{descMask}
+            </if>
+        </where>
+        <if test = "orderBy != null and orderBy != ''">
+            ORDER BY ${orderBy}
+        </if>
+        <if test = "orderType != null and orderType != ''">
+            ${orderType}
+        </if>
+    </select>
+
+    <select id="selectDestDevice" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT
+        destination, mask
+        FROM
+        rsms_rout
+        <where>
+            <if test="time != null">
+                AND addTime = (
+                SELECT addTime FROM rsms_rout_history WHERE addTime &lt;= #{time} ORDER BY addTime DESC limit 1
+                )
+            </if>
+            <if test="beforeTime != null">
+                AND addTime &lt;=#{beforeTime}
+            </if>
+            <if test="network != null and broadcast != null">
+                destination
+                BETWEEN
+                #{network}
+                AND
+                #{broadcast}
+            </if>
+            <if test = "deviceName != null">
+                AND device_name = #{deviceName}
+            </if>
+            <if test = "destination != null">
+                AND destination = #{destination}
+            </if>
+            <if test = "mask != null">
+                AND mask = #{mask}
+            </if>
+        </where>
+        ORDER BY mask
+        DESC
+        LIMIT 1
+    </select>
+
+    <delete id="batchDelete" parameterType="com.metoo.nspm.entity.nspm.Route">
+        DELETE FROM rsms_rout_history where
+        <foreach collection="list" item="item"  separator="or">
+            id = #{item.id}
+        </foreach>
+    </delete>
+
+    <insert id="copyRoutTemp">
+        INSERT INTO rsms_rout_history (<include refid="Copy_Column_List"/>)
+        SELECT <include refid="Copy_Column_List"/> FROM rsms_rout_temp
+    </insert>
+
+</mapper>

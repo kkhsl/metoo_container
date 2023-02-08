@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.zabbix.IpAddressHistoryMapper">
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.nspm.IpAddress">
+        <id column="id" property="id"></id>
+        <result column="ip" property="ip"></result>
+        <result column="mac" property="mac"></result>
+        <result column="mask" property="mask"></result>
+        <result column="ip_segment" property="ipSegment"></result>
+        <result column="interface_name" property="interfaceName"></result>
+        <result column="device_name" property="deviceName"></result>
+        <result column="ip_address" property="ipAddress"></result>
+        <result column="device_uuid" property="deviceUuid"></result>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, addTime, ip, mac, mask, ip_segment, `index`, device_name, interface_name, ip_address, device_uuid
+    </sql>
+
+    <sql id="Copy_Column_List">
+         addTime, ip, mac, mask, ip_segment, `index`, device_name, interface_name, ip_address, device_uuid
+    </sql>
+
+    <select id="selectObjByIp" parameterType="java.lang.String" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM rsms_ip_history
+        where ip = #{ip}
+    </select>
+
+    <select id="selectObjByMac" parameterType="java.lang.String" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM rsms_ip_history
+        where mac = #{mac}
+    </select>
+
+    <select id="selectObjByMap" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM rsms_ip_history
+        <where>
+            <if test="time != null">
+                AND addTime = (
+                SELECT addTime FROM rsms_ip_history WHERE addTime &lt;= #{time} ORDER BY addTime DESC limit 1
+                )
+            </if>
+            <if test="beforeTime != null">
+                AND addTime &lt;=#{beforeTime}
+            </if>
+            <if test="ipSegment != null">
+                AND ip_segment = #{ipSegment}
+            </if>
+            <if test="ipSelf != null">
+                AND ip != #{ipSelf}
+            </if>
+            <if test="index != null">
+                AND `index` = #{index}
+            </if>
+            <if test="mac != null">
+                AND mac = #{mac}
+            </if>
+            <if test="mask != null">
+                AND mask = #{mask}
+            </if>
+            <if test="deviceName != null">
+                AND device_name = #{deviceName}
+            </if>
+            <if test="interfaceName != null">
+                AND interface_name = #{interfaceName}
+            </if>
+        </where>
+    </select>
+
+    <select id="querySrcDevice" parameterType="java.util.Map" resultMap="Base_Result_Map">
+       SELECT
+          id, mac, mask, device_name, interface_name, INET_NTOA(ip) AS ip, device_uuid
+        FROM
+            rsms_ip_history
+        WHERE
+           ip
+        BETWEEN
+            #{network}
+        AND
+            #{broadcast}
+        AND
+          addTime =
+          (
+            SELECT addTime FROM rsms_ip_history WHERE addTime &lt;= #{time} ORDER BY addTime DESC limit 1
+          )
+        ORDER BY
+            mask
+        DESC
+          LIMIT 1
+    </select>
+
+    <delete id="batchDelete" parameterType="com.metoo.nspm.entity.nspm.IpAddress">
+        DELETE FROM rsms_ip_history where
+        <foreach collection="list" item="item"  separator="or">
+            id = #{item.id}
+        </foreach>
+    </delete>
+
+    <insert id="copyIpAddressTemp">
+        INSERT INTO rsms_ip_history(<include refid="Copy_Column_List"/>)
+        SELECT <include refid="Copy_Column_List"/>
+        FROM rsms_ip_temp
+    </insert>
+
+</mapper>

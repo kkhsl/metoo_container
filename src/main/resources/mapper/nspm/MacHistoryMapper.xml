@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.zabbix.MacHistoryMapper">
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.nspm.Mac">
+        <id column="id" property="id"></id>
+        <result column="addTime" property="addTime"></result>
+        <result column="device_ip" property="deviceIp"></result>
+        <result column="device_type" property="deviceType"></result>
+        <result column="device_name" property="deviceName"></result>
+        <result column="interface_name" property="interfaceName"></result>
+        <result column="mac" property="mac"></result>
+        <result column="index" property="index"></result>
+        <result column="tag" property="tag"></result>
+        <result column="uuid" property="uuid"></result>
+        <result column="remote_device" property="remoteDevice"></result>
+        <result column="remote_interface" property="remoteInterface"></result>
+        <result column="remote_device_ip" property="remoteDeviceIp"></result>
+        <result column="remote_device_type" property="remoteDeviceType"></result>
+        <result column="remote_uuid" property="remoteUuid"></result>
+        <result column="interface_index" property="interfaceIndex"></result>
+        <result column="ip_address" property="ipAddress"></result>
+        <result column="vlan" property="vlan"></result>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, device_name, `interface_name`, mac, `index`, tag, uuid, remote_device, remote_interface,
+         remote_device_ip, remote_device_type, remote_uuid, interface_index, ip, device_ip, device_type, vlan
+    </sql>
+
+    <sql id="Ntoa_Column_List">
+        id, addTime, device_name, `interface_name`, mac, `index`, tag, uuid, remote_device, remote_interface,
+        remote_device_ip, remote_device_type,  remote_uuid, interface_index, INET_NTOA(ip) AS ip, device_ip, device_type, vlan
+    </sql>
+
+    <sql id="Copy_Column_List">
+         addTime, device_name, `interface_name`, mac, `index`, tag, uuid, remote_device, remote_interface,
+         remote_device_ip, remote_device_type, remote_uuid, interface_index, ip, device_ip, device_type, vlan
+    </sql>
+
+    <select id="selectObjByMap" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT <include refid="Ntoa_Column_List" />
+        FROM rsms_mac_history
+        <where>
+            <if test="time != null">
+                AND addTime = (
+                SELECT addTime FROM rsms_mac_history WHERE addTime &lt;= #{time} ORDER BY addTime DESC limit 1
+                )
+            </if>
+            <if test="beforeTime != null">
+                AND addTime &lt;=#{beforeTime}
+            </if>
+            <if test="mac != null">
+                AND mac = #{mac}
+            </if>
+            <if test="deviceName != null">
+                AND device_name = #{deviceName}
+            </if>
+            <if test="interfaceName != null">
+                AND interface_name = #{interfaceName}
+            </if>
+            <if test="tag != null">
+                AND tag = #{tag}
+            </if>
+            <if test="other != null">
+                AND tag != #{other}
+            </if>
+            <if test="uuid != null">
+                AND uuid = #{uuid}
+            </if>
+            <if test="tags != null">
+                AND tag in
+                <foreach collection="tags" index = "index" item="item" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="ip != null">
+                AND ip = #{ip}
+            </if>
+            <if test="remoteDevice != null">
+                AND remote_device = #{remoteDevice}
+            </if>
+            <if test="remoteDevice != null">
+                AND remote_device = #{remoteDevice}
+            </if>
+            <if test="macId != null and macId != ''">
+                AND id != #{macId}
+            </if>
+        </where>
+    </select>
+
+    <delete id="batchDelete" parameterType="com.metoo.nspm.entity.nspm.Mac">
+        DELETE FROM rsms_mac_history where
+        <foreach collection="list" item="item"  separator="or">
+            id = #{item.id}
+        </foreach>
+    </delete>
+
+    <insert id="copyMacTemp">
+        INSERT INTO rsms_mac_history (<include refid="Copy_Column_List"/>)
+        SELECT <include refid="Copy_Column_List"/> FROM rsms_mac_temp
+    </insert>
+
+</mapper>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.TopologyHistoryMapper">
+
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.nspm.Topology">
+        <id column="id" property="id"></id>
+        <result column="addTime" property="addTime"></result>
+        <result column="deleteStatus" property="deleteStatus"></result>
+        <result column="name" property="name"></result>
+        <result column="updateTime" property="updateTime"></result>
+        <result column="is_default" property="isDefault"></result>
+        <result column="description" property="description"></result>
+        <result column="group_id" property="groupId"></result>
+        <result column="group_name" property="groupName"></result>
+        <result column="user_id" property="userId"></result>
+        <result column="user_name" property="userName"></result>
+        <result column="content" property="content"></result>
+        <result column="base_url" property="baseUrl"></result>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+        id, addTime, deleteStatus, `name`, updateTime, is_default, description, group_id, group_name,
+        group_name, user_id, user_name, base_url
+    </sql>
+
+    <sql id="Content_Column_List">
+        id, addTime, deleteStatus, `name`, updateTime, is_default, description, group_id, group_name,
+        group_name, user_id, user_name, base_url, content
+    </sql>
+
+    <select id="selectObjByMap" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT <include refid="Content_Column_List" />
+        FROM metoo_topology_history
+        <where>
+            <if test="time != null">
+               AND addTime = (SELECT addTime FROM metoo_topology_history WHERE addTime &lt;=#{time} ORDER BY addTime DESC limit 1)
+            </if>
+            <if test="name != null and name != ''">
+                AND  `name` = #{name}
+            </if>
+            <if test="userId != null and userId != ''">
+                AND  `user_id` = #{userId}
+            </if>
+            <if test="groupIds != null and groupIds != ''">
+                AND group_id in
+                <foreach collection="groupIds" index = "index" item="item" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY is_default desc, addTime desc
+    </select>
+
+    <insert id="save" parameterType="com.metoo.nspm.entity.nspm.Topology" keyProperty="id" useGeneratedKeys="true">
+          INSERT INTO metoo_topology_history
+          <trim prefix="(" suffixOverrides="," suffix=")">
+              <if test="id != null">
+                  id,
+              </if>
+              <if test="addTime != null">
+                    addTime,
+              </if>
+              <if test="deleteStatus != null and name != ''">
+                  deleteStatus,
+              </if>
+              <if test="updateTime != null">
+                  updateTime,
+              </if>
+              <if test="name != null and name != ''">
+                  `name`,
+              </if>
+              <if test="isDefault != null">
+                  is_default,
+              </if>
+              <if test="description != null and description != ''">
+                  description,
+              </if>
+              <if test="groupId != null and groupId != ''">
+                  group_id,
+              </if>
+              <if test="groupName != null and groupName != ''">
+                  group_name,
+              </if>
+              <if test="userId != null and userId != ''">
+                  user_id,
+              </if>
+              <if test="userName != null and userName != ''">
+                  user_name,
+              </if>
+              <if test="content != null and content != null">
+                  content,
+              </if>
+              <if test="baseUrl != null and baseUrl != null">
+                  base_url,
+              </if>
+          </trim>
+        <trim prefix="VALUES(" suffixOverrides="," suffix=")">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="addTime != null">
+                #{addTime},
+            </if>
+            <if test="deleteStatus != null and name != ''">
+                #{deleteStatus},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="name != null and name != ''">
+                 #{name},
+            </if>
+            <if test="isDefault != null">
+                #{isDefault},
+            </if>
+            <if test="description != null and description != ''">
+                #{description},
+            </if>
+            <if test="groupId != null and groupId != ''">
+                #{groupId},
+            </if>
+            <if test="groupName != null and groupName != ''">
+                #{groupName},
+            </if>
+            <if test="userId != null and userId != ''">
+                #{userId},
+            </if>
+            <if test="userName != null and userName != ''">
+                #{userName},
+            </if>
+            <if test="content != null and content != null">
+                #{content},
+            </if>
+            <if test="baseUrl != null and baseUrl != null">
+                #{baseUrl},
+            </if>
+        </trim>
+    </insert>
+
+</mapper>

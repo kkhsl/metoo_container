@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.OrderMapper">
+
+
+    <select id="getObjByOrderId" parameterType="java.lang.Long" resultType="com.metoo.nspm.entity.nspm.Order">
+        SELECT * FROM metoo_order where orderId = #{orderId}
+    </select>
+
+    <select id="getObjByOrderNo" parameterType="java.lang.String" resultType="com.metoo.nspm.entity.nspm.Order">
+        SELECT * FROM metoo_order where orderNo = #{orderNo}
+    </select>
+
+
+    <insert id="save" parameterType="com.metoo.nspm.entity.nspm.Order" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO metoo_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="addTime != null">
+                addTime,
+            </if>
+            <if test="orderNo != null">
+                orderNo,
+            </if>
+            <if test="userName != null">
+                userName,
+            </if>
+            <if test="userId != null">
+                userId,
+            </if>
+            <if test="branchName != null">
+                branchName,
+            </if>
+            <if test="branchLevel != null">
+                branchLevel,
+            </if>
+            <if test="orderId != null">
+                orderId,
+            </if>
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            <if test="addTime != null">
+                #{addTime},
+            </if>
+            <if test="orderNo != null">
+                #{orderNo},
+            </if>
+            <if test="userName != null">
+                #{userName},
+            </if>
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="branchName != null">
+                #{branchName},
+            </if>
+            <if test="branchLevel != null">
+                #{branchLevel},
+            </if>
+            <if test="orderId != null">
+                #{orderId},
+            </if>
+        </trim>
+    </insert>
+
+</mapper>

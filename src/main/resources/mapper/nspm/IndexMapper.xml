@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.IndexMapper">
+
+   <!-- <resultMap id="Base_Menu_Map" type="MenuVo">
+        <result column="roleGroupId" property="roleGroupId"></result>
+        <result column="roleGroupName" property="roleGroupName"></result>
+        <result column="roleGroupIcon" property="roleGroupIcon"></result>
+        <result column="roleGroupUrl" property="roleGroupUrl"></result>
+        <collection property="role" ofType="RoleReq">
+            <id column="roleId" property="roleId"></id>
+            <result column="roleName" property="roleName"></result>
+            <result column="roleUrl" property="roleUrl"></result>
+            <result column="roleComponent" property="roleComponent"></result>
+        </collection>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        mrg.id roleGroupId, mrg.`name` roleGroupName, mrg.icon roleGroupIcon,mrg.url roleGroupUrl,
+        mr.id roleId, mr.name roleName, mr.url roleUrl, mr.component roleComponent
+    </sql>
+
+    <select id="findMenu" parameterType="java.lang.Long" resultMap="Base_Menu_Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM metoo_role_group mrg
+        LEFT JOIN metoo_role mr ON mr.rg_id = mrg.id
+        LEFT JOIN metoo_user_role mur ON mur.role_id = mr.id
+        LEFT JOIN metoo_user mu ON mu.id = mur.user_id
+        WHERE
+        mu.id = #{userId}
+        ORDER BY mrg.sequence DESC, mr.sequence DESC
+    </select>-->
+
+    <resultMap id="Base_Nav_Map" type="com.metoo.nspm.vo.MenuVo">
+        <id column="id" property="id"/>
+        <result column="name" property="name"></result>
+        <result column="value" property="value"></result>
+        <result column="sequence" property="sequence"></result>
+        <result column="url" property="url"></result>
+        <result column="component" property="component"></result>
+        <result column="componentName" property="componentName"></result>
+        <result column="sequence" property="sequence"></result>
+        <result column="icon" property="icon"></result>
+        <result column="hidden" property="hidden"></result>
+        <collection property="childrenList" ofType="com.metoo.nspm.vo.MenuVo">
+            <id column="res2_id" property="id"/>
+            <result column="res2_name" property="name"></result>
+            <result column="res2_value" property="value"></result>
+            <result column="res2_url" property="url"></result>
+            <result column="res_component" property="component"></result>
+            <result column="res2_componentName" property="componentName"></result>
+            <result column="res2_sequence" property="sequence"></result>
+            <result column="res2_icon" property="icon"></result>
+            <result column="res2_hidden" property="hidden"></result>
+         </collection>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        res.id, res.name, res.value, res.sequence,res.componentName, res.icon, res.url,res.component,res.hidden,
+        res2.id res2_id, res2.name res2_name, res2.value res2_value, res2.url res2_url,
+        res2.component res_component, res2.sequence res2_sequence,res2.componentName res2_componentName,
+        res2.icon res2_icon, res2.hidden res2_hidden
+    </sql>
+
+  <!--  <select id="findMenu" parameterType="java.lang.Long" resultMap="Base_Nav_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM metoo_res res1
+	      JOIN metoo_res res2 ON res2.parentId = res1.id
+        WHERE res2.level = 1 AND res1.level = 0
+        ORDER BY res1.sequence DESC, res2.sequence DESC
+    </select>-->
+
+    <select id="findMenu" parameterType="java.lang.Long" resultMap="Base_Nav_Map">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM metoo_res res
+        JOIN (
+            SELECT res.*
+            FROM metoo_res res
+                LEFT JOIN metoo_role_res role_res ON role_res.res_id = res.id
+                LEFT JOIN metoo_role role ON role.id = role_res.role_id
+                LEFT JOIN metoo_user_role user_role ON user_role.role_id = role.id
+                LEFT JOIN metoo_user user ON user.id = user_role.user_id
+                WHERE
+                    user.id = #{id}
+                AND
+                    res.level = 1
+        ) res2	ON res2.parentId = res.id
+            WHERE
+              res.level = 0
+        ORDER BY res.sequence ASC,res2.sequence ASC
+  </select>
+</mapper>

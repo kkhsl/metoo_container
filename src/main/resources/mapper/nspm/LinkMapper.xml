@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.LinkMapper">
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.nspm.Link">
+        <id column="id" property="id"></id>
+        <result column="addTime" property="addTime"></result>
+        <result column="deleteStatus" property="deleteStatus"></result>
+        <result column="name" property="name"></result>
+        <result column="transmitter" property="transmitter"></result>
+        <result column="type" property="type"></result>
+        <result column="bandwidth" property="bandwidth"></result>
+        <result column="status" property="status"></result>
+        <result column="start_device" property="startDevice"></result>
+        <result column="start_interface" property="startInterface"></result>
+        <result column="start_ip" property="startIp"></result>
+        <result column="end_device" property="endDevice"></result>
+        <result column="end_interface" property="endInterface"></result>
+        <result column="end_ip" property="endIp"></result>
+        <result column="description" property="description"></result>
+        <result column="group_ip" property="groupId"></result>
+        <result column="group_name" property="groupName"></result>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, addTime, deleteStatus, name, transmitter, type, bandwidth, status, start_device, start_interface, start_ip,
+        end_device, end_interface, end_ip, description, group_ip, group_name
+    </sql>
+
+    <sql id="Join_Column_List">
+        metoo_link.id id, metoo_link.addTime addTime, metoo_link.deleteStatus deleteStatus, metoo_link.name name,
+        metoo_link.transmitter transmitter, metoo_link.type type, metoo_link.bandwidth bandwidth, metoo_link.status status,
+        metoo_link.start_device start_device, metoo_link.start_interface start_interface,
+        metoo_link.start_ip start_ip, metoo_link.end_device end_device, metoo_link.end_interface end_interface,
+        metoo_link.end_ip end_ip, metoo_link.description description,
+        metoo_group.id group_id, metoo_group.branchName group_name
+    </sql>
+
+    <select id="selectObjById" parameterType="java.lang.Long" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List" />
+        FROM metoo_link
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectObjConditionQuery" parameterType="com.metoo.nspm.entity.nspm.Link" resultMap="Base_Result_Map">
+        SELECT <include refid="Join_Column_List" />
+        FROM metoo_link
+        join metoo_group
+        on metoo_link.group_id = metoo_group.id
+        <if test = "orderBy != null and orderBy != ''">
+            ORDER BY ${orderBy}
+        </if>
+        <if test = "orderType != null and orderType != ''">
+            ${orderType}
+        </if>
+    </select>
+
+    <select id="selectObjByMap" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT *
+        FROM metoo_link
+        <where>
+            <if test="startIp != null and startIp != ''">
+                AND start_ip = #{startIp}
+            </if>
+            <if test="endIp != null and endIp != ''">
+                AND end_ip = #{endIp}
+            </if>
+        </where>
+        <if test = "orderBy != null and orderBy != ''">
+            ORDER BY ${orderBy}
+        </if>
+        <if test = "orderType != null and orderType != ''">
+            ${orderType}
+        </if>
+    </select>
+
+
+    <insert id="save" parameterType="com.metoo.nspm.entity.nspm.Link" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO metoo_link
+        <trim prefix="(" suffixOverrides="," suffix=")">
+            <if test="addTime != null">
+                addTime,
+            </if>
+            <if test="deleteStatus != null">
+                deleteStatus,
+            </if>
+            <if test="name != null and name != ''">
+                name,
+            </if>
+            <if test="transmitter != null">
+                transmitter,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="bandwidth != null">
+                bandwidth,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="startDevice != null and startDevice != ''">
+                start_device,
+            </if>
+            <if test="startInterface != null and startInterface != ''">
+                start_interface,
+            </if>
+            <if test="startIp != null and startIp != ''">
+                start_ip,
+            </if>
+            <if test="endDevice != null and endDevice != ''">
+                end_device,
+            </if>
+            <if test="endInterface != null and endInterface != ''">
+                end_interface,
+            </if>
+            <if test="endIp != null and endIp != ''">
+                end_ip,
+            </if>
+            <if test="description != null and description != ''">
+                description,
+            </if>
+            <if test="groupId != null and groupId != ''">
+                group_id,
+            </if>
+            <if test="groupName != null and groupName != ''">
+                group_name,
+            </if>
+        </trim>
+        <trim prefix="VALUES(" suffixOverrides="," suffix=")">
+            <if test="addTime != null">
+                #{addTime},
+            </if>
+            <if test="deleteStatus != null">
+                #{deleteStatus},
+            </if>
+            <if test="name != null and name != ''">
+                #{name},
+            </if>
+            <if test="transmitter != null">
+                #{transmitter},
+            </if>
+            <if test="type != null">
+                #{type},
+            </if>
+            <if test="bandwidth != null">
+                #{bandwidth},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+            <if test="startDevice != null and startDevice != ''">
+                #{startDevice},
+            </if>
+            <if test="startInterface != null and startInterface != ''">
+                #{startInterface},
+            </if>
+            <if test="startIp != null and startIp != ''">
+                #{startIp},
+            </if>
+            <if test="endDevice != null and endDevice != ''">
+                #{endDevice},
+            </if>
+            <if test="endInterface != null and endInterface != ''">
+                #{endInterface},
+            </if>
+            <if test="endIp != null and endIp != ''">
+                #{endIp},
+            </if>
+            <if test="description != null and description != ''">
+                #{description},
+            </if>
+            <if test="groupId != null and groupId != ''">
+                #{groupId},
+            </if>
+            <if test="groupName != null and groupName != ''">
+                #{groupName},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.Link">
+        UPDATE metoo_link
+        <set>
+            <if test="addTime != null">
+                addTime = #{addTime},
+            </if>
+            <if test="deleteStatus != null">
+                deleteStatus = #{deleteStatus},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="transmitter != null">
+                transmitter = #{transmitter},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="bandwidth != null">
+                bandwidth = #{bandwidth},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="startDevice != null and startDevice != ''">
+                start_device = #{startDevice},
+            </if>
+            <if test="startInterface != null and startInterface != ''">
+                start_interface = #{startInterface},
+            </if>
+            <if test="startIp != null and startIp != ''">
+                start_ip = #{startIp},
+            </if>
+            <if test="endDevice != null and endDevice != ''">
+                end_device = #{endDevice},
+            </if>
+            <if test="endInterface != null and endInterface != ''">
+                end_interface = #{endInterface},
+            </if>
+            <if test="endIp != null and endIp != ''">
+                end_ip = #{endIp},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description},
+            </if>
+            <if test="groupId != null and groupId != ''">
+                group_id = #{groupId},
+            </if>
+            <if test="groupName != null and groupName != ''">
+                group_name = #{groupName},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE FROM metoo_link
+        WHERE id = #{id}
+    </delete>
+
+    <delete id="batchesDel" parameterType="java.lang.Long">
+        DELETE FROM metoo_link
+        WHERE id in
+        <foreach collection="array" item="item"  separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <insert id="batchesInsert" parameterType="java.util.List">
+        INSERT INTO metoo_link(addTime, start_device, start_interface, start_ip, end_device, end_interface, end_ip)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+              #{item.addTime},
+              #{item.startDevice},
+              #{item.startInterface},
+              #{item.startIp},
+              #{item.endDevice},
+              #{item.endInterface},
+              #{item.endIp}
+            )
+        </foreach>
+    </insert>
+
+</mapper>

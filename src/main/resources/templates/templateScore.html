@@ -1,0 +1,2187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="index.css">
+    <title>${dataForNodeDTO.fileName}</title>
+</head>
+<style type="text/css" media="all, print, screen">
+    body,
+        html {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            list-style: square;
+            font-size: 9pt;
+            margin: 0;
+            padding: 0;
+        }
+
+        div {
+            text-overflow: ellipsis;
+            word-wrap: break-word;
+        }
+
+        ul {
+            list-style: square;
+        }
+
+        pre {
+            margin: 0;
+        }
+
+        a {
+            color: #3D92AC;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        h1 {
+            font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", "Segoe UI Light", "Segoe UI", Arial, sans-serif;
+            font-weight: 100;
+            margin-top: 64px;
+            page-break-before: auto;
+            page-break-inside: avoid;
+            font-size: 30pt;
+        }
+
+        .h1issue {
+            page-break-before: always;
+        }
+
+        h2,
+        .h2group {
+            font-weight: bold;
+            font-size: 16pt;
+            color: #30758B;
+            margin-top: 64px;
+            page-break-inside: avoid;
+        }
+
+        .h2group,
+        .h3group {
+            margin-bottom: 16px;
+            page-break-inside: avoid;
+        }
+
+        .h2group h2,
+        .h3group h3 {
+            margin-top: 0;
+            display: inline;
+            page-break-inside: avoid;
+        }
+
+        h3,
+        .h3group {
+            color: #30758B;
+            font-weight: normal;
+            font-size: 14pt;
+            margin-top: 64px;
+            page-break-inside: avoid;
+        }
+
+        h4 {
+            color: #30758B;
+            font-weight: normal;
+            font-size: 12pt;
+            margin-top: 24px;
+            margin-bottom: 4px;
+            page-break-inside: avoid;
+            white-space: nowrap;
+        }
+
+        h5 {
+            color: #30758B;
+            font-weight: normal;
+            font-size: 10pt;
+            margin-top: 16px;
+            page-break-inside: avoid;
+        }
+        .logos {
+            display: table;
+            width: 100%;
+            margin-bottom: 1.5em;
+        }
+        .toc li {
+            list-style: square;
+            color: #3D92AC;
+        }
+        .row {
+            display: table-row;
+        }
+
+        .row .name {
+            display: table-cell;
+            padding: 4px 8px 4px 8px;
+            vertical-align: top;
+        }
+
+        .row .value {
+            display: table-cell;
+            padding: 4px 0 4px 0;
+            width: 100%;
+            vertical-align: top;
+        }
+        .name {
+            color: #333333;
+            font-weight: bold;
+            padding-right: 16px;
+            white-space: nowrap;
+        }
+        .count {
+            background-color: #6EADC1;
+            border-radius: 2em;
+            -moz-border-radius: 2em;
+            color: #ffffff;
+            padding: 1px 4px;
+            margin: 0 4px;
+            font-size: 60%;
+            font-weight: bold;
+
+        }
+        .datatable {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .datatable th,
+        .datatable .th {
+            padding: 2px 4px;
+            background-color: #3D92AC;
+            color: white;
+            text-align: left;
+            font-weight: bold;
+            font-size: 10pt;
+            height: 30px;
+            page-break-inside: auto;
+        }
+
+        .datatable td,
+        .datatable .td {
+            border-bottom: 1px solid #cccccc;
+            padding: 2px 4px;
+            text-overflow: ellipsis;
+            font-size: 9pt;
+            word-wrap: break-word;
+            vertical-align: top;
+        }
+
+        .datatable .double td,
+        .datatable div.double {
+            border-bottom: 2px solid #3D92AC;
+        }
+
+        td,
+        .td {
+            word-wrap: break-word;
+            word-break: break-all;
+        }
+
+        td.breakNormal {
+            word-break: break-all;
+        }
+
+        img {
+            page-break-inside: avoid;
+        }
+
+        .datatable a {
+            color: #3D92AC;
+            text-decoration: none;
+        }
+
+        .datatable a:hover {
+            text-decoration: underline;
+        }
+        .datatable .severity {
+            width: 24px;
+            text-align: center;
+            color: white;
+            border-radius: 0px;
+            -moz-border-radius: 0px;
+        }
+        .severity {
+            width: 24px;
+            text-align: center;
+            color: white;
+            border-radius: 8px;
+            -moz-border-radius: 8px;
+        }
+        .issueType {
+            display: table;
+            background-color: #3D92AC;
+            margin: 64px 0 16px 0;
+            width: 100%;
+            height: 32px;
+            border-radius: 8px;
+            -moz-border-radius: 8px;
+            page-break-inside: avoid;
+        }
+
+        .issueType h2 {
+            font-weight: normal;
+            font-size: 12pt;
+            color: white;
+            margin: 0;
+        }
+
+        .issueType a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .issueType a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .issueType div {
+            display: table-cell;
+            padding: 8px;
+        }
+
+        .issueType table {
+            width: 99%;
+        }
+
+        .issueType td:last-child {
+            height: 28px;
+            text-align: right;
+        }
+
+        .issueType td {
+            height: 28px;
+        }
+        .toclink {
+            text-align: right;
+            float: right;
+            font-weight: normal;
+            font-size: 8pt;
+            color: #3D92AC;
+            padding-top: 4px;
+        }
+
+        .issueType .toclink {
+            color: #FFFFFF;
+            float: none;
+        }
+        td .severity_0,
+        td .severity_1,
+        td .severity_2,
+        td .severity_3,
+        td .severity_6 {
+            height: 16px;
+            float: left;
+        }
+        .severity {
+
+        }
+        .severity_0 {
+            background-color: #85A1C0;
+        }
+
+        .severity_1 {
+            background-color: #FFCC00;
+        }
+
+        .severity_2 {
+            background-color: #FF9900;
+        }
+
+        .severity_3 {
+            background-color: #CC0000;
+        }
+
+        .severity_5 {
+            background-color: #CC0000;
+        }
+
+        .severity_6 {
+            background-color: #471B5E;
+        }
+        .nowordwrap *,
+        .nowordwrap {
+            word-wrap: normal;
+            word-break: normal;
+        }
+</style>
+<style type="text/css" media="all, print, screen">
+    body,
+    html {
+        margin: 1cm;
+    }
+
+    <#include  "./index.css" >
+
+</style>
+<script>
+    <#include  "./echarts.min.js" >
+</script>
+
+<body>
+    <div class="logos">
+        <div class="cell left"></div>
+        <div class="cell right"></div>
+    </div>
+    <h1 style="margin-top: 6cm; page-break-before: auto">检查报告<br /></h1>
+    <h3>该报告包含设备的 安全策略、NAT策略、ACL策略、地址对象、服务对象、时间对象等配置信息的检查。<br /></h3>
+    <h2>声明</h2>报告结果仅供参考使用<br />报告生成时间： ${dataForNodeDTO.createTime!"--"}<br />
+    <h1 id="toc"><a name="toc"></a>目录</h1>
+    <div class="toc" xmlns="">
+        <h2><a href="#introduction">介绍</a></h2>
+        <ul>
+            <li><a href="#generalInformation">设备信息</a></li>
+            <li><a href="#checkExplain">检查范围说明</a></li>
+        </ul>
+        <h2><a href="#executiveSummary">摘要</a></h2>
+        <ul>
+            <#if  dataPolicyDetailDTOList?size gt 0>
+            <li><a href="#policySecurityRisks">策略检查问题</a></li>
+            </#if>
+             <#if  objectDetailDTOList[0].sonDTOList?size gt 0  ||   objectDetailDTOList[1].sonDTOList?size gt 0>
+            <li><a href="#targetSecurityRisks">对象检查问题</a></li>
+            </#if>
+            <#if (dataRulePortDTOList?size>0)>
+            <li><a href="#riskPortSecurityRisks">高危端口问题</a></li>
+            </#if>
+            <#if (dataRuleLooseDTOList?size>0) >
+            <li><a href="#looseSecurityRisks">宽松风险问题</a></li>
+            </#if>
+        </ul>
+    </div>
+    <h1 id="introduction" xmlns=""><a name="introduction"></a>介绍</h1>
+    <p xmlns="">该报告包含由安博通安全策略可视化团队执行的防火墙安全性扫描的结果。</p>
+    <!--  <table xmlns="">
+        <#list dataForCheckTypeList as item>
+        <tr>
+            <td>${item.typeName}：</td>
+            <td>${item.typeSum}</td>
+        </tr>
+    </#list>
+    </table> -->
+    <h2 id="generalInformation" xmlns="">设备信息<a name="generalInformation"></a></h2>
+    <div class="row" xmlns="">
+        <div class="name">检查报告名称：</div>
+        <div class="value">${dataForNodeDTO.fileName!"--"}</div>
+    </div>
+    <div class="row" xmlns="">
+        <div class="name">开始时间：</div>
+        <div class="value">${dataForNodeDTO.createTime!"--"}</div>
+    </div>
+    <div class="row" xmlns="">
+        <div class="name">设备名称：</div>
+        <div class="value">${dataForNodeDTO.deviceName!"--"}</div>
+    </div>
+    <div class="row" xmlns="">
+        <div class="name">设备管理IP：</div>
+        <div class="value">${dataForNodeDTO.ip!"--"}</div>
+    </div>
+    <div class="row" xmlns="">
+        <div class="name">设备所属品牌：</div>
+        <div class="value">${dataForNodeDTO.vendorName!"--"}</div>
+    </div>
+    <div class="row" xmlns="">
+        <div class="name">描述：</div>
+        <div class="value">${dataForNodeDTO.description!"--"}</div>
+    </div>
+
+    <h2 id="checkExplain" xmlns="">检查范围说明<a name="loginSettings"></a></h2>
+    <div style="line-height: 24px;">
+        本检查只要针对防火墙、路由交换机等访问控制设备的安全策略与ACL策略进行策略配置检查，检查范围包括策略配置检查、对象配置检查、高危端口检查、宽松策略检查4大类。
+    </div>
+    <h1 id="executiveSummary"><a name="executiveSummary"></a>摘要</h1>
+    <!-- 统计图 -->
+    <div>
+        <div id="object-echart" style="width: 50%;height:300px;float: right;top:-30px"></div>
+        <div id="policy-echart" style="width: 50%;height:300px;float: right;margin-top:-30px"></div>
+    </div>
+    <div class="clear"></div>
+    <!--        策略检查摘要-->
+    <#if dataForPolicyPieReDTO.total gt 0 >
+    <div id="policySecurityRisks" class="h2group" xmlns=""><h2>策略检查问题 <span class="count">${dataForPolicyPieReDTO.total}</span></h2></div>
+    <table class="datatable nowordwrap" xmlns="">
+            <tr>
+                <th></th>
+                <th>策略类型</th>
+                <th colspan="2">数量</th>
+            </tr>
+            <#list dataForPolicyPieReDTO.statistics>
+                <#items as item>
+                <#if item.value gt 0 >
+                    <tr>
+                        <td class="severity severity_5">
+                            高
+                        </td>
+                        <td style="width:66%"><a href="#${item.name}">${item.name!"--"}</a></td>
+                        <td>${item.value!"--"}</td>
+                        <td style="width:33%">
+                            <div style=" height:16px; width: ${item.percent}px; " class="severity_5"></div>
+                        </td>
+                    </tr>
+                    </#if>
+                </#items>
+            </#list>
+        </table>
+        </#if>
+        <!--        对象检查摘要/引用第一种-->
+
+        <#assign x = 0>
+        <#assign k = 0>
+        <#list dataObjectCheckPieDTO.dataUnrefObjectCheckPieDTOList?sort_by("unrefNum")?reverse as item>
+
+        <#if item?index == 0 >
+        <#assign indexOne=item.unrefNum>
+        <#assign k = indexOne>
+        <#break>
+        </#if>
+
+
+
+        </#list>
+
+
+<!--        对象检查摘要/引用第二种-->
+
+
+        <#assign m = 0>
+        <#list dataObjectCheckPieDTO.dataEmptyObjectCheckPieDTOList?sort_by("emptyNum")?reverse as item>
+
+        <#if item?index == 0 >
+        <#assign indexSecond=item.emptyNum>
+        <#assign m = indexSecond>
+        </#if>
+
+        </#list>
+
+        <#if  dataObjectCheckPieDTO.total gt 0>
+
+
+        <div id="targetSecurityRisks" class="h2group" xmlns=""><h2>对象检查问题 <span class="count">${dataObjectCheckPieDTO.total}</span></h2></div>
+
+<#if  objectDetailDTOList[0].sonDTOList?size gt 0>
+            <table class="datatable nowordwrap" xmlns="">
+
+                <tr>
+                    <th></th>
+                    <th>${objectDetailDTOList[0].name}</th>
+                    <th colspan="2">数量</th>
+                </tr>
+
+
+                <#list dataObjectCheckPieDTO.dataUnrefObjectCheckPieDTOList?sort_by("unrefNum")?reverse as item>
+
+
+                <tr>
+                    <td class="severity severity_5">
+                        高
+                    </td>
+                    <td style="width:66%"><a href="#${objectDetailDTOList[0].name}">${item.name!"--"}</a></td>
+                    <td>${item.unrefNum}</td>
+                    <td style="width:33%">
+                        <div style=" height:16px; width: ${avgOne(k,item.unrefNum)}px; " class="severity_5"></div>
+                    </td>
+
+                </tr>
+
+            </#list>
+            <#function avgOne x y>
+                <#if x == 0 >
+                <#return 0?string["0.##"] >
+                <#else>
+                <#return ((y / x)*100)?string["0.##"] >
+                </#if>
+            </#function>
+
+            </table>
+</#if>
+    <!--        对象检查摘要/引用第二种-->
+<#if  objectDetailDTOList[1].sonDTOList?size gt 0>
+            <table class="datatable nowordwrap" xmlns="">
+                <tr>
+                    <th></th>
+                    <th>${objectDetailDTOList[1].name}</th>
+                    <th colspan="2">数量</th>
+                </tr>
+
+
+                <#list dataObjectCheckPieDTO.dataEmptyObjectCheckPieDTOList?sort_by("emptyNum")?reverse as item>
+
+                <tr>
+                    <td class="severity severity_5">
+                        高
+                    </td>
+                    <td style="width:66%"><a href="#${objectDetailDTOList[1].name}">${item.name!"--"}</a></td>
+                    <td>${item.emptyNum}</td>
+                    <td style="width:33%">
+                        <div style=" height:16px; width: ${avgSecond(m,item.emptyNum)}px; " class="severity_5"></div>
+                    </td>
+
+                </tr>
+            </#list>
+            <#function avgSecond x y>
+            <#if x == 0 >
+                <#return 0?string["0.##"] >
+            <#else>
+                <#return ((y / x)*100)?string["0.##"] >
+            </#if>
+
+            </#function>
+
+            </table>
+</#if>
+    </#if>
+        <!--        高危端口风险摘要-->
+        <#assign x = 0>
+        <#assign k = 0>
+        <#list dataRulePortDTOList?sort_by("dataDTOListSize")?reverse as item>
+
+        <#if item?index == 0 >
+        <#assign indexOne=item.dataDTOListSize>
+        <#assign k = indexOne>
+        </#if>
+
+        <#assign x = x + item.dataDTOList?size>
+
+        </#list>
+        <#if x gt 0>
+        <div id="riskPortSecurityRisks" class="h2group" xmlns=""><h2>高危端口问题 <span class="count">${x}</span></h2></div>
+        <table class="datatable nowordwrap" xmlns="">
+            <tr>
+                <th></th>
+                <th>名称</th>
+                <th colspan="2">数量</th>
+            </tr>
+
+
+            <#list dataRulePortDTOList >
+            <#items as item>
+            <#if item.dataDTOList?size gt 0 >
+            <tr>
+                <td class="severity severity_${item.ruleLevel}">
+                    高
+                </td>
+                <td style="width:66%"><a href="#${item.ruleName}">${item.ruleName!"--"}</a></td>
+                <td>${item.dataDTOList?size}</td>
+                <td style="width:33%">
+                    <#assign x = 0>
+                    <div style=" height:16px; width: ${avg(k,item.dataDTOListSize)}px; " class="severity_${item.ruleLevel?c}"></div>
+                </td>
+
+            </tr>
+            </#if>
+
+
+        </#items>
+        </#list>
+        <#function avg x y>
+        <#return ((y / x)*100)?string["0.##"] >
+        </#function>
+
+        </table>
+        </#if>
+<!--        宽松风险摘要-->
+        <#assign x = 0>
+        <#assign k = 0>
+        <#list dataRuleLooseDTOList?sort_by("dataDTOListSize")?reverse as item>
+
+        <#if item?index == 0 >
+        <#assign indexOne=item.dataDTOListSize>
+        <#assign k = indexOne>
+        </#if>
+
+        <#assign x = x + item.dataDTOList?size>
+
+        </#list>
+    <#if x  gt 0 >
+    <div id="looseSecurityRisks" class="h2group" xmlns=""><h2>宽松风险问题 <span class="count">${x}</span></h2></div>
+    <table class="datatable nowordwrap" xmlns="">
+        <tr>
+            <th></th>
+            <th>规则名称</th>
+            <th colspan="2">数量</th>
+        </tr>
+        <if></if>
+
+        <#list dataRuleLooseDTOList >
+        <#items as item>
+        <#if item.dataDTOList?size gt 0 >
+        <tr>
+            <td class="severity severity_${item.ruleLevel}">
+                高
+            </td>
+            <td style="width:66%"><a href="#${item.ruleName}">${item.ruleName!"--"}</a></td>
+            <td>${item.dataDTOList?size}</td>
+            <td style="width:33%">
+                <#assign x = 0>
+                <div style=" height:16px; width: ${avg(k,item.dataDTOListSize)}px; " class="severity_${item.ruleLevel?c}"></div>
+            </td>
+
+        </tr>
+    </#if>
+    </#items>
+    </#list>
+            <#function avg x y>
+            <#return ((y / x)*100)?string["0.##"] >
+            </#function>
+
+    </table>
+
+    </#if>
+<#if  dataPolicyDetailDTOList?size gt 0>
+<!--策略检查-->
+    <h1 id="issuesByIssueType"><a name="issuesByIssueType"></a>按策略检查问题分类的问题</h1>
+    <#list dataPolicyDetailDTOList as data>
+    <div id="${data.name}" class="issueType" xmlns="">
+        <div class="severity severity_5">高</div>
+        <div>
+            <h2 class="nowordwrap"><a href="javascript:void(0);">${(data.name)!"--"}</a>
+                 
+                <span class="count">${data.dataPolicyDetailSonDTOList?size}</span><a name="attCrossSiteRequestForgery"></a></h2>
+        </div>
+        <div class="toclink"><a class="toclink" href="#toc">TOC</a></div>
+    </div>
+	<div class="description">
+		<div class="des-name">描述：</div>
+		<div class="des-value">
+            <#switch data.name>
+                <#case '隐藏策略'>
+                同一策略集内，该策略的协议、IP、端口均为其优先级更高策略的子集，不管动作是否相同。<br/>
+                例如：策略 1： A——B/C 允许(或禁止)；策略 2： A——B允许，则策略 1 包含策略 2，策略 2 可删除。<br/>
+                <#break>
+                <#case '冗余策略'>
+                同一策略集内，该策略的协议、IP、端口均包含比其优先级更高的策略，且动作相同。<br/>
+                例如：策略1： A——B 允许；策略2：A——B/C 允许，则策略2包含策略1，策略1为多余策略可删除。<br/>
+                <#break>
+                <#case '合并策略'>
+                可合并策略：指两条动作相同的策略，源目的域、源目的IP、服务中只有一项不相同，其余均相同。<br/>
+                例如：策略1：192.1.1.1——B 允许；策略2：192.1.1.2——B 允许，则建议策略1和策略2 合并为一条策略：192.1.1.1/192.1.1.2 —— B 允许。<br/>
+                <#break>
+                <#case '空策略'>
+                策略中源地址、目标地址、服务为对象，但对象内容为空。
+                <#break>
+                <#case '过期策略'>
+                策略中会包含时间对象，当时间对象过期后，该策略会显示为过期策略。
+                <#break>
+                <#default>
+                暂无描述
+            </#switch>
+		</div>
+	</div>
+        <#list data.dataPolicyDetailSonDTOList as list>
+    <div class="h3group" xmlns="">
+        <h3>${data.name}&nbsp;&nbsp;&nbsp;${list_index+1}&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;${data.dataPolicyDetailSonDTOList?size}</h3><a class="toclink" href="#toc">TOC</a>
+    </div>
+    <div class="content">
+        <div class="headerIssueType"><a href="javascript:void(0);">${(list.policyTypeDesc)!"--"}</a></div>
+        <div class="row">
+            <div class="name">处置建议：</div>
+            <#switch data.name>
+                <#case '隐藏策略'>
+                <div class="value">
+                    <span>策略</span>
+                    <span style="color:#30758B">
+                        <#if list.primaryPolicyId?? && (list.primaryPolicyId?trim?length>0) >
+                            <#list list.primaryPolicyId?split(",") as x>
+                                [${x}]
+                            </#list>
+                         <#else>
+                            ${list.primaryLineNumber}
+                        </#if>
+                    </span>
+                    ,被策略
+                    <span style="color:#30758B">
+                        <#if list.relatedPolicyId?? && (list.relatedPolicyId?trim?length>0)>
+                            [${list.relatedPolicyId}]
+                        <#else>
+                            ${list.relatedLineNumber}
+                        </#if>
+                    </span>
+                    隐藏，建议删除策略
+                    <span style="color:#30758B">
+                        <#if list.primaryPolicyId?? && (list.primaryPolicyId?trim?length>0) >
+                            <#list list.primaryPolicyId?split(",") as x>
+                                [${x}]
+                            </#list>
+                        <#else>
+                            ${list.primaryLineNumber}
+                        </#if>
+                    </span>
+                </div>
+                <#break>
+                <#case '冗余策略'>
+                <div class="value">
+                    <span>策略</span>
+                    <span style="color:#30758B">
+                        <#if list.primaryPolicyId?? && (list.primaryPolicyId?trim?length>0) >
+                            <#list list.primaryPolicyId?split(",") as x>
+                                [${x}]
+                            </#list>
+                            <#else>
+                            ${list.primaryLineNumber}
+                        </#if>
+                    </span>
+                    ,被策略
+                    <span style="color:#30758B">
+                        <#if list.relatedPolicyId?? && (list.relatedPolicyId?trim?length>0)>
+                            [${list.relatedPolicyId}]
+                        <#else>
+                            ${list.relatedLineNumber}
+                        </#if>
+                    </span>
+                    冗余，建议删除策略
+                    <span style="color:#30758B">
+                        <#if list.primaryPolicyId?? && (list.primaryPolicyId?trim?length>0) >
+                            <#list list.primaryPolicyId?split(",") as x>
+                                [${x}]
+                            </#list>
+                            <#else>
+                            ${list.primaryLineNumber}
+                        </#if>
+                    </span>
+                </div>
+                <#break>
+                <#case '合并策略'>
+                <div class="value">
+                    <span>策略</span>
+                    <span style="color:#30758B">
+                        <#if list.primaryPolicyId?? && (list.primaryPolicyId?trim?length>0) >
+                            <#list list.primaryPolicyId?split(",") as x>
+                                [${x}]
+                            </#list>
+                            <#else>
+                            ${list.primaryLineNumber}
+                        </#if>
+                    </span>
+                    &nbsp;&nbsp;建议合并
+                </div>
+                <#break>
+                <#case '空策略'>
+                <div class="value">
+                    <span>策略</span>
+                    <span style="color:#30758B">
+                        <#if list.primaryPolicyId?? && (list.primaryPolicyId?trim?length>0) >
+                            <#list list.primaryPolicyId?split(",") as x>
+                                [${x}]
+                            </#list>
+                            <#else>
+                            ${list.primaryLineNumber}
+                        </#if>
+                    </span>
+                    为空策略,建议删除
+                </div>
+                <#break>
+                <#case '过期策略'>
+                <div class="value">
+                    <span>策略</span>
+                    <span style="color:#30758B">
+                        <#if list.primaryPolicyId?? && (list.primaryPolicyId?trim?length>0) >
+                            <#list list.primaryPolicyId?split(",") as x>
+                                [${x}]
+                            </#list>
+                            <#else>
+                            ${list.primaryLineNumber}
+                        </#if>
+                    </span>
+                    为过期策略,建议删除
+                </div>
+                <#break>
+                <#default>
+                暂无描述
+            </#switch>
+        </div>
+        <table width="100%" class="data-table policy-table">
+            <tr>
+                <th width="40">序号</th>
+                <th width="120">策略概要</th>
+                <th width="120">域</th>
+                <th width="25%">源IP</th>
+                <th width="25%">目的IP</th>
+                <th width="25%">服务</th>
+                <th width="25%">排除服务</th>
+                <th width="25%">时间</th>
+                <th width="80">老化时间</th>
+                <th width="80">动作</th>
+                <th width="120">描述</th>
+            </tr>
+            <#list list.detailList as item>
+                <tr class="${(item.type=='生效策略')?string('policy-actvie', '')}">
+                    <td class="num">${item_index+1}</td>
+                    <td valign="top">
+                        <div>
+                            <div>类型：${(item.type)!"--"}</div>
+                            <div>行号：${(item.lineNum)!"--"}</div>
+                            <div>名称：${(item.policyName)!"--"}</div>
+                            <div>策略ID：${(item.policyId)!"--"}</div>
+                        </div>
+                    </td>
+                    <td valign="top">
+                        <div>源域：${(item.srcDomain)!"--"}</div>
+                        <div>目的域：${(item.dstDomain)!"--"}</div>
+                    </td>
+                    <td>
+
+                        <#if list.policyTypeDesc == 'NAT策略'>
+                                <div>源IP(转换前)</div>
+                                <div class="second-space">
+                                    <#if item.preSrcIp??>
+                                    <#if item.preSrcIp?contains("//")>
+                                        <#list item.preSrcIp?split("//") as x>
+                                            <#assign s = x?split("$")>
+                                                <div class="object-name">${s[0]!"--"}</div>
+                                            <#if s[1]?? && (s[1]?trim?length>0)>
+                                                <#list s[1]?split(",") as v>
+                                                <div class="object-value">
+                                                    ${v!"--"}
+                                                    </div>
+                                                </#list>
+                                            </#if>
+
+                                        </#list>
+                                    <#else>
+                                    <#list item.preSrcIp?split(",") as k>
+                                        <div class="object-value">
+                                            ${k!"--"}
+                                        </div>
+                                    </#list>
+                                    </#if>
+                                    </#if>
+                                </div>
+
+                                <div>源IP(转换后)</div>
+                                <div class="second-space">
+                                    <#if item.postSrcIp??>
+                                    <#if item.postSrcIp?contains("//")>
+                                        <#list item.postSrcIp?split("//") as x>
+                                            <#assign s = x?split("$")>
+                                            <#if s[1]?? && (s[1]?trim?length>0)>
+                                                <#list s[1]?split(",") as v>
+                                                    <div class="object-value">
+                                                        ${v!"--"}
+                                                    </div>
+                                                 </#list>
+                                            </#if>
+                                        </#list>
+                                    <#else>
+                                    <#list item.postSrcIp?split(",") as k>
+                                    <div class="object-value">${k!"--"}</div>
+                                    </#list>
+                                    </#if>
+                                    </#if>
+                                </div>
+                            <#else>
+                            <if class="second-space">
+                                <#if item.srcIp??>
+                                <#if item.srcIp?contains("//")>
+                                    <#list item.srcIp?split("//") as x>
+                                        <#assign s = x?split("$")>
+                                        <div class="object-name">${s[0]!"--"}</div>
+                                        <#if s[1]?? && (s[1]?trim?length>0)>
+                                            <#if s[1]?? && (s[1]?trim?length>0)>
+                                                <#list s[1]?split(",") as v>
+                                                    <div class="object-value">
+                                                        ${v!"--"}
+                                                    </div>
+                                                </#list>
+                                            </#if>
+                                        </#if>
+                                    </#list>
+                                <#else>
+                                <#list item.srcIp?split(",") as k>
+                                <div class="object-value">${k!"--"}</div>
+                                </#list>
+                                </#if>
+
+
+                                </#if>
+                            </div>
+                        </#if>
+
+                    </td>
+                    <td>
+
+                        <#if list.policyTypeDesc == 'NAT策略'>
+                            <div>目的IP(转换前)</div>
+                            <div class="second-space">
+                                <#if item.preDstIp??>
+                                    <#if item.preDstIp?contains("//")>
+                                        <#list item.preDstIp?split("//") as x>
+                                            <#assign s = x?split("$")>
+                                            <div class="object-name">${s[0]!"--"}</div>
+                                            <#if s[1]?? && (s[1]?trim?length>0)>
+                                                <#list s[1]?split(",") as v>
+                                                    <div class="object-value">
+                                                        ${v!"--"}
+                                                    </div>
+                                                </#list>
+                                            </#if>
+                                        </#list>
+                                    <#else>
+                                        <#list item.preDstIp?split(",") as k>
+                                            <div class="object-value">${k!"--"}</div>
+                                        </#list>
+                                    </#if>
+                                </#if>
+                            </div>
+
+                            <div>目的IP(转换后)</div>
+                            <div class="second-space">
+                                <#if item.postDstIp??>
+                                <#if item.postDstIp?contains("//")>
+                                    <#list item.postDstIp?split("//") as x>
+                                        <#assign s = x?split("$")>
+                                        <div class="object-name">${s[0]!"--"}</div>
+                                        <#if s[1]?? && (s[1]?trim?length>0)>
+                                            <#list s[1]?split(",") as v>
+                                            <div class="object-value">
+                                                ${v!"--"}
+                                            </div>
+                                            </#list>
+                                        </#if>
+                                    </#list>
+                                <#else>
+                                    <#list item.postDstIp?split(",") as k>
+                                    <div class="object-value">${k!"--"}</div>
+                                    </#list>
+                                </#if>
+                                </#if>
+                            </div>
+                            <#else>
+                                <div class="second-space">
+                                    <#if item.dstIp??>
+                                    <#if item.dstIp?contains("//")>
+                                        <#list item.dstIp?split("//") as x>
+                                            <#assign s = x?split("$")>
+                                            <div class="object-name">${s[0]!"--"}</div>
+                                            <#if s[1]?? && (s[1]?trim?length>0)>
+                                            <#list s[1]?split(",") as v>
+                                            <div class="object-value">
+                                                ${v!"--"}
+                                            </div>
+                                            </#list>
+                                            </#if>
+                                        </#list>
+                                    <#else>
+                                    <#list item.dstIp?split(",") as k>
+                                    <div class="object-value">${k!"--"}</div>
+                                    </#list>
+                                    </#if>
+                                    </#if>
+                                </div>
+                            </#if>
+
+                    </td>
+                    <td>
+
+                        <#if list.policyTypeDesc == 'NAT策略'>
+                            <div>服务(转换前)</div>
+                            <div class="second-space">
+                                <#if item.preService??>
+                                <#if item.preService?contains("//")>
+                                        <#list item.preService?split("//") as x>
+                                                <#assign s = x?split("$")>
+                                                <div class="object-name">${s[0]!"--"}</div>
+                                                <#if s[1]?? && (s[1]?trim?length>0)>
+                                                        <#list s[1]?split(";") as v>
+                                                        <div class="object-value">
+                                                            ${v!"--"}
+                                                        </div>
+                                                         </#list>
+                                                </#if>
+                                        </#list>
+                                <#else>
+                                    <#list item.preService?split(";") as k>
+                                    <div class="object-value">${k!"--"}</div>
+                                 </#list>
+                                 </#if>
+
+
+                                 </#if>
+                            </div>
+                        <div>服务(转换后)</div>
+                        <div class="second-space">
+
+                            <#if item.postService??>
+                            <#if item.postService?contains("//")>
+                            <#list item.postService?split("//") as x>
+                                        <#assign s = x?split("$")>
+                                        <div class="object-name">${s[0]!"--"}</div>
+                                        <#if s[1]?? && (s[1]?trim?length>0)>
+                                        <#list s[1]?split(";") as v>
+                                        <div class="object-value">
+                                            ${v!"--"}
+                                        </div>
+                                        </#list>
+                                        </#if>
+                            </#list>
+                            <#else>
+                            <#list item.postService?split(";") as k>
+                            <div class="object-value">${k!"--"}</div>
+                            </#list>
+                            </#if>
+                            </#if>
+                        </div>
+                        <#else>
+                            <div class="second-space">
+                                <#if item.service??>
+                                <#if item.service?contains("//")>
+                                <#list item.service?split("//") as x>
+                                    <#assign s = x?split("$")>
+                                    <div class="object-name">${s[0]!"--"}</div>
+                                <#if s[1]?? && (s[1]?trim?length>0)>
+                                <#list s[1]?split(";") as v>
+                                <div class="object-value">
+                                    ${v!"--"}
+                                </div>
+                                 </#list>
+                                </#if>
+                            </#list>
+                            <#else>
+                            <#list item.service?split(";") as k>
+                            <div class="object-value">${k!"--"}</div>
+                            </#list>
+                            </#if>
+                            </#if>
+
+                            </div>
+
+                        </#if>
+
+                    </td>
+<td>
+
+<#if list.policyTypeDesc == 'NAT策略'>
+
+    <div>排除服务(转换前)</div>
+
+    <div class="second-space">
+        <#if item.preExcludeServices??>
+        <#if item.preExcludeServices?contains("//")>
+                <#list item.preExcludeServices?split("//") as x>
+                        <#assign s = x?split("$")>
+                        <div class="object-name">${s[0]!"--"}</div>
+                        <#if s[1]?? && (s[1]?trim?length>0)>
+                                <#list s[1]?split(";") as v>
+                                <div class="object-value">
+                                    ${v!"--"}
+                                </div>
+                                 </#list>
+                        </#if>
+                </#list>
+        <#else>
+            <#list item.preExcludeServices?split(";") as k>
+            <div class="object-value">${k!"--"}</div>
+         </#list>
+         </#if>
+
+
+         </#if>
+    </div>
+<#else>
+    <div class="second-space">
+        <#if item.excludeServices??>
+        <#if item.excludeServices?contains("//")>
+        <#list item.excludeServices?split("//") as x>
+            <#assign s = x?split("$")>
+            <div class="object-name">${s[0]!"--"}</div>
+        <#if s[1]?? && (s[1]?trim?length>0)>
+        <#list s[1]?split(";") as v>
+        <div class="object-value">
+            ${v!"--"}
+        </div>
+         </#list>
+        </#if>
+    </#list>
+    <#else>
+    <#list item.excludeServices?split(";") as k>
+    <div class="object-value">${k!"--"}</div>
+    </#list>
+    </#if>
+    </#if>
+
+    </div>
+
+</#if>
+
+</td>
+                    <td>
+
+                        <div class="ip-info">
+                            <#if item.time??>
+                            <#if item.time?contains("//")>
+                            <#list item.time?split("//") as x>
+                                <#assign s = x?split("$")>
+                                <div class="object-name">${s[0]!"--"}</div>
+                            <#if s[1]?? && (s[1]?trim?length>0)>
+                            <#list s[1]?split(",") as v>
+                            <div class="object-value">
+                                ${v!"--"}
+                            </div>
+                        </#list>
+                    </#if>
+                        </#list>
+                            <#else>
+                            <#list item.time?split(",") as k>
+                            <div class="object-value">${k!"--"}</div>
+                            </#list>
+                            </#if>
+                            </#if>
+                        </div>
+                    </td>
+                    <td valign="top" class="center">${(item.idleTimeout)!"--"}</td>
+                    <td valign="top" class="center">
+                        <#if item.action == 'PERMIT'>
+                        <span class="permit">允许</span>
+                        <#elseif item.action == 'DENY' >
+                        <span class="deny">禁止</span>
+                        <#else>
+                        --
+                       </#if>
+                    </td>
+                    <td valign="top" class="center">${(item.description)!"--"}</td>
+                </tr>
+            </#list>
+        </table>
+    </div>
+</#list>
+</#list>
+
+</#if>
+
+<!-- 对象检查 -->
+<#if  objectDetailDTOList[0].sonDTOList?size gt 0  ||   objectDetailDTOList[1].sonDTOList?size gt 0>
+<h1 id="issuesByIssueType"><a name="issuesByIssueType"></a>按对象检查分类的问题</h1>
+<#list objectDetailDTOList as data>
+<#if  data.sonDTOList?size gt 0 >
+<div id="${data.name}" class="issueType" xmlns="">
+    <div class="severity severity_5">高</div>
+    <div>
+        <h2 class="nowordwrap"><a href="javascript:void(0);">${data.name!"--"}</a>
+             
+            <span class="count">${data.sonDTOList?size}</span><a name="attCrossSiteRequestForgery"></a></h2>
+    </div>
+    <div class="toclink"><a class="toclink" href="#toc">TOC</a></div>
+</div>
+<div class="description">
+	<div class="des-name">描述：</div>
+	<div class="des-value">
+		<#switch data.code>
+            <#case 'RC_UNREF_OBJECT'>
+            地址对象、地址组对象、服务对象、服务组对象和时间对象未被策略引用。
+            <#break>
+            <#case 'RC_EMPTY_OBJECT'>
+            地址对象、地址组对象、服务对象、服务组对象和时间对象的对象内容为空。
+            <#break>
+            <#default>
+            暂无描述
+        </#switch>
+	</div>
+</div>
+
+<#list data.sonDTOList as list>
+<div class="h3group" xmlns="">
+    <h3>${list.objectTypes!"--"}&nbsp;&nbsp;&nbsp;${list_index+1}&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;${data.sonDTOList?size}</h3><a class="toclink" href="#toc">TOC</a>
+</div>
+<div class="content">
+    <div class="headerIssueType"><a href="javascript:void(0);">${list.objectTypes!"--"}</a></div>
+    <div>
+        <table width="100%" class="data-table policy-table" cellpadding="0" cellspacing="0">
+            <#switch list.objectTypes>
+                <#case '地址对象'>
+                    <tr>
+                        <th>序号</th>
+                        <th>名称</th>
+                        <th>对象类型</th>
+                        <th>所在行号</th>
+                        <th>地址项目</th>
+                        <th>排除地址</th>
+                        <th>描述</th>
+
+                    </tr>
+                    <#list list.netWorkGroupObjectShowVOList as item>
+                        <tr>
+                            <td class="num">${(item.index)!"--"}</td>
+                            <td>${item.name!"--"}</td>
+                            <td class="center">${item.typeDesc!"--"}</td>
+                            <td class="center">${item.lineNumbers!"--"}</td>
+                            <td>
+                                <#if item.includeAddress??>
+                                    <#list item.includeAddress?split(",") as x>
+                                        ${x}<br/>
+                                    </#list>
+                                </#if>
+                            </td>
+                            <td>
+                                <#if item.excludeAddress??>
+                                    <#list item.excludeAddress?split(",") as x>
+                                        ${x}<br/>
+                                    </#list>
+                                </#if>
+                            </td>
+                            <td>${item.description!"--"}</td>
+
+                        </tr>
+                    </#list>
+                <#break>
+                <#case '地址组对象'>
+                    <tr>
+                        <th>序号</th>
+                        <th>名称</th>
+                        <th>对象类型</th>
+                        <th>所在行号</th>
+                        <th>地址项目</th>
+                        <th>排除地址</th>
+                        <th>描述</th>
+
+                    </tr>
+                    <#list list.netWorkGroupObjectShowVOList as item>
+                        <tr>
+                            <td class="num">${(item.index)!"--"}</td>
+                            <td>${item.name!"--"}</td>
+                            <td class="center">${item.typeDesc!"--"}</td>
+                            <td class="center">${item.lineNumbers!"--"}</td>
+                            <td>
+                                <#if item.includeAddress??>
+                                    <#list item.includeAddress?split(",") as x>
+                                        ${x}<br/>
+                                    </#list>
+                                </#if>
+                            </td>
+                            <td>
+                                <#if item.excludeAddress??>
+                                    <#list item.excludeAddress?split(",") as x>
+                                        ${x}<br/>
+                                    </#list>
+                                </#if>
+                            </td>
+                            <td>${item.description!"--"}</td>
+
+                        </tr>
+                    </#list>
+                <#break>
+                <#case '服务对象'>
+                    <tr>
+                        <th>序号</th>
+                        <th>名称</th>
+                        <th>所在行号</th>
+                        <th>内容</th>
+                        <th>老化时间</th>
+                        <th>描述</th>
+                    </tr>
+                    <#list list.serviceGroupObjectShowVOList as item>
+                        <tr>
+                            <td class="num">${(item.index)!"--"}</td>
+                            <td>${item.name!"--"}</td>
+                            <td class="center">${item.lineNumbers!"--"}</td>
+                            <td>${item.content!"--"}</td>
+                            <td>
+                                ${item.idleTimeout!"--"}
+                            </td>
+                            <td>${item.description!"--"}</td>
+                        </tr>
+                    </#list>
+                <#break>
+                <#case '服务组对象'>
+                    <tr>
+                        <th>序号</th>
+                        <th>名称</th>
+                        <th>所在行号</th>
+                        <th>内容</th>
+                        <th>老化时间</th>
+                        <th>描述</th>
+
+                    </tr>
+                    <#list list.serviceGroupObjectShowVOList as item>
+                        <tr>
+                            <td class="num">${(item.index)!"--"}</td>
+                            <td>${item.name!"--"}</td>
+                            <td class="center">${item.lineNumbers!"--"}</td>
+                            <td>${item.content!"--"}</td>
+                            <td>
+                                ${item.idleTimeout!"--"}
+                            </td>
+                            <td>${item.description!"--"}</td>
+
+                        </tr>
+                    </#list>
+                <#break>
+                <#case '时间对象'>
+                    <tr>
+                        <th>序号</th>
+                        <th>名称</th>
+                        <th>所在行号</th>
+                        <th>时间计划</th>
+                        <th>描述</th>
+
+                    </tr>
+                    <#list list.timeObjectShowVOList as item>
+                        <tr>
+                            <td class="num">${(item.index)!"--"}</td>
+                            <td>${item.name!"--"}</td>
+                            <td class="center">${item.lineNumbers!"--"}</td>
+                            <td>${item.content!"--"}</td>
+                            <td>${item.description!"--"}</td>
+
+                        </tr>
+                    </#list>
+                <#break>
+            </#switch>
+        </table>
+    </div>
+</div>
+</#list>
+</#if>
+</#list>
+</#if>
+
+
+<!--高危端口-->
+<#if (dataRulePortDTOList?size>0)>
+<h1 id="issuesByIssueType"><a name="issuesByIssueType"></a>按高危端口分类的问题</h1>
+</#if>
+<#list dataRulePortDTOList as data>
+<div id="${data.ruleName}" class="issueType" xmlns="">
+    <div class="severity severity_${data.ruleLevel}">
+        <#if data.ruleLevel == 5>
+        高
+        <#elseif data.ruleLevel == 4>
+        较高
+        <#elseif data.ruleLevel == 3>
+        中等
+        <#elseif data.ruleLevel == 2>
+        较低
+        <#elseif data.ruleLevel == 1>
+        低级
+        <#else>
+        参考
+    </#if>
+
+</div>
+    <div>
+        <h2 class="nowordwrap"><a href="javascript:void(0);">${data.ruleName}</a>
+             
+            <span class="count">${data.dataDTOList?size}</span><a name="attCrossSiteRequestForgery"></a></h2>
+    </div>
+    <div class="toclink"><a class="toclink" href="#toc">TOC</a></div>
+</div>
+<div class="description">
+    <div class="des-name">描述：</div>
+    <div class="des-value">
+        ${data.ruleDesc}
+    </div>
+</div>
+
+
+<div class="content">
+    <div class="headerIssueType"><a href="javascript:void(0);">
+        ${data.ruleName}
+    </a></div>
+    <table width="100%" class="data-table policy-table">
+        <tr>
+            <th width="40">序号</th>
+            <th width="120">策略概要</th>
+            <th width="120">域</th>
+            <th width="25%">源IP</th>
+            <th width="25%">目的IP</th>
+            <th width="25%">服务</th>
+            <th width="25%">时间</th>
+            <th width="80">老化时间</th>
+            <th width="80">动作</th>
+            <th width="120">描述</th>
+        </tr>
+        <#list data.dataDTOList as list>
+        <tr>
+            <td align="center" class="num">${list_index+1}</td>
+            <td valign="top">
+                <div>
+                    <div>类型：${list.policyType!"--"}</div>
+                    <div>策略名称：${list.policyName!"--"}</div>
+                    <div>策略ID：${list.policyId!"--"}</div>
+                </div>
+            </td>
+            <td valign="top">
+                <div>
+                    <div>源域：${list.srcDomain!"--"}</div>
+                    <div>目的域：${list.dstDomain!"--"}</div>
+                </div>
+            </td>
+            <td>
+
+                <#if data.policyType == 'NAT策略'>
+                <div>源IP(转换前)</div>
+                <div class="second-space">
+                    <#if list.presrcIpPre??>
+                    <#if list.presrcIpPre?contains("//")>
+                    <#list list.presrcIpPre?split("//") as x>
+                            <#assign s = x?split("$")>
+                            <div class="object-name">${s[0]!"--"}</div>
+                            <#if s[1]?? && (s[1]?trim?length>0)>
+                            <#list s[1]?split(",") as v>
+                            <div class="object-value">
+                                ${v!"--"}
+                            </div>
+                            </#list>
+                            </#if>
+                    </#list>
+                            <#else>
+                            <#list list.presrcIpPre?split(",") as k>
+                            <div class="object-value">${k!"--"}</div>
+                        </#list>
+                    </#if>
+                </#if>
+                </div>
+
+                <div>源IP(转换后)</div>
+                <div class="second-space">
+                    <#if list.postsrcIpPre??>
+                    <#if list.postsrcIpPre?contains("//")>
+                    <#list list.postsrcIpPre?split("//") as x>
+                            <#assign s = x?split("$")>
+                                <div class="object-name">${s[0]!"--"}</div>
+                            <#if s[1]?? && (s[1]?trim?length>0)>
+                                <#list s[1]?split(",") as v>
+                                 <div class="object-value">
+                                 ${v!"--"}
+                                </div>
+                                </#list>
+                            </#if>
+                </#list>
+                <#else>
+                <#list list.postsrcIpPre?split(",") as k>
+                <div class="object-value">${k!"--"}</div>
+                </#list>
+                </#if>
+                </#if>
+                </div>
+                <#else>
+                <div class="second-space">
+                    <#if list.srcIp??>
+                    <#if list.srcIp?contains("//")>
+                        <#list list.srcIp?split("//") as x>
+                            <#assign s = x?split("$")>
+                            <div class="object-name">${s[0]!"--"}</div>
+                                <#if s[1]?? && (s[1]?trim?length>0)>
+                                <#list s[1]?split(",") as v>
+                                <div class="object-value">
+                                    ${v!"--"}
+                                </div>
+                                </#list>
+                                </#if>
+                        </#list>
+                <#else>
+                <#list list.srcIp?split(",") as k>
+                <div class="object-value">${k!"--"}</div>
+                </#list>
+                </#if>
+
+
+                </#if>
+                </div>
+                </#if>
+
+            </td>
+            <td>
+
+                <#if data.policyType == 'NAT策略'>
+
+                <div>目的IP(转换前)</div>
+                <div class="second-space">
+                    <#if list.predstIpPre??>
+                    <#if list.predstIpPre?contains("//")>
+                    <#list list.predstIpPre?split("//") as x>
+                            <#assign s = x?split("$")>
+                            <div class="object-name">${s[0]!"--"}</div>
+                            <#if s[1]?? && (s[1]?trim?length>0)>
+                            <#list s[1]?split(",") as v>
+                            <div class="object-value">
+                                ${v!"--"}
+                            </div>
+                </#list>
+                            </#if>
+                </#list>
+                <#else>
+                <#list list.predstIpPre?split(",") as k>
+                <div class="object-value">${k!"--"}</div>
+                </#list>
+                </#if>
+
+                </#if>
+                </div>
+
+                <div>目的IP(转换后)</div>
+                <div class="second-space">
+                    <#if list.postdstIpPre??>
+                    <#if list.postdstIpPre?contains("//")>
+                    <#list list.postdstIpPre?split("//") as x>
+                        <#assign s = x?split("$")>
+                        <div class="object-name">${s[0]!"--"}</div>
+                    <#if s[1]?? && (s[1]?trim?length>0)>
+                    <#list s[1]?split(",") as v>
+                    <div class="object-value">
+                        ${v!"--"}
+                    </div>
+                        </#list>
+                    </#if>
+                </#list>
+                <#else>
+                <#list list.postdstIpPre?split(",") as k>
+                <div class="object-value">${k!"--"}</div>
+                </#list>
+                </#if>
+                </#if>
+                </div>
+                <#else>
+                <div class="second-space">
+                    <#if list.dstIp??>
+                    <#if list.dstIp?contains("//")>
+                    <#list list.dstIp?split("//") as x>
+                            <#assign s = x?split("$")>
+                            <div class="object-name">${s[0]!"--"}</div>
+                    <#if s[1]?? && (s[1]?trim?length>0)>
+                    <#list s[1]?split(",") as v>
+                    <div class="object-value">
+                        ${v!"--"}
+                    </div>
+                    </#list>
+                    </#if>
+                </#list>
+                <#else>
+                <#list list.dstIp?split(",") as k>
+                <div class="object-value">${k!"--"}</div>
+                </#list>
+                </#if>
+                </#if>
+                </div>
+                </#if>
+
+            </td>
+            <td>
+
+                <#if data.policyType == 'NAT策略'>
+                <div>服务(转换前)</div>
+                <div class="second-space">
+                    <#if list.preService??>
+                    <#if list.preService?contains("//")>
+                    <#list list.preService?split("//") as x>
+                        <#assign s = x?split("$")>
+                        <div class="object-name">${s[0]!"--"}</div>
+                        <#if s[1]?? && (s[1]?trim?length>0)>
+                             <#list s[1]?split(";") as v>
+                            <div class="object-value">
+                                ${v!"--"}
+                            </div>
+                            </#list>
+                        </#if>
+                    </#list>
+                <#else>
+            <#list list.preService?split(";") as k>
+            <div class="object-value">${k!"--"}</div>
+            </#list>
+            </#if>
+
+            </#if>
+            </div>
+            <div>服务(转换后)</div>
+            <div class="second-space">
+
+                <#if list.postService??>
+                <#if list.postService?contains("//")>
+                <#list list.postService?split("//") as x>
+                        <#assign s = x?split("$")>
+                        <div class="object-name">${s[0]!"--"}</div>
+                <#if s[1]?? && (s[1]?trim?length>0)>
+                <#list s[1]?split(";") as v>
+                <div class="object-value">
+                    ${v!"--"}
+                </div>
+               </#list>
+                </#if>
+            </#list>
+            <#else>
+            <#list list.postService?split(";") as k>
+            <div class="object-value">${k!"--"}</div>
+            </#list>
+            </#if>
+            </#if>
+            </div>
+            <#else>
+            <div class="second-space">
+                <#if list.service??>
+                <#if list.service?contains("//")>
+                <#list list.service?split("//") as x>
+                        <#assign s = x?split("$")>
+                        <div class="object-name">${s[0]!"--"}</div>
+                <#if s[1]?? && (s[1]?trim?length>0)>
+                <#list s[1]?split(";") as v>
+                <div class="object-value">
+                    ${v!"--"}
+                </div>
+            </#list>
+</#if>
+            </#list>
+            <#else>
+            <#list list.service?split(";") as k>
+            <div class="object-value">${k!"--"}</div>
+            </#list>
+            </#if>
+            </#if>
+
+            </div>
+
+            </#if>
+
+            </td>
+            <td valign="top">
+                <div>
+                    <#if list.time??>
+                    <#if list.time?contains("//")>
+                    <#list list.time?split("//") as x>
+                        <#assign s = x?split("$")>
+                        <div class="object-name">${s[0]!"--"}</div>
+                    <#if s[1]?? && (s[1]?trim?length>0)>
+                    <#list s[1]?split(";") as v>
+                    <div class="object-value">
+                        ${v!"--"}
+                    </div>
+                </#list>
+            </#if>
+                </#list>
+                    <#else>
+                    <#list list.time?split(",") as k>
+                    <div class="object-value">${k!"--"}</div>
+                    </#list>
+                    </#if>
+                    </#if>
+                </div>
+            </td>
+            <td valign="top" class="center">${(list.idleTimeout)!"--"}</td>
+            <td valign="top" class="center">
+               <#if list.action == 'PERMIT'>
+                <span class="permit">允许</span>
+                <#elseif list.action == 'DENY' >
+                <span class="deny">禁止</span>
+                <#else>
+                --
+                </#if>
+            </td>
+            <td valign="top" class="center">${(list.description)!"--"}</td>
+        </tr>
+        </#list>
+    </table>
+</div>
+
+</#list>
+
+<!--宽松风险-->
+<#if (dataRuleLooseDTOList?size>0)>
+<h1 id="issuesByIssueType"><a name="issuesByIssueType"></a>按宽松风险分类的问题</h1>
+</#if>
+<#list dataRuleLooseDTOList as data>
+<div id="${data.ruleName}" class="issueType" xmlns="">
+    <div class="severity severity_${data.ruleLevel}">
+        <#if data.ruleLevel == 5>
+        高
+        <#elseif data.ruleLevel == 4>
+        较高
+        <#elseif data.ruleLevel == 3>
+        中等
+        <#elseif data.ruleLevel == 2>
+        较低
+        <#elseif data.ruleLevel == 1>
+        低级
+        <#else>
+        参考
+        </#if>
+    </div>
+    <div>
+        <h2 class="nowordwrap"><a href="javascript:void(0);">${data.ruleName}</a>
+             
+            <span class="count">${data.dataDTOList?size}</span><a name="attCrossSiteRequestForgery"></a></h2>
+    </div>
+    <div class="toclink"><a class="toclink" href="#toc">TOC</a></div>
+</div>
+<div class="description">
+    <div class="des-name">描述：</div>
+    <div class="des-value">
+        ${data.ruleDesc}
+    </div>
+</div>
+<div class="h3group" xmlns="">
+    <a class="toclink" href="#toc">TOC</a>
+</div>
+<div class="content">
+    <div class="headerIssueType"><a href="javascript:void(0);">
+        ${data.ruleName}
+    </a></div>
+    <table width="100%" class="data-table policy-table">
+        <tr>
+            <th width="40">序号</th>
+            <th width="120">策略概要</th>
+            <th width="120">域</th>
+            <th width="25%">源IP</th>
+            <th width="25%">目的IP</th>
+            <th width="25%">服务</th>
+            <th width="25%">时间</th>
+            <th width="80">老化时间</th>
+            <th width="80">动作</th>
+            <th width="120">描述</th>
+        </tr>
+        <#list data.dataDTOList as list>
+        <tr>
+            <td align="center" class="num">${list_index+1}</td>
+            <td valign="top">
+                <div>
+                    <div>类型：${list.policyType!"--"}</div>
+                    <div>策略名称：${list.policyName!"--"}</div>
+                    <div>策略ID：${list.policyId!"--"}</div>
+                </div>
+            </td>
+            <td valign="top">
+                <div>
+                    <div>源域：${list.srcDomain!"--"}</div>
+                    <div>目的域：${list.dstDomain!"--"}</div>
+                </div>
+            </td>
+            <td>
+
+                <#if data.policyType == 'NAT策略'>
+                <div>源IP(转换前)</div>
+                <div class="second-space">
+                    <#if list.presrcIpPre??>
+                    <#if list.presrcIpPre?contains("//")>
+                    <#list list.presrcIpPre?split("//") as x>
+                        <#assign s = x?split("$")>
+                        <div class="object-name">${s[0]!"--"}</div>
+                    <#if s[1]?? && (s[1]?trim?length>0)>
+                    <#list s[1]?split(",") as v>
+                    <div class="object-value">
+                        ${v!"--"}
+                    </div>
+                </#list>
+            </#if>
+            </#list>
+            <#else>
+            <#list list.presrcIpPre?split(",") as k>
+            <div class="object-value">${k!"--"}</div>
+        </#list>
+          </#if>
+            </#if>
+            </div>
+
+            <div>源IP(转换后)</div>
+            <div class="second-space">
+                <#if list.postsrcIpPre??>
+                <#if list.postsrcIpPre?contains("//")>
+                <#list list.postsrcIpPre?split("//") as x>
+                    <#assign s = x?split("$")>
+                    <div class="object-name">${s[0]!"--"}</div>
+                <#if s[1]?? && (s[1]?trim?length>0)>
+                <#list s[1]?split(",") as v>
+                <div class="object-value">
+                    ${v!"--"}
+                </div>
+            </#list>
+</#if>
+            </#list>
+            <#else>
+            <#list list.postsrcIpPre?split(",") as k>
+            <div class="object-value">${k!"--"}</div>
+            </#list>
+            </#if>
+            </#if>
+            </div>
+            <#else>
+            <div class="second-space">
+
+                <#if list.srcIp??>
+                <#if list.srcIp?contains("//")>
+                        <#list list.srcIp?split("//") as x>
+                            <#assign s = x?split("$")>
+                            <div class="object-name">${s[0]!"--"}</div>
+                        <#if s[1]?? && (s[1]?trim?length>0)>
+                        <#list s[1]?split(",") as v>
+                <div class="object-value">
+                    ${v!"--"}
+                </div>
+            </#list>
+                </#if>
+            </#list>
+            <#else>
+            <#list list.srcIp?split(",") as k>
+            <div class="object-value">${k!"--"}</div>
+            </#list>
+            </#if>
+
+
+            </#if>
+            </div>
+            </#if>
+
+            </td>
+            <td>
+
+                <#if data.policyType == 'NAT策略'>
+
+                <div>目的IP(转换前)</div>
+                <div class="second-space">
+                    <#if list.predstIpPre??>
+                    <#if list.predstIpPre?contains("//")>
+                    <#list list.predstIpPre?split("//") as x>
+                        <#assign s = x?split("$")>
+                        <div class="object-name">${s[0]!"--"}</div>
+                    <#if s[1]?? && (s[1]?trim?length>0)>
+                    <#list s[1]?split(",") as v>
+                    <div class="object-value">
+                        ${v!"--"}
+                    </div>
+                </#list>
+            </#if>
+            </#list>
+            <#else>
+            <#list list.predstIpPre?split(",") as k>
+            <div class="object-value">${k!"--"}</div>
+            </#list>
+            </#if>
+
+            </#if>
+            </div>
+
+            <div>目的IP(转换后)</div>
+            <div class="second-space">
+                <#if list.postdstIpPre??>
+                <#if list.postdstIpPre?contains("//")>
+                <#list list.postdstIpPre?split("//") as x>
+                    <#assign s = x?split("$")>
+                    <div class="object-name">${s[0]!"--"}</div>
+                <#if s[1]?? && (s[1]?trim?length>0)>
+                <#list s[1]?split(",") as v>
+                <div class="object-value">
+                    ${v!"--"}
+                </div>
+            </#list>
+</#if>
+            </#list>
+            <#else>
+            <#list list.postdstIpPre?split(",") as k>
+            <div class="object-value">${k!"--"}</div>
+            </#list>
+            </#if>
+            </#if>
+            </div>
+            <#else>
+            <div class="second-space">
+                <#if list.dstIp??>
+                <#if list.dstIp?contains("//")>
+                <#list list.dstIp?split("//") as x>
+                    <#assign s = x?split("$")>
+                    <div class="object-name">${s[0]!"--"}</div>
+                <#if s[1]?? && (s[1]?trim?length>0)>
+                <#list s[1]?split(",") as v>
+                <div class="object-value">
+                    ${v!"--"}
+                </div>
+            </#list>
+</#if>
+            </#list>
+            <#else>
+            <#list list.dstIp?split(",") as k>
+            <div class="object-value">${k!"--"}</div>
+            </#list>
+            </#if>
+            </#if>
+            </div>
+            </#if>
+
+            </td>
+            <td>
+
+                <#if data.policyType == 'NAT策略'>
+                <div>服务(转换前)</div>
+                <div class="second-space">
+                    <#if list.preService??>
+                    <#if list.preService?contains("//")>
+                    <#list list.preService?split("//") as x>
+                        <#assign s = x?split("$")>
+                        <div class="object-name">${s[0]!"--"}</div>
+                    <#if s[1]?? && (s[1]?trim?length>0)>
+                    <#list s[1]?split(";") as v>
+                    <div class="object-value">
+                        ${v!"--"}
+                    </div>
+                </#list>
+            </#if>
+            </#list>
+            <#else>
+            <#list list.preService?split(";") as k>
+            <div class="object-value">${k!"--"}</div>
+            </#list>
+            </#if>
+
+            </#if>
+            </div>
+            <div>服务(转换后)</div>
+            <div class="second-space">
+
+                <#if list.postService??>
+                <#if list.postService?contains("//")>
+                <#list list.postService?split("//") as x>
+                    <#assign s = x?split("$")>
+                    <div class="object-name">${s[0]!"--"}</div>
+                <#if s[1]?? && (s[1]?trim?length>0)>
+                <#list s[1]?split(";") as v>
+                <div class="object-value">
+                    ${v!"--"}
+                </div>
+            </#list>
+</#if>
+            </#list>
+            <#else>
+            <#list list.postService?split(";") as k>
+            <div class="object-value">${k!"--"}</div>
+            </#list>
+            </#if>
+            </#if>
+            </div>
+            <#else>
+            <div class="second-space">
+                <#if list.service??>
+                <#if list.service?contains("//")>
+                <#list list.service?split("//") as x>
+                    <#assign s = x?split("$")>
+                    <div class="object-name">${s[0]!"--"}</div>
+                <#if s[1]?? && (s[1]?trim?length>0)>
+                <#list s[1]?split(";") as v>
+                <div class="object-value">
+                    ${v!"--"}
+                </div>
+            </#list>
+</#if>
+            </#list>
+            <#else>
+            <#list list.service?split(";") as k>
+            <div class="object-value">${k!"--"}</div>
+            </#list>
+            </#if>
+            </#if>
+
+            </div>
+
+            </#if>
+
+            </td>
+            <td valign="top">
+                <div>
+                    <#if list.time??>
+                    <#if list.time?contains("//")>
+                    <#list list.time?split("//") as x>
+                    <#assign s = x?split("$")>
+                    <div class="object-name">${s[0]!"--"}</div>
+                    <#if s[1]?? && (s[1]?trim?length>0)>
+                    <#list s[1]?split(",") as v>
+                    <div class="object-value">
+                        ${v!"--"}
+                    </div>
+                </#list>
+            </#if>
+            </#list>
+            <#else>
+            <#list list.time?split(",") as k>
+            <div class="object-value">${k!"--"}</div>
+            </#list>
+            </#if>
+            </#if>
+            </div>
+            </td>
+            <td valign="top"  class="center">${(list.idleTimeout)!"--"}</td>
+            <td valign="top"  class="center">
+                <#if list.action == 'PERMIT'>
+                <span class="permit">允许</span>
+                <#elseif list.action == 'DENY' >
+                <span class="deny">禁止</span>
+                <#else>
+                --
+                </#if>
+            </td>
+            <td valign="top"  class="center">${(list.description)!"--"}</td>
+        </tr>
+        </#list>
+    </table>
+</div>
+
+</#list>
+</body>
+<script>
+
+
+
+var objectChart = echarts.init(document.getElementById('object-echart'));
+var policyChart = echarts.init(document.getElementById('policy-echart'));
+
+var typeName = [];
+var emptyObject = []
+var unRefObject = []
+var emptyNum = [];
+var unRefNum = [];
+var typeTotal = [];
+
+<#list dataObjectForGraphDTO.typeName>
+    <#items as item>
+        typeName.push('${item!'--'}');
+    </#items>
+</#list>
+
+
+<#list dataObjectForGraphDTO.emptyNum?keys as key>
+
+    emptyObject.push({'${key}': ${dataObjectForGraphDTO.emptyNum[key]}});
+
+</#list>
+
+<#list dataObjectForGraphDTO.unRefNum?keys as key>
+
+unRefObject.push({'${key}': ${dataObjectForGraphDTO.unRefNum[key]}});
+
+</#list>
+
+<#list dataObjectForGraphDTO.typeTotal>
+    <#items as item>
+        typeTotal.push('${item!'0'}');
+    </#items>
+</#list>
+
+emptyObject.map(function(it, index){
+    emptyNum[typeName.indexOf(Object.keys(it)[0])] = it[Object.keys(it)[0]]
+})
+unRefObject.map(function(it, index){
+    unRefNum[typeName.indexOf(Object.keys(it)[0])] = it[Object.keys(it)[0]]
+})
+var objectOptions = {
+    title: {
+        text: '对象检查统计图',
+        left: 'center'
+    },
+    color: ['rgb(42,129,173)', 'rgb(240,77,97)', 'rgb(165,165,165)'],
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+            type: 'shadow'
+        }
+    },
+    legend: {
+        data: ['对象总数','未引用对象', '空对象'],
+        bottom: 0,
+        left: 'center'
+    },
+    grid: {
+        right: 90
+    },
+    yAxis: {
+        type: 'value',
+        name: '数量',
+        axisLabel: {
+            formatter: '{value}'
+        }
+    },
+    xAxis: {
+        type: 'category',
+        data: typeName
+    },
+    series:[
+        {
+            name: '对象总数',
+            data: typeTotal,
+            label: {
+                show: true,
+                position: 'top'
+            },
+            type: 'bar'
+        },
+        {
+            name: '未引用对象',
+            data: unRefNum,
+            label: {
+                show: true,
+                position: 'top'
+            },
+            type: 'bar'
+        },
+        {
+            name: '空对象',
+            data: emptyNum,
+            label: {
+                show: true,
+                position: 'top'
+            },
+            type: 'bar'
+        }
+    ]
+
+}
+var xArray = [];
+var yArray = [];
+<#list dataPolicyForGraphDTOList >
+<#items as item>
+xArray.push('${item.name!'--'}');
+yArray.push('${item.value}');
+</#items>
+</#list>
+
+
+
+
+
+var policyOptions = {
+    title: {
+        text: '策略检查统计图',
+        left: 'center'
+    },
+    grid: {
+        left: 90,
+    },
+    yAxis: {
+        type: 'value',
+        name: '数量',
+        axisLabel: {
+            formatter: '{value}'
+        }
+    },
+    xAxis: {
+        type: 'category',
+        data: xArray
+    },
+    series:[
+        {
+            type: 'bar',
+            data: yArray,
+            barMaxWidth: 40,
+            label: {
+                show: true,
+                position: 'top'
+            },
+            itemStyle: {
+                normal: {
+                    color: function(params) {
+                        var colors = ['#2a81ad','#f04d61','#a5a5a5','#cdbc4f','#4472c4','#bababb']
+                        return colors[params.dataIndex]
+                    }
+                }
+            }
+        }
+
+    ]
+
+
+}
+objectChart.setOption(objectOptions)
+policyChart.setOption(policyOptions)
+window.onresize = () => {
+    //重置容器高宽
+    // resizeWorldMapContainer();
+    objectChart.resize()
+    policyChart.resize()
+}
+
+</script>
+</html>

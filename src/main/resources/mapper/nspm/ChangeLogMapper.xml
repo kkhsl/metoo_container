@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.ChangeLogMapper">
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.nspm.ChangeLog">
+        <id column="id" property="id"></id>
+        <result column="device_type" property="deviceType"></result>
+        <result column="device_name" property="deviceName"></result>
+        <result column="device_id" property="deviceId"></result>
+        <result column="user_name" property="userName"></result>
+        <result column="change_reasons" property="changeReasons"></result>
+        <result column="object_id" property="objectId"></result>
+        <result column="object_name" property="objectName"></result>
+    </resultMap>
+
+    <select id="findBySelect" parameterType="com.metoo.nspm.dto.ChangeLogDto" resultMap="Base_Result_Map">
+        SELECT * FROM rsms_change_log
+        <where>
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+            <if test="deviceId != null and deviceId != ''">
+                AND device_id = #{deviceId}
+            </if>
+            <if test="objectName != null and objectName != ''">
+                AND object_name = #{objectName}
+            </if>
+        </where>
+            <if test = "orderBy != null ">
+                ORDER BY ${orderBy}
+            </if>
+            <if test = "orderType != null">
+                ${orderType}
+            </if>
+    </select>
+
+    <insert id="save" parameterType="com.metoo.nspm.entity.nspm.ChangeLog">
+        INSERT INTO rsms_change_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="addTime != null">
+                addTime,
+            </if>
+            <if test="deviceType != null">
+                device_type,
+            </if>
+            <if test="deviceName != null">
+                device_name,
+            </if>
+            <if test="deviceId != null">
+                device_id,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            <if test="changeReasons != null">
+                change_reasons,
+            </if>
+            <if test="objectId != null">
+                object_id,
+            </if>
+            <if test="objectName != null">
+                object_name,
+            </if>
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            <if test="addTime != null">
+                #{addTime},
+            </if>
+            <if test="deviceType != null">
+                #{deviceType},
+            </if>
+            <if test="deviceName != null">
+                #{deviceName},
+            </if>
+            <if test="deviceId != null">
+                #{deviceId},
+            </if>
+            <if test="userName != null">
+                #{userName},
+            </if>
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="content != null">
+                #{content},
+            </if>
+            <if test="changeReasons != null">
+                #{changeReasons},
+            </if>
+            <if test="objectId != null">
+                #{objectId},
+            </if>
+            <if test="objectName != null">
+                #{objectName},
+            </if>
+        </trim>
+    </insert>
+
+</mapper>

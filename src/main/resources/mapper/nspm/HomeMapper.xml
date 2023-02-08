@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.HomeMapper">
+
+    <select id="selectObjByMap" parameterType="java.util.Map" resultType="com.metoo.nspm.entity.nspm.Home">
+          SELECT * FROM metoo_home
+          ORDER BY `sequence` desc
+    </select>
+
+    <insert id="save" parameterType="com.metoo.nspm.entity.nspm.Home">
+        INSERT INTO metoo_home
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="addTime != null">
+                addTime,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="sequence != null">
+                sequence,
+            </if>
+            <if test="display != null">
+                display,
+            </if>
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            <if test="addTime != null">
+                #{addTime},
+            </if>
+            <if test="name != null">
+                #{name},
+            </if>
+            <if test="sequence != null">
+                #{sequence},
+            </if>
+            <if test="display != null">
+                #{display},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.Home">
+        UPDATE metoo_home
+        <set>
+            <if test="addTime != null">
+                addTime = #{addTime},
+            </if>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="sequence != null">
+                sequence = #{sequence},
+            </if>
+            <if test="display != null">
+                display = #{display},
+            </if>
+        </set>
+        WHERE
+        id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE FROM metoo_home WHERE id = #{id}
+    </delete>
+</mapper>

@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.GradeMapper">
+
+    <resultMap id="Unit_Map" type="com.metoo.nspm.entity.nspm.Grade">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="name" column="name"/>
+        <result property="level" column="level"/>
+        <result property="sequence" column="sequence"/>
+        <result property="username" column="username"/>
+        <result property="user_id" column="user_id"/>
+        <result property="type" column="type"/>
+        <result property="parent_id" column="parent_id"/>
+        <result property="display" column="display"/>
+        <result property="message" column="message"/>
+        <result property="addTime" column="addTime"/>
+        <association property="accessory" column="accessory_id" jdbcType="BIGINT" javaType="com.metoo.nspm.entity.nspm.Accessory">
+            <id property="id" column="ma_id" />
+            <result property="a_name" column="ma_name"></result>
+            <result property="a_path" column="ma_path"></result>
+        </association>
+    </resultMap>
+
+    <resultMap id="Base_Web_Map" type="com.metoo.nspm.vo.GradeVo">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="name" column="name"/>
+        <result property="accessory_id" column="ma_id" />
+        <result property="accessory_name" column="ma_name"></result>
+        <result property="accessory_path" column="ma_path"></result>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+        id, addTime, deleteStatus, name, level, sequence, username, user_id, type, parent_id, display, message
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultType="com.metoo.nspm.entity.nspm.Grade">
+        SELECT *
+        FROM metoo_grade mg
+        WHERE mg.id = #{id, jdbcType=BIGINT}
+    </select>
+
+
+    <select id="selectByGradeUnit" parameterType="java.lang.Long" resultMap="Unit_Map">
+        SELECT mg.*, ma.id ma_id, ma.name ma_name
+        FROM metoo_grade mg
+        LEFT JOIN metoo_accessory ma on mg.accessory_id = ma.id
+        <where>
+            <if test="id != null">
+                mg.id = #{id, jdbcType=BIGINT}
+            </if>
+        </where>
+    </select>
+
+    <sql id="Unit_Column_List">
+        mg.*, ma.id ma_id, ma.name ma_name, ma.path ma_path
+    </sql>
+
+    <select id="selectAll" resultMap="Unit_Map">
+        SELECT <include refid="Unit_Column_List" />
+        FROM metoo_grade mg
+        left join metoo_accessory ma on mg.accessory_id = ma.id
+        ORDER BY mg.sequence
+        ASC
+    </select>
+
+    <select id="webGradeList" resultMap="Base_Web_Map">
+        SELECT <include refid="Unit_Column_List" />
+        FROM metoo_grade mg
+        left join metoo_accessory ma on mg.accessory_id = ma.id
+        ORDER BY mg.sequence
+        ASC
+    </select>
+
+
+
+    <select id="query" resultType="com.metoo.nspm.entity.nspm.Grade">
+        SELECT <include refid="Base_Column_List" />
+        FROM metoo_grade mg
+        ORDER BY mg.sequence DESC
+    </select>
+
+    <select id="findBycondition" parameterType="Map" resultType="com.metoo.nspm.entity.nspm.Grade">
+        SELECT <include refid="Base_Column_List" />
+        FROM metoo_grade mg
+        <where>
+            <if test="display != null and display != ''">
+              AND mg.display = #{display}
+            </if>
+        </where>
+        ORDER BY
+          mg.sequence
+        ASC
+    </select>
+
+    <insert id="insert" parameterType="com.metoo.nspm.entity.nspm.Grade" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO metoo_grade
+      <trim prefix="(" suffix=")" suffixOverrides=",">
+          <if test="addTime != null">
+              addTime,
+          </if>
+          <if test="deleteStatus != null">
+              deleteStatus,
+          </if>
+          <if test = "name != null">
+              `name`,
+          </if>
+          <if test = "level != null">
+              `level`,
+          </if>
+          <if test = "sequence != null">
+              sequence,
+          </if>
+          <if test = "username != null">
+              username,
+          </if>
+          <if test = "user_id != null">
+              user_id,
+          </if>
+          <if test = "type != null">
+              `type`,
+          </if>
+          <if test = "parent_id != null">
+              parent_id,
+          </if>
+          <if test = "display != null">
+              display,
+          </if>
+          <if test = "message != null">
+              message,
+          </if>
+          <if test = "accessory != null">
+              accessory_id,
+          </if>
+
+      </trim>
+        <trim prefix="VALUES(" suffixOverrides="," suffix=")">
+            <if test="addTime != null">
+                #{addTime},
+            </if>
+            <if test="deleteStatus != null">
+                #{deleteStatus},
+            </if>
+            <if test = "name != null">
+                #{name},
+            </if>
+            <if test = "level != null">
+                #{level},
+            </if>
+            <if test = "sequence != null">
+                #{sequence},
+            </if>
+            <if test = "username != null">
+                #{username},
+            </if>
+            <if test = "user_id != null">
+                #{user_id},
+            </if>
+            <if test = "type != null">
+                #{type},
+            </if>
+            <if test = "parent_id != null">
+                #{parent_id}
+            </if>
+            <if test = "display != null">
+                #{display},
+            </if>
+            <if test = "message != null">
+                #{message},
+            </if>
+            <if test = "accessory != null">
+                #{accessory.id},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.Grade">
+      UPDATE metoo_grade
+      <set>
+          <if test="addTime != null">
+              addTime = #{addTime},
+          </if>
+          <if test="deleteStatus != null">
+              deleteStatus = #{deleteStatus},
+          </if>
+          <if test = "name != null">
+              `name` = #{name},
+          </if>
+          <if test = "level != null">
+              `level` = #{level},
+          </if>
+          <if test = "sequence != null">
+              sequence = #{sequence},
+          </if>
+          <if test = "username != null">
+              username = #{username},
+          </if>
+          <if test = "user_id != null">
+              user_id = #{user_id},
+          </if>
+          <if test = "type != null">
+              `type` = #{type},
+          </if>
+          <if test = "parent_id != null">
+              parent_id = #{parent_id}
+          </if>
+          <if test = "display != null">
+              display = #{display},
+          </if>
+          <if test = "message != null">
+              message = #{message},
+          </if>
+          <if test = "accessory != null">
+              accessory_id = #{accessory.id},
+          </if>
+      </set>
+        <where>
+            id=#{id, jdbcType=BIGINT}
+        </where>
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        DELETE FROM metoo_grade
+        WHERE id=#{id}
+    </delete>
+
+
+</mapper>

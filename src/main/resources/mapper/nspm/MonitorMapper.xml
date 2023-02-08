@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.MonitorMapper">
+
+        <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.nspm.Monitor">
+            <id column="id" property="id" javaType="Long" jdbcType="BIGINT"></id>
+            <result column="addTime" property="addTime"></result>
+            <result column="title" property="title"></result>
+        </resultMap>
+
+        <sql id="Base_Column_List">
+            id, addTime, title
+        </sql>
+
+        <select id="getObjById" parameterType="Long" resultMap="Base_Result_Map">
+            SELECT <include refid="Base_Column_List"/>
+            FROM metoo_monitor monitor
+            WHERE monitor.id = #{id, jdbcType=BIGINT}
+        </select>
+
+    <select id="getObjBySign" parameterType="java.lang.String" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM metoo_monitor monitor
+        WHERE monitor.sign = #{sign, jdbcType=VARCHAR}
+    </select>
+
+    <resultMap id="Base_Query_Map" type="com.metoo.nspm.vo.MonitorVo">
+        <id column="id" property="id" jdbcType="BIGINT" javaType="Long"></id>
+        <result column="addTime" property="addTime" jdbcType="TIMESTAMP" javaType="java.util.Date"></result>
+        <result column="title" property="title" jdbcType="VARCHAR" javaType="java.lang.String"></result>
+        <result column="startTime" property="startTime" jdbcType="TIMESTAMP" javaType="java.util.Date"></result>
+        <result column="endTime" property="endTiime" jdbcType="TIMESTAMP" javaType="java.util.Date"></result>
+        <result column="username" property="username"></result>
+        <result column="liveRoomTitle" property="liveRoomTitle"></result>
+        <result column="roomProgramTitle" property="roomProgramTitle"></result>
+        <result column="status" property="status"></result>
+        <!--<association property="user" javaType="User">
+            <id column="userId" property="id"></id>
+            <result column="username" property="username" jdbcType="VARCHAR" javaType="java.lang.String"></result>
+         </association>
+        <association property="liveRoom" javaType="LiveRoom">
+            <id column="liveRoomId" property="id"  javaType="java.lang.Long"></id>
+            <result column="liveRoomTitle" property="title"></result>
+        </association>-->
+    </resultMap>
+
+    <sql id="Base_Qurey_List">
+        monitor.*
+    </sql>
+
+    <select id="query" parameterType="com.metoo.nspm.dto.MonitorDto" resultMap="Base_Query_Map">
+        SELECT <include refid="Base_Qurey_List"/>
+        FROM metoo_monitor monitor
+    </select>
+
+    <insert id="save" parameterType="com.metoo.nspm.entity.nspm.Monitor" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO metoo_monitor
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="addTime != null">
+                addTime,
+            </if>
+            <if test="deleteStatus != null">
+                deleteStatus,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="liveRoomTitle != null">
+                liveRoomTitle,
+            </if>
+            <if test="username != null">
+                username,
+            </if>
+            <if test="startTime != null">
+                startTime,
+            </if>
+            <if test="endTime != null">
+                endTime,
+            </if>
+            <if test="appId != null">
+                appId,
+            </if>
+            <if test="sign != null">
+                sign,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+        </trim>
+        <trim prefix="VALUES( " suffix=")" suffixOverrides="," >
+            <if test="addTime != null">
+                #{addTime},
+            </if>
+            <if test="deleteStatus != null">
+                #{deleteStatus},
+            </if>
+            <if test="title != null">
+                #{title},
+            </if>
+            <if test="liveRoomTitle != null">
+                #{liveRoomTitle},
+            </if>
+            <if test="username != null">
+                #{username},
+            </if>
+            <if test="startTime != null">
+                #{startTime},
+            </if>
+            <if test="endTime != null">
+                #{endTime},
+            </if>
+            <if test="appId != null">
+                #{appId},
+             </if>
+            <if test="sign != null">
+                #{sign},
+            </if>
+            <if test="status != null">
+               #{status},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update">
+        UPDATE metoo_monitor
+        <set>
+            <if test="addTime != null">
+                addTime = #{addTime},
+            </if>
+            <if test="deleteStatus != null">
+                deleteStatus = #{deleteStatus},
+            </if>
+            <if test="title != null">
+                title = #{title},
+            </if>
+            <if test="liveRoomTitle != null">
+                liveRoomTitle = #{liveRoomTitle},
+            </if>
+            <if test="username != null">
+                username = #{username},
+            </if>
+            <if test="startTime != null">
+                startTime = #{startTime},
+            </if>
+            <if test="endTime != null">
+                endTime = #{endTime},
+            </if>
+            <if test="appId != null">
+                appId = #{appId},
+            </if>
+            <if test="sign != null">
+                sign = #{sign},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+        </set>
+        <where>
+        <if test = "id != null">
+            id=#{id}
+        </if>
+    </where>
+    </update>
+
+</mapper>

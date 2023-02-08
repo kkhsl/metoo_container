@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.PlantRoomMapper">
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.nspm.PlantRoom">
+        <id column="id" property="id" jdbcType="BIGINT" javaType="java.lang.Long" ></id>
+        <result column="addTime" property="addTime" jdbcType="TIMESTAMP" javaType="java.util.Date" ></result>
+        <result column="name" property="name" jdbcType="VARCHAR" javaType="java.lang.String"></result>
+        <result column="description" property="description" jdbcType="VARCHAR" javaType="java.lang.String"></result>
+        <result column="change_reasons" property="change_reasons" jdbcType="VARCHAR" javaType="java.lang.String"></result>
+        <result column="is_default" property="isDefault"></result>
+    </resultMap>
+
+    <resultMap id="Plant_Result_Map" type="com.metoo.nspm.vo.PlantRoomVO">
+        <id column="id" property="id" jdbcType="BIGINT" javaType="java.lang.Long" ></id>
+        <result column="name" property="name" jdbcType="VARCHAR" javaType="java.lang.String"></result>
+        <result column="is_default" property="isDefault"></result>
+    </resultMap>
+
+    <resultMap id="PlantRoom_Rack_Map" type="com.metoo.nspm.entity.nspm.PlantRoom">
+        <id column="id" property="id" jdbcType="BIGINT" javaType="java.lang.Long" ></id>
+        <result column="addTime" property="addTime" jdbcType="TIMESTAMP" javaType="java.util.Date" ></result>
+        <result column="name" property="name" jdbcType="VARCHAR" javaType="java.lang.String"></result>
+        <result column="description" property="description" jdbcType="VARCHAR" javaType="java.lang.String"></result>
+        <result column="change_reasons" property="change_reasons" jdbcType="VARCHAR" javaType="java.lang.String"></result>
+        <result column="is_default" property="isDefault"></result>
+        <collection property="rackList" ofType="com.metoo.nspm.entity.nspm.Rack">
+            <id column="rack_id" property="id"></id>
+            <result column="rack_name" property="name"></result>
+            <result column="rack_size" property="size"></result>
+            <result column="rack_rear" property="rear"></result>
+            <result column="rack_description" property="description"></result>
+            <result column="device_number" property="number"></result>
+            <result column="surplusSize" property="surplusSize"></result>
+            <result column="rack_deleteStatus" property="deleteStatus"></result>
+            <result column="rack_asset_number" property="asset_number" jdbcType="VARCHAR" javaType="java.lang.String"></result>
+            <result column="rack_change_reasons" property="change_reasons" jdbcType="VARCHAR" javaType="java.lang.String"></result>
+        </collection>
+    </resultMap>
+
+    <sql id="Base_Result_Column_List">
+       plant_room.id, plant_room.addTime, plant_room.`name`, plant_room.description, plant_room.change_reasons,
+       rack.id rack_id, rack.name rack_name, rack.size rack_size, rack.rear rack_rear, rack.description rack_description,
+       rack.number rack_number
+    </sql>
+
+    <sql id="Base_Column_List">
+        id, addTime, `name`, description, change_reasons
+    </sql>
+
+    <select id="getObjById" parameterType="java.lang.Long" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM rsms_plant_room
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectObjByName" parameterType="java.lang.String" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM rsms_plant_room
+        WHERE name = #{name}
+    </select>
+
+
+    <select id="query" parameterType="com.metoo.nspm.entity.nspm.PlantRoom" resultMap="Plant_Result_Map">
+        SELECT id, name
+        FROM rsms_plant_room
+        <where>
+            <if test="deleteStatus != null and deleteStatus != ''">
+                AND deleteStatus = #{deleteStatus}
+            </if>
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="selectConditionQuery" parameterType="com.metoo.nspm.dto.PlantRoomDTO" resultMap="Base_Result_Map">
+        SELECT id, addTime, `name`, description, deleteStatus, `change_reasons`, (select count(*)  from rsms_rack where plant_room_id = plant_room.id) as rack_number
+        FROM rsms_plant_room plant_room
+        <where>
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+        </where>
+        <if test = "orderBy != null and orderBy != ''">
+            ORDER BY is_default desc, ${orderBy}
+        </if>
+        <if test = "orderType != null and orderType != ''">
+            ${orderType}
+        </if>
+    </select>
+
+    <select id="findBySelectAndRack" parameterType="com.metoo.nspm.dto.PlantRoomDTO" resultMap="PlantRoom_Rack_Map">
+        SELECT
+            plant_room.id, plant_room.addTime, plant_room.`name`, plant_room.description,
+            plant_room.deleteStatus deleteStatus, plant_room.change_reasons change_reasons,
+            rack.id rack_id, rack.addTime rack_addTime, rack.name rack_name, rack.size rack_size,
+            rack.rear rack_rear, rack.description rack_description,
+            rack.number rack_number, rack.asset_number
+            rack_asset_number, rack.change_reasons rack_change_reasons,
+            (
+                SELECT
+                  IF(rack_id IS NULL,0, COUNT(*)) AS count
+                FROM
+                  rsms_device
+                WHERE
+                 rack_id = rack.id
+                AND
+                  start > 0
+                AND
+                  `size` > 0
+            ) AS device_number
+        FROM
+          rsms_rack rack
+        RIGHT JOIN
+          rsms_plant_room plant_room
+        ON
+          plant_room.id=rack.plant_room_id
+        <where>
+            <if test="userId != null and userId != ''">
+                plant_room.user_id = #{userId}
+            </if>
+        </where>
+        <if test = "orderBy != null and orderBy != ''">
+            ORDER BY plant_room.is_default DESC, rack.addTime
+        </if>
+        <if test = "orderType != null and orderType != ''">
+            ${orderType}
+        </if>
+    </select>
+
+
+    <select id="selectObjByMap" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM rsms_plant_room
+        <where>
+            <if test="deleteStatus != null and deleteStatus != ''">
+                AND deleteStatus = #{deleteStatus}
+            </if>
+            <if test="name != null and userId != ''">
+                AND `name` = #{name}
+            </if>
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+            <if test="plantRootId != null and plantRootId != ''">
+                AND id != #{plantRootId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectVoByMap" parameterType="java.util.Map" resultMap="Plant_Result_Map">
+        SELECT id
+        FROM rsms_plant_room
+        <where>
+            <if test="deleteStatus != null and deleteStatus != ''">
+                AND deleteStatus = #{deleteStatus}
+            </if>
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+            <if test="name != null and userId != ''">
+                AND `name` = #{name}
+            </if>
+            <if test="plantRootId != null and plantRootId != ''">
+                AND id != #{plantRootId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectObjByCard" parameterType="java.util.Map" resultMap="PlantRoom_Rack_Map">
+        SELECT
+        plant_room.id,
+        plant_room.addTime,
+        plant_room.`name`,
+        plant_room.description,
+        plant_room.deleteStatus deleteStatus,
+        plant_room.change_reasons change_reasons,
+        rack.id rack_id,
+        rack.addTime rack_addTime,
+        rack.name rack_name,
+        rack.size rack_size,
+        rack.rear rack_rear,
+        rack.description rack_description,
+        rack.asset_number rack_asset_number,
+        rack.change_reasons rack_change_reasons,
+        IF(plant_room_id is NULL, 0, rack.device_size) device_size,
+        IF(plant_room_id is NULL, 0, rack.device_number) device_number,
+        IF(plant_room_id is NULL, 0, rack.surplusSize) surplusSize
+        FROM
+        rsms_plant_room plant_room
+        LEFT JOIN (
+        SELECT
+        rack.*,
+        IF(
+        (rack.size - SUM(device.size)) IS NULL,
+        0,
+        (rack.size - SUM(device.size))
+        ) surplusSize,
+        IF(rack_id is NULL, 0, SUM(device.size)) device_size,
+        IF(rack_id is NULL, 0, COUNT(*)) device_number
+        FROM
+        rsms_rack rack
+        LEFT JOIN rsms_device device ON rack.id = device.rack_id
+        GROUP BY
+        rack.id
+        ) rack ON plant_room.id = rack.plant_room_id
+        <where>
+            <if test="userId != null and userId != ''">
+                plant_room.user_id = #{userId}
+            </if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="com.metoo.nspm.entity.nspm.PlantRoom" keyProperty="id" useGeneratedKeys="true" keyColumn="id">
+      INSERT INTO rsms_plant_room
+      <trim prefix="(" suffixOverrides="," suffix=")">
+        <if test="addTime != null">
+            addTime,
+        </if>
+        <if test="deleteStatus != null">
+            deleteStatus,
+        </if>
+        <if test="name != null">
+            `name`,
+        </if>
+        <if test="description != null">
+            description,
+        </if>
+          <if test="userId != null">
+              user_id,
+          </if>
+          <if test="change_reasons != null">
+              change_reasons,
+          </if>
+          <if test="isDefault != null">
+              is_default,
+          </if>
+    </trim>
+        <trim prefix="VALUES(" suffixOverrides="," suffix=")">
+            <if test="addTime != null">
+                #{addTime},
+            </if>
+            <if test="deleteStatus != null">
+                #{deleteStatus},
+            </if>
+            <if test="name != null">
+                #{name},
+            </if>
+            <if test="description != null">
+                #{description},
+            </if>
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="change_reasons != null">
+                #{change_reasons},
+            </if>
+            <if test="isDefault != null">
+                #{isDefault},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.PlantRoom">
+        UPDATE rsms_plant_room
+        <set>
+            <if test="addTime != null">
+                addTime = #{addTime},
+            </if>
+            <if test="deleteStatus != null">
+                deleteStatus = #{deleteStatus},
+            </if>
+            <if test="name != null">
+                `name` = #{name},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+
+            <if test="change_reasons != null">
+                change_reasons = #{change_reasons},
+            </if>
+            <if test="isDefault != null">
+                is_default = #{isDefault},
+            </if>
+        </set>
+        where id=#{id, jdbcType=BIGINT}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE FROM rsms_plant_room
+        WHERE id=#{id}
+    </delete>
+
+    <delete id="batchDel" parameterType="java.lang.String">
+        DELETE FROM rsms_plant_room
+        WHERE id in (${ids})
+    </delete>
+
+
+</mapper>

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.HostMapper">
+
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.nspm.Host">
+        <id column="id" property="id" jdbcType="BIGINT" javaType="java.lang.Long"/>
+        <result column="addTime" property="addTime"></result>
+        <result column="deleteStatus" property="deleteStatus"></result>
+        <result column="name" property="name"></result>
+        <result column="uuid" property="uuid"></result>
+        <result column="ip1" property="ip1"></result>
+        <result column="ip2" property="ip2"></result>
+        <result column="description" property="description"></result>
+        <result column="user_id" property="userId"></result>
+        <result column="user_name" property="userName"></result>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, addTime, deleteStatus, `name`, uuid, ip1, ip2, description, user_id, user_name
+    </sql>
+
+    <sql id="Ntoa_Column_List">
+        id, addTime, deleteStatus, `name`, uuid, INET_NTOA(ip1) AS ip1, INET_NTOA(ip2) AS ip2, description, user_id, user_name
+    </sql>
+
+
+    <select id="selectObjById" parameterType="java.lang.Long" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List" />
+        FROM metoo_host
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectConditionQuery" parameterType="com.metoo.nspm.dto.HostDTO" resultMap="Base_Result_Map">
+        SELECT <include refid="Ntoa_Column_List" />
+        FROM metoo_host
+    </select>
+
+
+    <select id="selectObjByMap" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT <include refid="Ntoa_Column_List" />
+        FROM metoo_host
+        <where>
+            <if test="id != null and id != ''">
+                AND id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                AND name = #{name}
+            </if>
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+            <if test="hostId != null and hostId != ''">
+                AND id != #{hostId}
+            </if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="com.metoo.nspm.entity.nspm.Host" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO metoo_host
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null and id != ''">
+                id,
+            </if>
+            <if test="addTime != null">
+                addTime,
+            </if>
+            <if test="deleteStatus != null and deleteStatus != ''">
+                deleteStatus,
+            </if>
+            <if test="name != null and name != ''">
+                name,
+            </if>
+            <if test="uuid != null and uuid != ''">
+                uuid,
+            </if>
+            <if test="ip1 != null and ip1 != ''">
+                ip1,
+            </if>
+            <if test="ip2 != null and ip2 != ''">
+                ip2,
+            </if>
+            <if test="description != null and description != ''">
+                description,
+            </if>
+            <if test="userId != null and userId != ''">
+                user_id,
+            </if>
+            <if test="userName != null and userName != ''">
+                user_name,
+            </if>
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            <if test="id != null and id != ''">
+                #{id},
+            </if>
+            <if test="addTime != null">
+                #{addTime},
+            </if>
+            <if test="deleteStatus != null and deleteStatus != ''">
+                #{deleteStatus},
+            </if>
+            <if test="name != null and name != ''">
+                #{name},
+            </if>
+            <if test="uuid != null and uuid != ''">
+                #{uuid},
+            </if>
+            <if test="ip1 != null and ip1 != ''">
+                #{ip1},
+            </if>
+            <if test="ip2 != null and ip2 != ''">
+                #{ip2},
+            </if>
+            <if test="description != null and description != ''">
+                #{description},
+            </if>
+            <if test="userId != null and userId != ''">
+                #{userId},
+            </if>
+            <if test="userName != null and userName != ''">
+                #{userName},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.Host">
+        UPDATE metoo_host
+        <set>
+            <if test="id != null and id != ''">
+                id = #{id},
+            </if>
+            <if test="deleteStatus != null and deleteStatus != ''">
+                deleteStatus = #{deleteStatus},
+            </if>
+            <if test="name != null and name != ''">
+                `name` = #{name},
+            </if>
+            <if test="uuid != null and uuid != ''">
+                uuid = #{uuid},
+            </if>
+            <if test="ip1 != null and ip1 != ''">
+                ip1 = #{ip1},
+            </if>
+            <if test="ip2 != null and ip2 != ''">
+                ip2 = #{ip2},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description},
+            </if>
+            <if test="userId != null and userId != ''">
+                user_id = #{userId},
+            </if>
+            <if test="userName != null and userName != ''">
+                user_name = #{userName},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE FROM metoo_host
+        WHERE id = #{id}
+    </delete>
+</mapper>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.AccessoryMapper">
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.nspm.Accessory">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="a_name" column="name" jdbcType="VARCHAR"></result>
+        <result property="a_path" column="path" jdbcType="VARCHAR"></result>
+        <result property="a_ext" column="ext" jdbcType="VARCHAR"></result>
+        <result property="a_width" column="width" jdbcType="VARCHAR"></result>
+        <result property="a_height" column="height" jdbcType="VARCHAR"></result>
+        <result property="a_size" column="size" jdbcType="VARCHAR" ></result>
+        <result property="a_userId" column="userId" jdbcType="VARCHAR"></result>
+        <result property="type" column="type" jdbcType="VARCHAR"></result>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, `name`, path, ext, width, height, `size`, userId, `type`
+    </sql>
+
+    <select id="getObjById" parameterType="java.lang.Long" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List" />
+        FROM metoo_accessory
+        where id = #{id, jdbcType=BIGINT}
+    </select>
+
+    <select id="query" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List" />
+        FROM metoo_accessory
+        LIMIT #{startRow}, #{pageSize};
+    </select>
+
+    <insert id="save" parameterType="com.metoo.nspm.entity.nspm.Accessory" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO metoo_accessory
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+          <if test=" id != null ">
+              id,
+          </if>
+            <if test="a_name != null ">
+                name,
+            </if>
+            <if test="a_path != null ">
+               path,
+            </if>
+            <if test="a_ext != null ">
+                ext,
+            </if>
+            <if test=" a_width != null ">
+                width,
+            </if>
+            <if test=" a_height != null ">
+                height,
+            </if>
+            <if test=" a_size != null ">
+                `size`,
+            </if>
+            <if test=" a_userId != null ">
+                userId,
+            </if>
+            <if test=" type != null ">
+                `type`,
+            </if>
+
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            <if test=" id != null ">
+                #{id},
+            </if>
+            <if test=" a_name != null ">
+                #{a_name},
+            </if>
+            <if test=" a_path != null ">
+                #{a_path},
+            </if>
+            <if test=" a_ext != null ">
+                #{a_ext},
+            </if>
+            <if test=" a_width != null ">
+                #{a_width},
+            </if>
+            <if test=" a_height != null ">
+                #{a_height},
+            </if>
+            <if test=" a_size != null ">
+                #{a_size},
+            </if>
+            <if test="a_userId != null ">
+                #{a_userId},
+            </if>
+            <if test="type != null ">
+                #{type},
+            </if>
+
+        </trim>
+    </insert>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE FROM metoo_accessory
+        WHERE id=#{id, jdbcType=BIGINT}
+    </delete>
+</mapper>

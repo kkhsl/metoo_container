@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.zabbix.RouteTempMapper">
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.nspm.RouteTemp">
+        <id column="id" property="id"></id>
+        <result column="mask" property="mask"></result>
+        <result column="mask_bit" property="maskBit"></result>
+        <result column="destination" property="destination"></result>
+        <result column="cost" property="cost"></result>
+        <result column="flags" property="flags"></result>
+        <result column="proto" property="proto"></result>
+        <result column="next_hop" property="nextHop"></result>
+        <result column="interface_name" property="interfaceName"></result>
+        <result column="device_name" property="deviceName"></result>
+        <result column="device_uuid" property="deviceUuid"></result>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, mask, mask_bit, destination, cost, proto, flags, next_hop, interface_name, device_name, device_uuid
+    </sql>
+
+    <sql id="INET_Column_List">
+        id, mask, mask_bit, INET_NTOA(destination) AS destination, cost, proto, flags, INET_NTOA(next_hop) next_hop, interface_name, device_name, device_uuid
+    </sql>
+
+    <select id="selectObjById" parameterType="java.lang.Long" resultMap="Base_Result_Map">
+        SELECT *
+        FROM rsms_rout_temp
+        WHERE
+          id = #{id, jdbcType=BIGINT}
+    </select>
+
+    <select id="selectObjByMap" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT
+          <include refid="Base_Column_List" />
+        FROM rsms_rout_temp
+        <where>
+            <if test="mask != null">
+                AND mask = #{mask}
+            </if>
+            <if test="destination != null">
+                AND destination = #{destination}
+            </if>
+            <if test="cost != null">
+                AND cost = #{cost}
+            </if>
+            <if test="flags != null">
+                AND flags = #{flags}
+            </if>
+            <if test="proto != null">
+                AND proto = #{proto}
+            </if>
+            <if test="nextHop != null">
+                AND next_hop = #{nextHop}
+            </if>
+            <if test="deviceName != null">
+                AND device_name = #{deviceName}
+            </if>
+            <if test="interfaceName != null">
+                AND interface_name = #{interfaceName}
+            </if>
+            <if test="deviceUuid != null and deviceUuid != ''">
+                AND device_uuid = #{deviceUuid}
+            </if>
+            <if test="network != null and broadcast != null">
+                AND destination
+                BETWEEN
+                  #{network}
+                AND
+                  #{broadcast}
+            </if>
+            <if test = "descMask != null">
+                AND mask &lt;= #{descMask}
+            </if>
+        </where>
+        <if test = "orderBy != null and orderBy != ''">
+            ORDER BY ${orderBy}
+        </if>
+        <if test = "orderType != null and orderType != ''">
+            ${orderType}
+        </if>
+    </select>
+
+    <select id="queryDestDevice" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT
+             id, INET_NTOA(destination) destination, mask,
+             cost, proto, flags, INET_NTOA(next_hop) next_hop, interface_name, device_name, device_uuid
+            FROM rsms_rout_temp
+            where
+                    (destination, mask) = (
+                            SELECT
+                                destination, mask
+                            FROM
+                            rsms_rout_temp
+                            WHERE
+                                destination
+                            BETWEEN
+                                #{network}
+                            AND
+                                #{broadcast}
+                            AND
+                                device_name = #{deviceName}
+                            ORDER BY mask
+                            DESC
+                            LIMIT 1
+                            )
+                 AND
+                     device_name = #{deviceName}
+
+
+    </select>
+
+    <select id="selectDestDevice" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT
+         destination, mask
+        FROM
+        rsms_rout_temp
+        <where>
+            <if test="network != null and broadcast != null">
+                destination
+                 BETWEEN
+                    #{network}
+                AND
+                    #{broadcast}
+            </if>
+            <if test = "deviceName != null">
+                AND device_name = #{deviceName}
+            </if>
+            <if test = "destination != null">
+                AND destination = #{destination}
+            </if>
+            <if test = "mask != null">
+                AND mask = #{mask}
+            </if>
+        </where>
+        ORDER BY mask
+        DESC
+        LIMIT 1
+    </select>
+
+    <select id="selectNextHopDevice" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT
+          id, cost, proto, flags, INET_NTOA(next_hop) next_hop, interface_name, device_name, device_uuid
+        FROM
+        rsms_rout_temp
+        <where>
+            <if test = "deviceName != null">
+                AND device_name = #{deviceName}
+            </if>
+            <if test = "destination != null">
+                AND destination = #{destination}
+            </if>
+            <if test = "mask != null">
+                AND mask = #{mask}
+            </if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="com.metoo.nspm.entity.nspm.RouteTemp">
+        INSERT INTO rsms_rout_temp
+        <trim prefix="(" suffixOverrides="," suffix=")">
+            <if test="addTime != null">
+                addTime,
+            </if>
+            <if test="mask != null">
+                mask,
+            </if>
+            <if test="maskBit != null">
+                mask_bit,
+            </if>
+            <if test="destination != null">
+                destination,
+            </if>
+            <if test="cost != null">
+                cost,
+            </if>
+            <if test="proto != null">
+                proto,
+            </if>
+            <if test="flags != null">
+                flags,
+            </if>
+            <if test="nextHop != null">
+                next_hop,
+            </if>
+            <if test="deviceName != null">
+                device_name,
+            </if>
+            <if test="deviceUuid != null">
+                device_uuid,
+            </if>
+            <if test="interfaceName != null">
+                interface_name,
+            </if>
+        </trim>
+        <trim prefix="VALUES(" suffixOverrides="," suffix=")">
+            <if test="addTime != null">
+                #{addTime},
+            </if>
+            <if test="mask != null">
+                #{mask},
+            </if>
+            <if test="maskBit != null">
+                #{maskBit},
+            </if>
+            <if test="destination != null">
+                #{destination},
+            </if>
+            <if test="cost != null">
+                #{cost},
+            </if>
+            <if test="proto != null">
+                #{proto},
+            </if>
+            <if test="flags != null">
+                #{flags},
+            </if>
+            <if test="nextHop != null">
+                #{nextHop},
+            </if>
+            <if test="deviceName != null">
+                #{deviceName},
+            </if>
+            <if test="deviceUuid != null">
+                #{deviceUuid},
+            </if>
+            <if test="interfaceName != null">
+                #{interfaceName},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.RouteTemp">
+        UPDATE rsms_rout_temp
+        <set>
+            <if test="mask != null">
+                mask = #{mask},
+            </if>
+            <if test="maskBit != null">
+                mask_bit = #{maskBit},
+            </if>
+            <if test="destination != null">
+                destination = #{destination},
+            </if>
+            <if test="cost != null">
+                cost = #{cost},
+            </if>
+            <if test="proto != null">
+                proto = #{proto},
+            </if>
+            <if test="flags != null">
+                flags = #{flags},
+            </if>
+            <if test="nextHop != null">
+                next_hop = #{nextHop},
+            </if>
+            <if test="deviceName != null">
+                device_name = #{deviceName},
+            </if>
+            <if test="interfaceName != null">
+                interface_name = #{interfaceName},
+            </if>
+            <if test="deviceUuid != null">
+                device_uuid = #{deviceUuid},
+            </if>
+        </set>
+        where id = #{id, jdbcType=BIGINT}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE FROM rsms_rout_temp
+        WHERE
+          id = #{id}
+    </delete>
+
+    <update id="truncateTable">
+        TRUNCATE TABLE rsms_rout_temp
+    </update>
+    
+</mapper>

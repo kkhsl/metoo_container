@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.TopologyMapper">
+
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.nspm.Topology">
+        <id column="id" property="id"></id>
+        <result column="addTime" property="addTime"></result>
+        <result column="deleteStatus" property="deleteStatus"></result>
+        <result column="name" property="name"></result>
+        <result column="suffix" property="suffix"></result>
+        <result column="updateTime" property="updateTime"></result>
+        <result column="is_default" property="isDefault"></result>
+        <result column="description" property="description"></result>
+        <result column="group_id" property="groupId"></result>
+        <result column="group_name" property="groupName"></result>
+        <result column="user_id" property="userId"></result>
+        <result column="user_name" property="userName"></result>
+        <result column="content" property="content"></result>
+        <result column="base_url" property="baseUrl"></result>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+        id, addTime, deleteStatus, `name`, updateTime, is_default, description, group_id,
+        group_name, user_id, user_name, base_url, suffix
+    </sql>
+
+    <sql id="List_Column_List">
+        id, addTime, deleteStatus, concat(ifnull(name, ''), if(suffix is null, '', ' '), ifnull(suffix, '')) as name, updateTime, is_default, description, group_id,
+        group_name, user_id, user_name, base_url, suffix
+    </sql>
+
+
+    <sql id="Content_Column_List">
+        id, addTime, deleteStatus, `name`, updateTime, is_default, description, group_id,
+        group_name, user_id, user_name, base_url, content, suffix
+    </sql>
+
+    <sql id="Copy_Column_List">
+        addTime, deleteStatus, `name`, updateTime, description, group_id,
+        group_name, user_id, user_name, base_url, content
+    </sql>
+
+    <select id="selectObjById" parameterType="java.lang.Long" resultMap="Base_Result_Map">
+        SELECT *
+        FROM metoo_topology
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectObjBySuffix" parameterType="java.lang.String" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List" />
+        FROM metoo_topology
+        WHERE `suffix` = #{suffix}
+    </select>
+
+    <select id="selectConditionQuery" parameterType="com.metoo.nspm.dto.TopoNodeDto" resultMap="Base_Result_Map">
+        SELECT <include refid="List_Column_List" />
+        FROM metoo_topology
+        <where>
+            <if test="name != null and name != ''">
+                AND  `name` = #{name}
+            </if>
+            <if test="userId != null and userId != ''">
+                AND  `user_id` = #{userId}
+            </if>
+            <if test="groupIds != null and groupIds != ''">
+                AND group_id in
+                <foreach collection="groupIds" index = "index" item="item" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY is_default desc, addTime desc
+    </select>
+
+    <select id="selectObjByMap" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT <include refid="Content_Column_List" />
+        FROM metoo_topology
+        <where>
+            <if test="id != null and id != ''">
+                AND  `id` = #{id}
+            </if>
+            <if test="topologyId != null and topologyId != ''">
+                AND  `id` != #{topologyId}
+            </if>
+            <if test="name != null and name != ''">
+                AND  `name` = #{name}
+            </if>
+            <if test="userId != null and userId != ''">
+                AND  `user_id` = #{userId}
+            </if>
+            <if test="isDefault != null and isDefault != ''">
+                AND  `is_default` = #{isDefault}
+            </if>
+            <if test="groupIds != null and groupIds != ''">
+                AND group_id in
+                <foreach collection="groupIds" index = "index" item="item" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="NotId != null and NotId != ''">
+                AND  `id` != #{NotId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectTopologyByMap" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT id, `name`, content, base_url
+        FROM metoo_topology
+        <where>
+            <if test="id != null and id != ''">
+                AND  `id` = #{id}
+            </if>
+            <if test="userId != null and userId != ''">
+                AND  `user_id` = #{userId}
+            </if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="com.metoo.nspm.entity.nspm.Topology" keyProperty="id" useGeneratedKeys="true">
+          INSERT INTO metoo_topology
+          <trim prefix="(" suffixOverrides="," suffix=")">
+              <if test="addTime != null">
+                    addTime,
+              </if>
+              <if test="deleteStatus != null and name != ''">
+                  deleteStatus,
+              </if>
+              <if test="updateTime != null">
+                  addTime,
+              </if>
+              <if test="name != null and name != ''">
+                  `name`,
+              </if>
+              <if test="isDefault != null">
+                  is_default,
+              </if>
+              <if test="description != null and description != ''">
+                  description,
+              </if>
+              <if test="groupId != null and groupId != ''">
+                  group_id,
+              </if>
+              <if test="groupName != null and groupName != ''">
+                  group_name,
+              </if>
+              <if test="userId != null and userId != ''">
+                  user_id,
+              </if>
+              <if test="userName != null and userName != ''">
+                  user_name,
+              </if>
+              <if test="content != null and content != null">
+                  content,
+              </if>
+              <if test="baseUrl != null and baseUrl != null">
+                  base_url,
+              </if>
+          </trim>
+        <trim prefix="VALUES(" suffixOverrides="," suffix=")">
+            <if test="addTime != null">
+                #{addTime},
+            </if>
+            <if test="deleteStatus != null and name != ''">
+                #{deleteStatus},
+            </if>
+            <if test="updateTime != null">
+                #{addTime},
+            </if>
+            <if test="name != null and name != ''">
+                 #{name},
+            </if>
+            <if test="isDefault != null">
+                #{isDefault},
+            </if>
+            <if test="description != null and description != ''">
+                #{description},
+            </if>
+            <if test="groupId != null and groupId != ''">
+                #{groupId},
+            </if>
+            <if test="groupName != null and groupName != ''">
+                #{groupName},
+            </if>
+            <if test="userId != null and userId != ''">
+                #{userId},
+            </if>
+            <if test="userName != null and userName != ''">
+                #{userName},
+            </if>
+            <if test="content != null and content != null">
+                #{content},
+            </if>
+            <if test="baseUrl != null and baseUrl != null">
+                #{baseUrl},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.Topology">
+        UPDATE metoo_topology
+        <set>
+            <if test="addTime != null">
+                addTime = #{addTime},
+            </if>
+            <if test="deleteStatus != null and name != ''">
+                deleteStatus = #{deleteStatus},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime},
+            </if>
+            <if test="name != null and name != ''">
+                `name` = #{name},
+            </if>
+            <if test="isDefault != null">
+                is_default = #{isDefault},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description},
+            </if>
+            <if test="groupId != null and groupId != ''">
+                group_id = #{groupId},
+            </if>
+            <if test="groupName != null and groupName != ''">
+                group_name = #{groupName},
+            </if>
+            <if test="userId != null and userId != ''">
+                user_id =  #{userId},
+            </if>
+            <if test="userName != null and userName != ''">
+                user_name =  #{userName},
+            </if>
+            <if test="content != null and content != null">
+                content = #{content},
+            </if>
+            <if test="baseUrl != null and baseUrl != null">
+                base_url = #{baseUrl},
+            </if>
+            <if test="suffix != ''">
+                suffix = #{suffix},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE FROM metoo_topology WHERE id = #{id}
+    </delete>
+
+    <insert id="copy" parameterType="com.metoo.nspm.entity.nspm.Topology" keyProperty = "id" useGeneratedKeys = "true">
+        INSERT INTO metoo_topology(<include refid="Copy_Column_List"/>)
+        SELECT
+          <include refid="Copy_Column_List"/>
+        FROM
+          metoo_topology
+      WHERE
+          id = #{id}
+    </insert>
+
+</mapper>

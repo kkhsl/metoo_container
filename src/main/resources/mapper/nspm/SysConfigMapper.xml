@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.SysConfigMapper">
+
+    <select id="select" resultType="com.metoo.nspm.entity.nspm.SysConfig">
+        SELECT *
+        FROM metoo_sysconfig
+        limit 1
+    </select>
+
+    <select id="findObjById" parameterType="java.lang.Long" resultType="com.metoo.nspm.entity.nspm.SysConfig">
+        SELECT *
+        FROM metoo_sysconfig
+        where id = #{id}
+    </select>
+
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.SysConfig">
+        UPDATE metoo_sysconfig
+        <set>
+            <if test="title !=null and title !=''">
+                title=#{title},
+            </if>
+            <if test=" ip != null and ip !=''">
+                ip=#{ip},
+            </if>
+            <if test = "path != null and path !=''">
+                path=#{path},
+            </if>
+            <if test = "domain != null and domain !=''">
+                `domain` =#{domain},
+            </if>
+            <if test=" videoAudit != null and videoAudit !=''">
+                videoAudit = #{videoAudit},
+            </if>
+            <if test=" appId != null and appId !=''">
+                appId = #{appId},
+            </if>
+            <if test=" nspmToken != null and nspmToken !=''">
+                nspmToken = #{nspmToken},
+            </if>
+            <if test="ntasUrl != null and ntasUrl !=''">
+                ntasUrl = #{ntasUrl},
+            </if>
+            <if test="ntasProtocol != null and ntasProtocol !=''">
+                ntasProtocol = #{ntasProtocol},
+            </if>
+            <if test="ntasToken != null and ntasToken !=''">
+                ntasToken = #{ntasToken},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+</mapper>

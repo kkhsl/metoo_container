@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.BannerMapper">
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.nspm.Banner">
+        <id column="mb_id" property="id"></id>
+        <result column="mb_title" property="title"></result>
+        <result column="mb_addTime" property="addTime"></result>
+        <result column="mb_sequence" property="sequence"></result>
+        <result column="mb_display" property="display"></result>
+        <result column="mb_url" property="url"></result>
+        <result column="mb_accessoryId" property="accessoryId"></result>
+        <result column="mb_accessoryPath" property="accessoryPath"></result>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, addTime, title, sequence, display, url, accessoryId, accessoryPath
+    </sql>
+
+    <sql id="Base_Column_Query">
+          mb.id mb_id, mb.addTime mb_addTime, mb.title mb_title, mb.sequence mb_sequence, mb.display mb_display,
+          mb.url mb_url, mb.accessoryid mb_accessoryId, concat(ma.path, '/', ma.name) mb_accessoryPath
+    </sql>
+
+    <select id="findObjById" parameterType="java.lang.Long" resultMap="Base_Result_Map">
+        SELECT   <include refid="Base_Column_Query"/>
+        FROM metoo_banner mb
+        LEFT JOIN metoo_accessory ma ON ma.id = mb.accessoryId
+        WHERE mb.id = #{id, jdbcType=BIGINT}
+    </select>
+
+    <select id="query" parameterType="com.metoo.nspm.dto.BannerDto" resultMap="Base_Result_Map">
+        SELECT   <include refid="Base_Column_Query"/>
+        FROM metoo_banner mb
+        LEFT JOIN metoo_accessory ma ON ma.id = mb.accessoryId
+        <where>
+            <if test="title != null and title != ''">
+                AND mb.title LIKE CONCAT('%', #{title}, '%')
+            </if>
+            <if test = "sequence != null">
+                AND mb.sequence = #{sequence}
+            </if>
+            <if test = "display != null">
+                AND mb.display = #{display}
+            </if>
+        </where>
+        ORDER BY
+         mb.sequence
+        DESC
+    </select>
+
+    <select id="findObjByMap" parameterType="map" resultMap="Base_Result_Map">
+        SELECT   <include refid="Base_Column_Query"/>
+        FROM metoo_banner mb
+        LEFT JOIN metoo_accessory ma ON ma.id = mb.accessoryId
+        <where>
+            <if test = "display != null">
+                AND mb.display = #{display}
+            </if>
+        </where>
+        ORDER BY
+          mb.sequence
+        DESC
+    </select>
+
+    <insert id="save" parameterType="com.metoo.nspm.entity.nspm.Banner" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO metoo_banner
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+               id,
+            </if>
+            <if test = "addTime != null">
+               addTime,
+            </if>
+            <if test = "title != null and title != ''">
+               title,
+            </if>
+            <if test = "sequence != null">
+                sequence,
+            </if>
+            <if test = "display != null">
+             display,
+            </if>
+            <if test = "url != null">
+                url,
+            </if>
+            <if test = "accessoryId != null">
+                accessoryId,
+            </if>
+            <if test = "accessoryPath != null">
+                accessoryPath,
+            </if>
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test = "addTime != null">
+                #{addTime},
+            </if>
+            <if test = "title != null and title != ''">
+                #{title},
+            </if>
+            <if test = "sequence != null">
+                #{sequence},
+            </if>
+            <if test = "display != null">
+                #{display},
+            </if>
+            <if test = "url != null">
+                #{url},
+            </if>
+            <if test = "accessoryId != null">
+                #{accessoryId},
+            </if>
+            <if test = "accessoryPath != null">
+                #{accessoryPath},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.Banner">
+        UPDATE metoo_banner
+        <set>
+            <if test="id != null">
+                id = #{id},
+            </if>
+            <if test = "title != null and title != ''">
+                title = #{title},
+            </if>
+            <if test = "sequence != null">
+                sequence = #{sequence},
+            </if>
+            <if test = "display != null">
+                display = #{display},
+            </if>
+            <if test = "url != null">
+                url = #{url},
+            </if>
+            <if test = "accessoryId != null">
+                accessoryId = #{accessoryId},
+            </if>
+            <if test = "accessoryPath != null">
+                accessoryPath = #{accessoryPath},
+            </if>
+        </set>
+        WHERE id = #{id, jdbcType=BIGINT}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Long">
+      DELETE FROM metoo_banner
+      WHERE id = #{id, jdbcType = BIGINT}
+    </delete>
+
+</mapper>

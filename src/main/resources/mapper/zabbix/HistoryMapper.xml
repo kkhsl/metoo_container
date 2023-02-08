@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.zabbix.HistoryMapper">
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.zabbix.History">
+        <result column="itemid" property="itemid"></result>
+        <result column="clock" property="clock"></result>
+        <result column="value" property="value"></result>
+        <result column="ns" property="ns"></result>
+    </resultMap>
+
+    <select id="selectObjByMap" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT * FROM history_uint
+        <where>
+            <if test="time_from != null and time_till != null">
+                clock between #{time_from}  and #{time_till}
+            </if>
+            <if test="itemid != null and itemid != ''">
+                AND itemid = #{itemid}
+            </if>
+        </where>
+    </select>
+
+</mapper>

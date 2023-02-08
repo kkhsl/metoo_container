@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.topology.TopologyTokenMapper">
+
+    <select id="query" parameterType="java.util.Map" resultType="com.metoo.nspm.entity.nspm.TopologyToken">
+        SELECT * FROM ums_user_sso_token
+        <where>
+            <if test = "type != null and type != ''">
+                  type = #{type}
+            </if>
+        </where>
+        <if test = "orderBy != null and orderBy != ''">
+            ORDER BY ${orderBy}
+        </if>
+        <if test = "orderType != null and orderType != ''">
+            ${orderType}
+        </if>
+    </select>
+
+</mapper>

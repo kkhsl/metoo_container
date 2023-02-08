@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.zabbix.ArpHistoryMapper">
+
+    <resultMap id="Base_Result_Map"  type="com.metoo.nspm.entity.nspm.Arp">
+        <id column="id" property="id"></id>
+        <result column="device_ip" property="deviceIp"></result>
+        <result column="device_type" property="deviceType"></result>
+        <result column="device_name" property="deviceName"></result>
+        <result column="interface_name" property="interfaceName"></result>
+        <result column="ip" property="ip"></result>
+        <result column="mac" property="mac"></result>
+        <result column="mac_vendor" property="macVendor"></result>
+        <result column="tag" property="tag"></result>
+        <result column="remote_device" property="remoteDevice"></result>
+        <result column="remote_interface" property="remoteInterface"></result>
+        <result column="uuid" property="uuid"></result>
+        <result column="remote_uuid" property="remoteUuid"></result>
+        <result column="ip_address" property="ipAddress"></result>
+        <result column="remote_device_type" property="remoteDeviceType"></result>
+        <result column="remote_ip" property="remoteIp"></result>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, addTime, device_name, interface_name, ip, mac, mac_vendor, tag,
+        remote_device, remote_interface, remote_device_ip, remote_device_type, mask, uuid, remote_uuid, ip_address, device_ip, device_type
+    </sql>
+
+    <sql id="Ntoa_Column_List">
+        id, addTime, device_name, interface_name, INET_NTOA(ip) AS ip, mac, mac_vendor, tag,
+        remote_device, remote_interface, remote_device_ip, remote_device_type, mask, uuid, remote_uuid, ip_address, device_ip, device_type
+    </sql>
+
+    <sql id="Copy_Column_List">
+        addTime, device_name, interface_name, ip, mac, mac_vendor, tag, remote_device, remote_interface,
+         remote_device_ip, remote_device_type, mask, uuid, remote_uuid, ip_address, device_ip, device_type
+    </sql>
+
+    <select id="selectObjByIp" parameterType="java.lang.String" resultMap="Base_Result_Map">
+        SELECT
+         DISTINCT ip, mac
+        FROM
+          rsms_arp
+          <where>
+              <if test="time != null">
+                  AND addTime = (
+                      SELECT addTime FROM rsms_arp_history WHERE addTime &lt;= #{time} ORDER BY addTime DESC limit 1
+                  )
+              </if>
+              <if test="ip != null and ip !=''">
+                  AND ip = #{ip}
+              </if>
+          </where>
+        WHERE
+
+    </select>
+
+    <select id="selectObjByMap" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT
+          <include refid="Base_Column_List" />
+        FROM
+        rsms_arp_history
+        <where>
+            <if test="time != null">
+                AND addTime = (
+                SELECT addTime FROM rsms_arp_history WHERE addTime &lt;=#{time} ORDER BY addTime DESC limit 1
+                )
+            </if>
+            <if test="beforeTime != null">
+                AND addTime &lt;=#{beforeTime}
+            </if>
+            <if test="deviceName != null and deviceName != ''">
+                AND device_name = #{deviceName}
+            </if>
+            <if test="ip != null and ip != ''">
+                AND ip = #{ip}
+            </if>
+            <if test="interfaceName != null and interfaceName != ''">
+               AND interface_name = #{interfaceName}
+            </if>
+            <if test="tag != null and tag != ''">
+                AND tag = #{tag}
+            </if>
+            <if test="tagAndLS != null and tagAndLS != ''">
+                AND tag = #{tagAndLS}
+            </if>
+            <if test="tagL != null and tagL != ''">
+                AND tag = #{tagL}
+            </if>
+            <if test="tagLS != null and tagLS != ''">
+                OR tag = #{tagLS}
+            </if>
+            <if test="tagU != null and tagU != ''">
+                OR tag = #{tagU}
+            </if>
+            <if test="tagS != null and tagS != ''">
+                OR tag = #{tagS}
+            </if>
+            <if test="mac != null and mac != ''">
+                AND mac = #{mac}
+            </if>
+            <if test="unDeviceName != null and unDeviceName != ''">
+                AND device_name != #{unDeviceName}
+            </if>
+            <if test="like != null">
+                AND mac like "0:0:5e:0%"
+            </if>
+            <if test="other != null">
+                AND tag != #{other}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectDistinctObjByMap" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT
+        <include refid="Ntoa_Column_List"/>
+        FROM
+        rsms_arp_history
+        <where>
+            <if test="time != null">
+                AND addTime = (
+                 SELECT addTime FROM rsms_arp_history WHERE addTime &lt;=#{time} ORDER BY addTime DESC limit 1
+                )
+            </if>
+            <if test="beforeTime != null">
+                AND addTime &lt;=#{beforeTime}
+            </if>
+            <if test="ip != null and ip != ''">
+                AND ip = #{ip}
+            </if>
+            <if test="tag != null and tag != ''">
+                AND tag = #{tag}
+            </if>
+            <if test="mac != null and mac != ''">
+                AND mac = #{mac}
+            </if>
+            <if test="interfaceName != null and interfaceName != ''">
+                AND interface_name = #{interfaceName}
+            </if>
+            <if test="deviceName != null and deviceName != ''">
+                AND device_name = #{deviceName}
+            </if>
+            <if test="uuid != null and uuid != ''">
+                AND uuid = #{uuid}
+            </if>
+        </where>
+        GROUP BY
+        ip, mac
+    </select>
+
+    <delete id="batchDelete" parameterType="com.metoo.nspm.entity.nspm.Arp">
+        DELETE FROM rsms_arp_history where
+        <foreach collection="list" item="arp"  separator="or">
+            id = #{arp.id}
+        </foreach>
+    </delete>
+
+    <insert id="copyArpTemp">
+        INSERT INTO
+              rsms_arp_history(<include refid="Copy_Column_List"/>)
+        SELECT
+          <include refid="Copy_Column_List"/>
+        FROM rsms_arp_temp
+    </insert>
+
+    </mapper>

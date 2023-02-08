@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.ProjectMapper">
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.nspm.Project">
+        <id column="id" property="id"></id>
+        <result column="addTime" property="addTime"></result>
+        <result column="deleteStatus" property="deleteStatus"></result>
+        <result column="name" property="name"></result>
+        <result column="start_time" property="startTime"></result>
+        <result column="accept_time" property="acceptTime"></result>
+        <result column="person_liable" property="personLiable"></result>
+        <result column="description" property="description"></result>
+        <result column="user_id" property="userId"></result>
+        <result column="user_name" property="userName"></result>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, addTime, deleteStatus, name, start_time, accept_time, person_liable, description, user_id, user_name
+    </sql>
+
+    <select id="selectObjById" parameterType="java.lang.Long" resultMap="Base_Result_Map">
+        SELECT
+          <include refid="Base_Column_List"/>
+        FROM
+          metoo_project
+        WHERE id=#{id}
+    </select>
+
+    <select id="selectObjByName" parameterType="java.lang.String" resultMap="Base_Result_Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        metoo_project
+        WHERE name = #{name}
+    </select>
+
+    <select id="selectConditionQuery" parameterType="com.metoo.nspm.dto.ProjectDTO" resultMap="Base_Result_Map">
+        SELECT
+          <include refid="Base_Column_List" />
+        FROM metoo_project
+        <where>
+            <if test="id != null and id != ''">
+                AND id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                AND `name` = #{name}
+            </if>
+            <if test="personLiable != null and personLiable != ''">
+                AND personLiable = #{personLiable}
+            </if>
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+        </where>
+        <if test = "orderBy != null and orderBy != ''">
+            ORDER BY ${orderBy}
+        </if>
+        <if test = "orderType != null and orderType != ''">
+            ${orderType}
+        </if>
+    </select>
+
+    <select id="selectObjByMap" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT
+          <include refid="Base_Column_List" />
+        FROM
+          metoo_project
+        <where>
+            <if test="id != null and id != ''">
+                AND id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                AND `name` = #{name}
+            </if>
+            <if test="personLiable != null and personLiable != ''">
+                AND personLiable = #{personLiable}
+            </if>
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+            <if test="projectId != null and projectId != ''">
+                AND id != #{projectId}
+            </if>
+        </where>
+        <if test = "orderBy != null and orderBy != ''">
+            ORDER BY ${orderBy}
+        </if>
+        <if test = "orderType != null and orderType != ''">
+            ${orderType}
+        </if>
+    </select>
+
+    <insert id="save" parameterType="com.metoo.nspm.entity.nspm.Project" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO metoo_project
+        <trim prefix="(" suffixOverrides="," suffix=")">
+            <if test="addTime != null">
+                addTime,
+            </if>
+            <if test="deleteStatus != null">
+                deleteStatus,
+            </if>
+            <if test="name != null and name != ''">
+                name,
+            </if>
+            <if test="startTime != null">
+                start_time,
+            </if>
+            <if test="acceptTime != null">
+                accept_time,
+            </if>
+            <if test="personLiable != null">
+                person_liable,
+            </if>
+            <if test="description != null and description != ''">
+                description,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+        </trim>
+        <trim prefix="VALUE(" suffixOverrides="," suffix=")">
+            <if test="addTime != null">
+                #{addTime},
+            </if>
+            <if test="deleteStatus != null">
+                #{deleteStatus},
+            </if>
+            <if test="name != null and name != ''">
+                #{name},
+            </if>
+            <if test="startTime != null">
+                #{startTime},
+            </if>
+            <if test="acceptTime != null">
+                #{acceptTime},
+            </if>
+            <if test="personLiable != null">
+                #{personLiable},
+            </if>
+            <if test="description != null and description != ''">
+                #{description},
+            </if>
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="userName != null">
+                #{userName},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.Project">
+        UPDATE metoo_project
+        <set>
+            <if test="addTime != null">
+                addTime = #{addTime},
+            </if>
+            <if test="deleteStatus != null">
+                deleteStatus = #{deleteStatus},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="startTime != null">
+                start_time = #{startTime},
+            </if>
+            <if test="acceptTime != null">
+                accept_time = #{acceptTime},
+            </if>
+            <if test="personLiable != null">
+                person_liable = #{personLiable},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="userName != null">
+                user_name = #{userName},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE FROM metoo_project
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

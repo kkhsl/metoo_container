@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.zabbix.ProblemTempMapper">
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.nspm.ProblemTemp">
+        <id column="id" property="id"></id>
+        <result column="name" property="name"></result>
+        <result column="device_name" property="deviceName"></result>
+        <result column="interface_name" property="interfaceName"></result>
+        <result column="uuid" property="uuid"></result>
+        <result column="clock" property="clock"></result>
+        <result column="ip" property="ip"></result>
+        <result column="severity" property="severity"></result>
+        <result column="event" property="event"></result>
+        <result column="suppressed" property="suppressed"></result>
+        <result column="objectid" property="objectid"></result>
+    </resultMap>
+
+    <select id="selectObjByObjectId" parameterType="java.lang.Integer" resultMap="Base_Result_Map">
+            SELECT * FROM rsms_problem_temp where objectid = #{objectid}
+    </select>
+
+
+    <select id="selectObjByMap" parameterType="java.util.Map" resultMap="Base_Result_Map">
+            SELECT * FROM rsms_problem_temp
+            <where>
+                <if test="objectid != -1">
+                    and objectid = #{objectid}
+                </if>
+            </where>
+    </select>
+
+
+    <insert id="batchInsert" parameterType="com.metoo.nspm.entity.nspm.ProblemTemp">
+        INSERT INTO rsms_problem_temp (addTime, name, device_name, interface_name, uuid, clock, ip, severity, event,
+        suppressed, objectid)
+        values
+        <foreach collection="list" item="item" index="index"  separator=",">
+            (#{item.addTime},#{item.name}, #{item.deviceName}, #{item.interfaceName}, #{item.uuid}, #{item.clock},
+            #{item.ip}, #{item.severity}, #{item.event}, #{item.suppressed}, #{item.objectid})
+        </foreach>
+    </insert>
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.ProblemTemp">
+        UPDATE rsms_problem_temp
+        <set>
+            <if test="addTime != null">
+                addTime = #{addTime},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="clock != null">
+                clock = #{clock},
+            </if>
+            restoreTime = #{restoreTime},
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="truncateTable">
+        TRUNCATE TABLE rsms_problem_temp;
+    </update>
+
+
+</mapper>

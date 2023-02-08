@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.zabbix.MacTempMapper">
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.nspm.MacTemp">
+        <id column="id" property="id"></id>
+        <result column="addTime" property="addTime"></result>
+        <result column="device_ip" property="deviceIp"></result>
+        <result column="device_type" property="deviceType"></result>
+        <result column="device_name" property="deviceName"></result>
+        <result column="interface_name" property="interfaceName"></result>
+        <result column="mac" property="mac"></result>
+        <result column="index" property="index"></result>
+        <result column="tag" property="tag"></result>
+        <result column="uuid" property="uuid"></result>
+        <result column="remote_device" property="remoteDevice"></result>
+        <result column="remote_interface" property="remoteInterface"></result>
+        <result column="remote_uuid" property="remoteUuid"></result>
+        <result column="interface_index" property="interfaceIndex"></result>
+        <result column="ip_address" property="ipAddress"></result>
+        <result column="vlan" property="vlan"></result>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, device_name, `interface_name`, mac, `index`, tag, uuid, remote_device, remote_interface,
+         remote_uuid, interface_index, ip, device_ip, device_type, vlan
+    </sql>
+
+    <sql id="Ntoa_Column_List">
+        id, device_name, `interface_name`, mac, `index`, tag, uuid, remote_device, remote_interface,
+         remote_uuid, interface_index, INET_NTOA(ip) AS ip, device_ip, device_type, vlan
+    </sql>
+
+
+    <select id="getObjByInterfaceName" parameterType="java.lang.String" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List" />
+        FROM rsms_mac_temp
+        <where>
+            <if test="interfaceName != null and interfaceName != ''">
+               `interface_name` = #{interfaceName}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectByMac" parameterType="java.lang.String" resultMap="Base_Result_Map">
+        select DISTINCT mac, remote_device, remote_uuid from rsms_mac_temp
+        where `mac` = #{mac} and remote_device != ''
+    </select>
+
+    <select id="selectObjByMap" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List" />
+        FROM rsms_mac_temp
+        <where>
+            <if test="interfaceName != null and interfaceName != ''">
+                `interface_name` = #{interfaceName}
+            </if>
+            <if test="other != null">
+                AND tag != #{other}
+            </if>
+            <if test="mac != null">
+                AND mac != #{mac}
+            </if>
+            <if test="unDeviceName != null and unDeviceName != ''">
+                `interface_name` != #{unDeviceName}
+            </if>
+        </where>
+    </select>
+
+    <select id="groupByObjByMap2" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT
+            *
+        FROM
+            rsms_mac_temp
+        WHERE  device_name = #{deviceName}
+        GROUP BY
+            remote_device
+        HAVING
+            count(remote_device) >= 2
+    </select>
+
+    <select id="groupByObjByMap" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT
+            id, device_name, `interface_name`, mac, `index`, tag, uuid,
+            remote_device, remote_interface, remote_uuid, interface_index, ip
+        FROM
+            rsms_mac_temp
+        WHERE
+            tag = 'E'
+        GROUP BY
+            device_name
+        HAVING
+            count(remote_device) >= 2
+    </select>
+
+    <select id="selectByMap" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT <include refid="Ntoa_Column_List" />
+        FROM rsms_mac_temp
+        <where>
+            <if test="mac != null">
+                AND mac = #{mac}
+            </if>
+            <if test="deviceName != null">
+                AND device_name = #{deviceName}
+            </if>
+            <if test="interfaceName != null">
+                AND interface_name = #{interfaceName}
+            </if>
+            <if test="tag != null">
+                AND tag = #{tag}
+            </if>
+            <if test="other != null">
+                AND tag != #{other}
+            </if>
+            <if test="uuid != null">
+                AND uuid = #{uuid}
+            </if>
+            <if test="tags != null">
+                AND tag in
+                <foreach collection="tags" index = "index" item="item" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="ip != null">
+                AND ip = #{ip}
+            </if>
+            <if test="remoteDevice != null">
+                AND remote_device = #{remoteDevice}
+            </if>
+            <if test="macId != null and macId != ''">
+                AND id != #{macId}
+            </if>
+        </where>
+    </select>
+
+    <select id="getMacUS" parameterType="java.util.Map" resultMap="Base_Result_Map">
+       SELECT
+         *
+        FROM
+            rsms_mac_temp
+        WHERE
+            (device_name, interface_name)
+        IN(
+            SELECT
+                device_name, interface_name
+            FROM
+                    rsms_mac_temp
+            WHERE
+                tag is null
+            GROUP BY
+                device_name, interface_name
+            HAVING
+                <if test="u != null">
+                    COUNT(interface_name) = #{u}
+                </if>
+                <if test="s != null">
+                    COUNT(interface_name) >= #{s}
+                </if>
+            )
+        AND
+            tag is null
+    </select>
+
+    <select id="macJoinArp" parameterType="java.lang.String" resultMap="Base_Result_Map">
+        SELECT
+            mac.id, REPLACE(mac.tag, 'UT', 'DT') tag, arp.ip ip
+        FROM
+            rsms_mac_temp mac
+        JOIN
+            rsms_arp arp
+        ON
+            mac.mac=arp.mac
+        WHERE
+            mac.tag = 'RT'
+        OR
+            mac.tag = 'UT'
+        order by mac.device_name desc, mac.interface_name desc
+
+    </select>
+
+    <insert id="save" parameterType="com.metoo.nspm.entity.nspm.MacTemp">
+        INSERT INTO rsms_mac_temp
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="addTime != null">
+                addTime,
+            </if>
+            <if test="deviceName != null">
+                device_name,
+            </if>
+            <if test="deviceIp != null">
+                device_ip,
+            </if>
+            <if test="deviceType != null">
+                device_type,
+            </if>
+            <if test="interfaceName != null">
+                interface_name,
+            </if>
+            <if test="mac != null">
+                mac,
+            </if>
+            <if test="index != null">
+                `index`,
+            </if>
+            <if test="tag != null">
+                tag,
+            </if>
+            <if test="uuid != null">
+                uuid,
+            </if>
+            <if test="remoteDevice != null">
+                remote_device,
+            </if>
+            <if test="remoteInterface != null">
+                remote_interface,
+            </if>
+            <if test="remoteDeviceIp != null">
+                remote_device_ip,
+            </if>
+            <if test="remoteDeviceType != null">
+                remote_device_type,
+            </if>
+            <if test="remoteUuid != null">
+                remote_uuid,
+            </if>
+            <if test="interfaceIndex != null">
+                interface_index,
+            </if>
+            <if test="ip != null">
+                ip,
+            </if>
+            <if test="ipAddress != null">
+                ip_address,
+            </if>
+            <if test="vlan != null">
+                vlan,
+            </if>
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            <if test="addTime != null">
+                #{addTime},
+            </if>
+            <if test="deviceName != null">
+                #{deviceName},
+            </if>
+            <if test="deviceIp != null">
+                #{deviceIp},
+            </if>
+            <if test="deviceType != null">
+                #{deviceType},
+            </if>
+            <if test="interfaceName != null">
+                #{interfaceName},
+            </if>
+            <if test="mac != null">
+                #{mac},
+            </if>
+            <if test="index != null">
+                #{index},
+            </if>
+            <if test="tag != null">
+                #{tag},
+            </if>
+            <if test="uuid != null">
+                #{uuid},
+            </if>
+            <if test="remoteDevice != null">
+                #{remoteDevice},
+            </if>
+            <if test="remoteInterface != null">
+                #{remoteInterface},
+            </if>
+            <if test="remoteDeviceIp != null">
+                #{remoteDeviceIp},
+            </if>
+            <if test="remoteDeviceType != null">
+                #{remoteDeviceType},
+            </if>
+            <if test="remoteUuid != null">
+                #{remoteUuid},
+            </if>
+            <if test="interfaceIndex != null">
+                #{interfaceIndex},
+            </if>
+            <if test="ip != null">
+                #{ip},
+            </if>
+            <if test="ipAddress != null">
+                #{ipAddress},
+            </if>
+            <if test="vlan != null">
+                #{vlan},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.MacTemp">
+        UPDATE rsms_mac_temp
+        <set>
+            <if test="deviceName != null">
+                device_name = #{deviceName},
+            </if>
+            <if test="deviceIp != null">
+                device_ip = #{deviceIp},
+            </if>
+            <if test="deviceType != null">
+                device_type = #{deviceType},
+            </if>
+            <if test="interfaceName != null">
+                interface_name = #{interfaceName},
+            </if>
+            <if test="mac != null">
+                mac = #{mac},
+            </if>
+            <if test="index != null">
+                `index` = #{index},
+            </if>
+            <if test="tag != null">
+                tag = #{tag},
+            </if>
+            <if test="uuid != null">
+                uuid = #{uuid},
+            </if>
+            <if test="remoteDevice != null">
+                remote_device =  #{remoteDevice},
+            </if>
+            <if test="remoteInterface != null">
+                remote_interface = #{remoteInterface},
+            </if>
+            <if test="remoteDeviceIp != null">
+                remote_device_ip = #{remoteDeviceIp},
+            </if>
+            <if test="remoteDeviceType != null">
+                remote_device_type = #{remoteDeviceType},
+            </if>
+            <if test="remoteUuid != null">
+                remote_uuid = #{remoteUuid},
+            </if>
+            <if test="interfaceIndex != null">
+                interface_index = #{interfaceIndex},
+            </if>
+            <if test="ip != null">
+                ip = #{ip},
+            </if>
+            <if test="ipAddress != null">
+                ip_address = #{ipAddress},
+            </if>
+            <if test="vlan != null">
+                vlan = #{vlan},
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+
+    <update id="truncateTable">
+        TRUNCATE TABLE rsms_mac_temp
+    </update>
+
+</mapper>

@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.RoleMapper">
+
+    <resultMap id="roles" type="com.metoo.nspm.entity.nspm.Role">
+        <id property="id" column="rid" />
+        <result property="name" column="name"></result>
+        <result property="roleCode" column="roleCode"></result>
+        <result property="type" column="type"></result>
+    </resultMap>
+
+    <resultMap id="Unit_Role_Map" type="com.metoo.nspm.entity.nspm.Role">
+        <id property="id" column="mr_id" />
+        <result property="name" column="mr_name"></result>
+        <result property="addTime" column="mr_addTime"></result>
+        <result property="roleCode" column="mr_roleCode"></result>
+        <result property="type" column="mr_type"></result>
+        <result property="url" column="mr_url"></result>
+        <result property="component" column="mr_component"></result>
+        <result property="sequence" column="mr_sequence"></result>
+        <result property="info" column="mr_info"></result>
+        <collection property="res_ids" ofType="java.lang.Long">
+            <id column="res_id" property="res_ids"></id>
+        </collection>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, addTime, deleteStatus, `name`, roleCode, type, info, component
+    </sql>
+
+
+    <select id="findRoleById" parameterType="Long" resultType="com.metoo.nspm.entity.nspm.Role">
+          SELECT *
+          FROM metoo_role
+          WHERE id=#{id}
+      </select>
+
+    <select id="findRoleByName" parameterType="java.lang.String" resultType="com.metoo.nspm.entity.nspm.Role">
+          SELECT *
+          FROM metoo_role
+          WHERE name=#{name}
+      </select>
+
+
+
+    <!--
+
+            mrg.id mrg_id, mrg.name mrg_name,
+  /*      LEFT JOIN metoo_role_group mrg on mr.rg_id=mrg.id*/-->
+    <select id="selectByPrimaryUpdae" parameterType="Long" resultMap="Unit_Role_Map">
+        SELECT mr.id mr_id, mr.addTime mr_addTime, mr.name mr_name,
+            mr.roleCode mr_roleCode, mr.url mr_url,mr.component mr_component,
+            mr.sequence mr_querysequence, mr.info mr_info,
+            res.id res_id, res.name res_name
+        FROM metoo_role mr
+        LEFT JOIN metoo_role_res mrr ON mrr.role_id = mr.id
+        LEFT JOIN metoo_res res ON res.id = mrr.res_id
+        where mr.id= #{id}
+      </select>
+
+    <select id="query" parameterType="com.metoo.nspm.dto.RoleDto" resultType="com.metoo.nspm.entity.nspm.Role">
+        SELECT *
+        FROM metoo_role mr
+        WHERE
+          mr.deleteStatus = 0
+        ORDER BY mr.addTime DESC
+    </select>
+
+    <select id="findObjByMap" parameterType="map" resultMap="Unit_Role_Map">
+        SELECT mr.id mr_id, mr.addTime mr_addTime, mr.name mr_name, mr.roleCode mr_roleCode, mr.url mr_url,
+            mr.component mr_component, mr.sequence mr_sequence, res.id res_id,
+            res.name res_name
+        FROM metoo_role mr
+            LEFT JOIN metoo_role_res mrr ON mrr.role_id = mr.id
+            LEFT JOIN metoo_res res ON res.id = mrr.res_id
+            WHERE mr.deleteStatus = 0
+        ORDER BY  mr.addTime DESC
+    </select>
+
+    <resultMap id="roleDtoMap" type="com.metoo.nspm.vo.RoleVo">
+        <result column="mr_id" property="id"></result>
+        <result column="mr_addTime" property="addTime"></result>
+        <result column="mr_roleCode" property="name"></result>
+        <result column="" property="roleCode"></result>
+        <result column="mr_url" property="url"></result>
+        <result column="mr_component" property="component"></result>
+        <result column="mrg_id" property="roleGroupId"></result>
+        <result column="mrg_name" property="roleGroupName"></result>
+        <result column="res_id" property="resId"></result>
+        <result column="res_name" property="resName"></result>
+
+    </resultMap>
+
+
+    <select id="findRoleByType" parameterType="java.lang.String" resultType="com.metoo.nspm.entity.nspm.Role">
+        SELECT *
+        FROM metoo_role
+        WHERE type=#{type}
+    </select>
+
+    <sql id="Base_Role_List">
+        mr.id mr_id, mr.addTime mr_addTime, mr.deleteStatus mr_deleteStatus, mr.name mr_name, mr.roleCode mr_roleCode,
+         mr.type mr_type, mr.info mr_info, mrg.id mrg_id, mrg.name mrg_name, mrg.sequence mrg_sequence, mrg.type mrg_type
+    </sql>
+
+    <!--根据用户id查询所有角色 嵌套插叙-->
+     <select id="findRoleByUserId" parameterType="Long" resultType="com.metoo.nspm.entity.nspm.Role">
+         SELECT role.id,role.roleCode
+         FROM metoo_role role
+         WHERE id IN(
+           SELECT role_id
+           FROM metoo_user_role
+           WHERE user_id=#{user_id}
+         )
+     </select>
+
+    <select id="findRoleByResId" parameterType="java.lang.Long" resultType="com.metoo.nspm.entity.nspm.Role">
+        SELECT mr.id, mr.roleCode, mr.name
+        FROM metoo_role mr
+        where id IN(
+          SELECT role_id
+          FROM metoo_role_res mrr
+          WHERE mrr.res_id=#{id, jdbcType=BIGINT}
+        )
+    </select>
+
+    <select id="findRoleByRoleGroupId" parameterType="java.lang.Long" resultType="com.metoo.nspm.entity.nspm.Role">
+         SELECT *
+         FROM metoo_role mr
+         WHERE mr.rg_id=#{role_group_id, jdbcType=BIGINT};
+    </select>
+
+    <!--<select id="findRoleByRoleGroupId" parameterType="java.lang.Long" resultMap="Unit_Role_Map">
+         SELECT mr.id mr_id, mr.name mr_name, mr.roleCode mr_roleCode, mr.type mr_type, mrg.id mrg_id
+            FROM metoo_role mr
+            left join metoo_role_group mrg on mr.rg_id=mrg.id
+         WHERE mrg.id=#{role_group_id, jdbcType=BIGINT};
+    </select>-->
+
+  <!--  <select id="findRoleByUserId" parameterType="Long" resultMap="roles">
+        SELECT r.id rid, r.roleCode rcode, r.type
+        FROM role r
+        left join
+        user_role ur
+        on r.id=ur.role_id
+        left join
+        user u
+        on ur.user_id=u.id
+        where u.id=#{user_id}
+    </select>-->
+
+    <select id="findRoleByIds" parameterType="java.lang.String" resultType="com.metoo.nspm.entity.nspm.Role">
+        SELECT <include refid="Base_Column_List"/>
+        FROM metoo_role mr
+        WHERE mr.id in(${ids, jdbcType=VARCHAR})
+    </select>
+
+    <select id="findRoleByIdList" parameterType="java.lang.String" resultType="com.metoo.nspm.entity.nspm.Role">
+        SELECT <include refid="Base_Column_List"/>
+        FROM metoo_role mr
+        WHERE mr.id
+        IN
+        <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <insert id="insert" parameterType="com.metoo.nspm.entity.nspm.Role" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO metoo_role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="addTime != null">
+                addTime,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="roleCode != null">
+                roleCode,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="info != null">
+                info,
+            </if>
+            <if test="roleGroup != null">
+                rg_id,
+            </if>
+            <if test="url != null">
+                url,
+            </if>
+            <if test="component != null">
+                component,
+            </if>
+            <if test="sequence != null">
+                sequence,
+            </if>
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            <if test="addTime != null">
+                #{addTime},
+            </if>
+            <if test="name != null">
+                #{name},
+            </if>
+            <if test="roleCode != null">
+                #{roleCode},
+            </if>
+            <if test="type != null">
+                #{type},
+            </if>
+            <if test="info != null">
+                #{info},
+            </if>
+            <if test="roleGroup != null">
+                #{roleGroup.id},
+            </if>
+            <if test="url != null">
+                #{url},
+            </if>
+            <if test="component != null">
+                #{component},
+            </if>
+            <if test="sequence != null">
+                #{sequence},
+            </if>
+        </trim>
+    </insert>
+
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.Role" >
+          UPDATE metoo_role
+          <set>
+              <if test="name != null">
+                  name = #{name},
+              </if>
+              <if test="roleCode != null">
+                  roleCode = #{roleCode},
+              </if>
+              <if test="type != null">
+                  type = #{type},
+              </if>
+              <if test="info != null">
+                  info = #{info},
+              </if>
+              <if test="roleGroup != null">
+                  rg_id = #{roleGroup.id},
+              </if>
+              <if test="url != null">
+                  url = #{url},
+              </if>
+              <if test="component != null">
+                  component = #{component},
+             </if>
+              <if test="sequence != null">
+                  sequence = #{sequence},
+              </if>
+          </set>
+        <where>
+            <if test="id != null">
+                id=#{id, jdbcType=BIGINT}
+            </if>
+        </where>
+    </update>
+
+    <update id="batchUpdateRoleGroupId" parameterType="java.util.Map">
+        <foreach collection="roles" item="item" index="index" separator=";">
+            update  metoo_role mr
+            set
+            mr.rg_id=#{rg_id}
+            WHERE mr.id=#{item.id}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE FROM metoo_role
+        WHERE id=#{id}
+    </delete>
+
+</mapper>

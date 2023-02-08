@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.AddressMapper">
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.nspm.Address">
+        <id column="id" property="id"></id>
+        <result column="ip" property="ip"></result>
+        <result column="mac" property="mac"></result>
+        <result column="host_name" property="hostName"></result>
+        <result column="description" property="description"></result>
+        <result column="subnet_id" property="subnetId"></result>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, ip, mac, host_name, description, subnet_id
+    </sql>
+
+    <sql id="INET_NTOA_Column_List">
+        id, INET_NTOA(ip) ip, mac, host_name, description, subnet_id
+    </sql>
+
+    <select id="selectObjById" parameterType="java.lang.Long" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM metoo_ip_address
+        where id = #{id}
+    </select>
+
+    <select id="selectObjByIp" parameterType="java.lang.String" resultMap="Base_Result_Map">
+        SELECT <include refid="INET_NTOA_Column_List"/>
+        FROM metoo_ip_address
+        where ip = #{ip}
+    </select>
+
+    <select id="selectObjByMac" parameterType="java.lang.String" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM metoo_ip_address
+        where mac = #{mac}
+    </select>
+
+    <select id="selectObjByMap" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT <include refid="INET_NTOA_Column_List"/>
+        FROM metoo_ip_address
+        <where>
+            <if test="ipSelf != null">
+                AND ip != #{ipSelf}
+            </if>
+            <if test="mac != null">
+                AND mac = #{mac}
+            </if>
+            <if test="hostName != null and hostName != ''">
+                AND host_name = #{hostName}
+            </if>
+            <if test="subnetId != null and subnetId != ''">
+                AND subnet_id = #{subnetId}
+            </if>
+            <if test="subnetIds != null and subnetIds != ''">
+                AND subnet_id in
+                <foreach collection="subnetIds" index = "index" item="item" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+
+    <insert id="save" parameterType="com.metoo.nspm.entity.nspm.Address">
+        INSERT INTO metoo_ip_address
+        <trim prefix="(" suffixOverrides="," suffix=")">
+            <if test="addTime != null">
+                 addTime,
+            </if>
+            <if test="ip != null">
+                ip,
+            </if>
+            <if test="mac != null">
+                mac,
+            </if>
+            <if test="hostName != null">
+                host_name,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="subnetId != null and subnetId != ''">
+                subnet_id,
+            </if>
+        </trim>
+        <trim prefix="VALUES(" suffixOverrides="," suffix=")">
+            <if test="addTime != null">
+                #{addTime},
+            </if>
+            <if test="ip != null">
+                #{ip},
+            </if>
+            <if test="mac != null">
+                #{mac},
+            </if>
+            <if test="hostName != null and hostName != ''">
+                #{hostName},
+            </if>
+            <if test="description != null">
+                #{description},
+            </if>
+            <if test="subnetId != null and subnetId != ''">
+                #{subnetId},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.Address">
+        UPDATE metoo_ip_address
+        <set>
+            <if test="addTime != null">
+                addTime = #{addTime},
+            </if>
+            <if test="ip != null">
+                ip = #{ip},
+            </if>
+            <if test="mac != null">
+                mac = #{mac},
+            </if>
+            <if test="hostName != null and hostName != ''">
+               host_name = #{hostName},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+            <if test="subnetId != null and subnetId != ''">
+                subnet_id = #{subnetId},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM metoo_ip_address WHERE id = #{id}
+    </delete>
+
+    <update id="truncateTable">
+        TRUNCATE TABLE metoo_ip_address
+    </update>
+
+
+</mapper>

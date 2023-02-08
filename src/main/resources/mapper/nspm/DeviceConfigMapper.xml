@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.DeviceConfigMapper">
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.nspm.DeviceConfig">
+        <id column="id" property="id"></id>
+        <result column="addTime" property="addTime"></result>
+        <result column="deleteStatus" property="deleteStatus"></result>
+        <result column="name" property="name"></result>
+        <result column="ne_id" property="neId"></result>
+        <result column="ne_uuid" property="neUuid"></result>
+        <result column="accessory_id" property="accessoryId"></result>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, addTime, deleteStatus, name, ne_id, accessory_id, ne_uuid
+    </sql>
+
+    <select id="selectObjById" parameterType="java.lang.Long" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List" />
+        FROM metoo_device_config
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectConditionQuery" parameterType="com.metoo.nspm.dto.DeviceConfigDTO" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List" />
+        FROM metoo_device_config
+        <where>
+            <if test="neId != null and neId != ''">
+                AND ne_id = #{neId}
+            </if>
+            <if test="neUuid != null and neUuid != ''">
+                AND ne_uuid = #{neUuid}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectObjByMap" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM metoo_device_config
+        <where>
+            <if test="neId != null and neId != ''">
+                AND ne_id = #{neId}
+            </if>
+            <if test="neUuid != null and neUuid != ''">
+                AND ne_uuid = #{neUuid}
+            </if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="com.metoo.nspm.entity.nspm.DeviceConfig">
+        INSERT INTO metoo_device_config
+        <trim prefix="(" suffixOverrides="," suffix=")">
+            <if test="addTime != null">
+                addTime,
+            </if>
+            <if test="deleteStatus != null">
+                deleteStatus,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="neId != null">
+                ne_id,
+            </if>
+            <if test="accessoryId != null">
+                accessory_id,
+            </if>
+            <if test="neUuid != null">
+                ne_uuid,
+            </if>
+        </trim>
+        <trim prefix="VALUES(" suffixOverrides="," suffix=")">
+            <if test="addTime != null">
+                #{addTime},
+            </if>
+            <if test="deleteStatus != null">
+                #{deleteStatus},
+            </if>
+            <if test="name != null">
+                #{name},
+            </if>
+            <if test="neId != null">
+                #{neId},
+            </if>
+            <if test="accessoryId != null">
+                #{accessoryId},
+            </if>
+            <if test="neUuid != null">
+                #{neUuid},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.DeviceConfig">
+        UPDATE mteoo_device_config
+        <set>
+            <if test="addTime != null">
+                addTime = #{addTime},
+            </if>
+            <if test="deleteStatus != null">
+                deleteStatus = #{deleteStatus},
+            </if>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="neId != null">
+                ne_id = #{neId},
+            </if>
+            <if test="accessoryId != null">
+                accessory_id = #{accessoryId},
+            </if>
+            <if test="neUuid != null">
+                ne_uuid = #{neUuid},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE FROM metoo_device_config
+    </delete>
+
+</mapper>

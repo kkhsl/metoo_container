@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.UserMapper">
+
+    <resultMap id="Base_User_Map" type="com.metoo.nspm.entity.nspm.User">
+        <id column="mu_id" property="id"/>
+        <result column="mu_addTime" property="addTime"></result>
+        <result column="mu_username" property="username"></result>
+        <result column="mu_password" property="password"></result>
+        <result column="mu_sex" property="sex"></result>
+        <result column="mu_age" property="age"></result>
+        <!--角色信息-->
+        <collection property="roles" javaType="list" ofType="com.metoo.nspm.entity.nspm.Role">
+            <id column="mr_id" property="id"/>
+            <result column="mr_name" property="name"></result>
+            <result column="mr_roleCode" property="roleCode"></result>
+            <result column="mr_type" property="type"></result>
+        </collection>
+    </resultMap>
+
+    <resultMap id="Base_Update_Map" type="com.metoo.nspm.vo.UserVo">
+        <id column="mu_id" property="id"></id>
+        <result column="mu_addTime" property="addTime"></result>
+        <result column="mu_username" property="username"></result>
+        <result column="mu_password" property="password"></result>
+        <result column="mu_age" property="age"></result>
+        <result column="mu_sex" property="sex"></result>
+        <result column="mu_userRole" property="type"></result>
+        <result column="mu_email" property="email"></result>
+        <result column="mu_mobile" property="mobile"></result>
+        <result column="mu_note" property="note"></result>
+        <result column="mu_groupName" property="groupName"></result>
+        <result column="mu_groupId" property="groupId"></result>
+       <collection property="roleIds" column="mr_id" ofType="java.lang.Long">
+           <id column="mr_id" property="roleIds"></id>
+       </collection>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, addTime, deleteStatus, username, password, sex,
+        age, userRole, email, mobile, note, groupId, groupName, groupLevel,type
+    </sql>
+
+    <sql id="Base_Update_Info">
+        id, username, sex,
+        age, userRole, email, mobile, note, groupId, groupName, groupLevel
+    </sql>
+
+    <insert id="insert" parameterType="com.metoo.nspm.entity.nspm.User" keyProperty="id" useGeneratedKeys="true">
+        insert into metoo_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="addTime != null">
+                addTime,
+            </if>
+            <if test="username != null and username != ''">
+                `username`,
+            </if>
+            <if test="password != null and password != ''">
+                `password`,
+            </if>
+            <if test="salt != null">
+                salt,
+            </if>
+            <if test="userRole != null">
+                userRole,
+            </if>
+            <if test="age != null">
+                age,
+            </if>
+            <if test="sex != null">
+                sex,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="mobile != null">
+                mobile,
+            </if>
+            <if test="note != null">
+                note,
+            </if>
+            <if test="groupId != null">
+                groupId,
+            </if>
+            <if test="groupName != null">
+                groupName,
+            </if>
+            <if test="groupLevel != null">
+                groupLevel,
+            </if>
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="addTime != null">
+                #{addTime},
+            </if>
+            <if test="username != null and username != ''">
+                #{username},
+            </if>
+            <if test="password != null and password != ''">
+                #{password},
+            </if>
+            <if test="salt != null and salt != ''">
+                #{salt},
+            </if>
+            <if test="userRole != null">
+                #{userRole},
+            </if>
+            <if test="age != null">
+                #{age},
+            </if>
+            <if test="sex != null">
+                #{sex},
+            </if>
+            <if test="email != null">
+                #{email},
+            </if>
+            <if test="mobile != null">
+                #{mobile},
+            </if>
+            <if test="note != null">
+                #{note},
+            </if>
+            <if test="groupId != null">
+                #{groupId},
+            </if>
+            <if test="groupName != null">
+                #{groupName},
+            </if>
+            <if test="groupLevel != null">
+                #{groupLevel},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="findByUserName" parameterType="String" resultType="com.metoo.nspm.entity.nspm.User">
+        SELECT
+            id,
+            username,
+            password,
+            salt,
+            userRole,
+            sex,
+            age,
+            groupLevel,
+            groupName,
+            groupId
+        FROM
+            metoo_user
+        WHERE
+        username=#{username}
+        AND
+        deleteStatus >= 0
+    </select>
+
+    <sql id="Unit_Column_List">
+        mu.id mu_id,mu.addTime mu_addTime, mu.username mu_username, mu.password mu_password, mu.sex mu_sex,
+        mu.age mu_age,mu.userRole mu_userRole, mu.email mu_email, mu.mobile mu_mobile, mu.note mu_note, mu.groupId mu_groupId, mu.groupName mu_groupName,
+        mr.id mr_id
+    </sql>
+
+    <select id="findRolesByUserName" parameterType="String" resultMap="Base_User_Map">
+        SELECT <include refid="Unit_Column_List" />
+        FROM metoo_user mu
+            LEFT JOIN metoo_user_role mur on mu.id=mur.user_id
+            LEFT JOIN metoo_role mr on mr.id=mur.role_id
+        WHERE mu.username=#{username}
+
+    </select>
+
+    <select id="query" parameterType="com.metoo.nspm.dto.UserDto" resultType="com.metoo.nspm.vo.UserVo">
+        SELECT <include refid="Base_Column_List"/>
+        FROM metoo_user mu
+        WHERE
+        mu.deleteStatus = 0
+        ORDER BY mu.addTime
+        DESC
+    </select>
+
+    <select id="selectPrimaryKey" resultType="com.metoo.nspm.entity.nspm.User">
+        SELECT <include refid="Base_Column_List" />
+        FROM metoo_user mu
+        WHERE id=#{id, jdbcType=BIGINT}
+    </select>
+
+    <sql id="update_Column_List">
+        mu.id mu_id,mu.addTime mu_addTime, mu.username mu_username, mu.sex mu_sex,
+        mu.age mu_age,mu.userRole mu_userRole, mu.email mu_email, mu.mobile mu_mobile, mu.note mu_note, mu.groupId mu_groupId, mu.groupName mu_groupName,
+        mr.id mr_id
+    </sql>
+
+    <select id="findUserUpdate" parameterType="java.lang.Long" resultMap="Base_Update_Map">
+       SELECT <include refid="update_Column_List" />
+       FROM metoo_user mu
+        LEFT JOIN metoo_user_role mur ON mur.user_id = mu.id
+        LEFT JOIN metoo_role mr ON mr.id = mur.role_id
+		WHERE mu.id=#{id}
+    </select>
+
+    <delete id="deleteByLevel" parameterType="java.lang.String">
+       DELETE FROM metoo_user
+       WHERE groupLevel = #{level}
+    </delete>
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.User">
+        UPDATE metoo_user
+        <set>
+            <if test = "username != null and username != ''">
+                username=#{username},
+            </if>
+            <if test = "password != null and password != ''">
+                password=#{password},
+            </if>
+            <if test = "sex != null">
+                sex=#{sex},
+            </if>
+            <if test = "age != null">
+                age=#{age},
+            </if>
+            <if test = "salt != null">
+                salt=#{salt},
+            </if>
+            <if test="userRole != null">
+                userRole=#{userRole},
+            </if>
+            <if test="deleteStatus != null">
+                deleteStatus=#{deleteStatus},
+            </if>
+            <if test="email != null">
+                email=#{email},
+            </if>
+            <if test="mobile != null">
+                mobile=#{mobile},
+            </if>
+            <if test="note != null">
+                note=#{note},
+            </if>
+            <if test="groupId != null">
+                groupId = #{groupId},
+            </if>
+            <if test="groupName != null">
+                groupName = #{groupName},
+            </if>
+            <if test="groupLevel != null">
+                groupLevel = #{groupLevel},
+            </if>
+        </set>
+        <where>
+            <if test = "id != null">
+                id=#{id}
+            </if>
+        </where>
+    </update>
+
+    <update id="allocation" parameterType="java.util.List">
+      <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+          UPDATE metoo_user
+          <set>
+              <if test = "item.groupId != null">
+                  groupId = #{item.groupId},
+              </if>
+              <if test = "item.groupLevel != null">
+                  groupLevel = #{item.groupLevel},
+              </if>
+          </set>
+          where id = #{item.id, jdbcType=BIGINT}
+      </foreach>
+    </update>
+
+    <select id="findObjByIds" resultType="com.metoo.nspm.entity.nspm.User">
+        SELECT * FROM metoo_user WHERE id in 
+        <foreach collection="array" item="item" index="index" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </select>
+
+    <!--根据 Level查询用户-->
+    <select id="getObjByLevel" parameterType="java.util.List" resultType="String">
+        SELECT userName
+        FROM metoo_user
+        where groupLevel in
+        <foreach collection="list" index="index" item="item" open="(" close=")" separator=",">
+            #{item.level}
+        </foreach>
+    </select>
+
+    <!--根据 Level查询用户-->
+    <select id="getObjsByLevel" parameterType="String" resultType="com.metoo.nspm.entity.nspm.User">
+        SELECT <include refid="Base_Update_Info" />
+        FROM metoo_user
+        WHERE
+          deleteStatus = 0
+        AND
+          groupLevel = #{level}
+        OR
+          groupLevel in (
+        SELECT level FROM metoo_group WHERE parentLevel = #{level}
+        )
+    </select>
+
+
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE FROM metoo_user
+        WHERE id=#{id, jdbcType=BIGINT}
+    </delete>
+    
+</mapper>

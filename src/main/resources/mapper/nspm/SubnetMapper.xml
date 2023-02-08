@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.zabbix.ZabbixSubnetMapper">
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.nspm.Subnet">
+        <id column="id" property="id"></id>
+        <result column="ip" property="ip"></result>
+        <result column="mask" property="mask"></result>
+        <result column="vlan" property="vlan"></result>
+        <result column="threshold" property="threshold"></result>
+        <result column="parent_id" property="parentId"></result>
+        <result column="parent_ip" property="parentIp"></result>
+        <result column="description" property="description"></result>
+        <result column="vlan_id" property="vlanId"></result>
+        <result column="vlan_name" property="vlanName"></result>
+
+    </resultMap>
+
+    <sql id="Base_Column_List>">
+        id, ip, mask, parent_id, parent_ip, vlan, threshold, description, vlan_id, vlan_name
+    </sql>
+
+    <sql id="Inet_Column_List">
+        id, INET_NTOA(ip) ip, mask, parent_id, INET_NTOA(parent_ip) parent_ip, vlan,
+          threshold, description, vlan_id, vlan_name
+    </sql>
+
+    <select id="selectSubnetByParentId" parameterType="java.lang.Long" resultMap="Base_Result_Map">
+        SELECT <include refid="Inet_Column_List" />
+        FROM metoo_subnet
+        <where>
+            <if test="parentId != null and parentId != ''">
+                  parent_id = #{parentId}
+            </if>
+            <if test="parentId == null">
+                parent_id IS NULL
+            </if>
+        </where>
+        ORDER BY ip + 0 ASC
+    </select>
+
+    <select id="selectSubnetByParentIp" parameterType="java.lang.Long" resultMap="Base_Result_Map">
+        SELECT <include refid="Inet_Column_List" />
+        FROM metoo_subnet
+        <where>
+            <if test="parentIp!= null and parentIp != ''">
+                parent_ip = #{parentIp}
+            </if>
+            <if test="parentIp == null">
+                parent_ip IS NULL
+            </if>
+        </where>
+        ORDER BY ip + 0 ASC
+    </select>
+
+    <select id="selectObjByIp" resultMap="Base_Result_Map">
+        SELECT *
+        FROM metoo_subnet
+        WHERE ip = #{ip} and mask = #{mask}
+    </select>
+
+    <select id="selectObjById" parameterType="java.lang.Long" resultMap="Base_Result_Map">
+        SELECT <include refid="Inet_Column_List" />
+        FROM metoo_subnet
+        WHERE id = #{id}
+    </select>
+
+
+    <insert id="save" parameterType="com.metoo.nspm.entity.nspm.Subnet" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO metoo_subnet
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="addTime != null">
+                addTime,
+            </if>
+            <if test="ip != null and ip != ''">
+                ip,
+            </if>
+            <if test="mask != null and mask != ''">
+                mask,
+            </if>
+            <if test="vlan != null and vlan != ''">
+                vlan,
+            </if>
+            <if test="threshold != null and threshold != ''">
+                threshold,
+            </if>
+            <if test="parentIp != null and parentIp != ''">
+                parent_ip,
+            </if>
+            <if test="parentId != null and parentId != ''">
+                parent_id,
+            </if>
+            <if test="description != null and description != ''">
+                description,
+            </if>
+            <if test="vlanId != null and vlanId != ''">
+                vlan_id,
+            </if>
+            <if test="vlanName != null and vlanName != ''">
+                vlan_name,
+            </if>
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            <if test="addTime != null">
+                #{addTime},
+            </if>
+            <if test="ip != null and ip != ''">
+                #{ip},
+            </if>
+            <if test="mask != null and mask != ''">
+                #{mask},
+            </if>
+            <if test="vlan != null and vlan != ''">
+                #{vlan},
+            </if>
+            <if test="threshold != null and threshold != ''">
+                #{threshold},
+            </if>
+            <if test="parentIp != null and parentIp != ''">
+                #{parentIp},
+            </if>
+            <if test="parentId != null and parentId != ''">
+                #{parentId},
+            </if>
+            <if test="description != null and description != ''">
+                #{description},
+            </if>
+            <if test="vlanId != null and vlanId != ''">
+                #{vlanId},
+            </if>
+            <if test="vlanName != null and vlanName != ''">
+                #{vlanName},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.Subnet">
+        UPDATE metoo_subnet
+        <set>
+            <if test="vlan != null and vlan != ''">
+                vlan = #{vlan},
+            </if>
+            <if test="threshold != null and threshold != ''">
+                threshold = #{threshold},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description},
+            </if>
+            <if test="vlanId != null and vlanId != ''">
+                vlan_id = #{vlanId},
+            </if>
+            <if test="vlanName != null and vlanName != ''">
+                vlan_name = #{vlanName},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        delete from metoo_subnet where id = #{id}
+    </delete>
+
+</mapper>

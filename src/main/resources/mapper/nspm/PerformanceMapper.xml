@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.PerformenceMapper">
+
+    <select id="getObjBy" resultType="com.metoo.nspm.entity.nspm.Performance">
+        select * from metoo_performance
+        <where>
+            <if test="switch != null ">
+                AND switch=#{switch}
+            </if>
+            <if test="id != null and id != ''">
+                AND id=#{id}
+            </if>
+        </where>
+
+    </select>
+
+</mapper>

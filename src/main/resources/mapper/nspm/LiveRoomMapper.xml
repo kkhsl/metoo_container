@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.LiveRoomMapper">
+<!--DATE_FORMAT(lr.addTime,'%Y-%m-%d %H:%i:%s')-->
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.nspm.LiveRoom">
+        <id column="mlr_id" property="id"></id>
+        <result column="mlr_addTime" property="addTime"></result>
+        <result column="mlr_title" property="title"></result>
+        <result column="mlr_manager" property="manager"></result>
+        <result column="mlr_password" property="password"></result>
+        <result column="mlr_info" property="info"></result>
+        <result column="mlr_telephone" property="telephone"></result>
+        <result column="mlr_isEnable" property="isEnable"></result>
+        <result column="mlr_onLine" property="onLine"></result>
+        <result column="mlr_maxOnline" property="maxOnline"></result>
+        <result column="mlr_istalk" property="istalk"></result>
+        <result column="mlr_isVip" property="isVip"></result>
+        <result column="mlr_pushAddress" property="pushAddress"></result>
+        <result column="mlr_bindCode" property="bindCode"></result>
+        <result column="mlr_rtmp" property="rtmp"></result>
+        <result column="mlr_live" property="live"></result>
+        <result column="mlr_type" property="type"></result>
+        <result column="mlr_userId" property="userId"></result>
+        <result column="mlr_username" property="username"></result>
+        <result column="mlr_cover" property="cover"></result>
+        <result column="mlr_obsRtmp" property="obsRtmp"></result>
+        <result column="mlr_isPlayback" property="isPlayback"></result>
+        <association property="accessory" column="cover"  javaType="com.metoo.nspm.entity.nspm.Accessory">
+            <id property="id" column="ma_id" jdbcType="BIGINT"/>
+            <result property="a_name" column="ma_name" jdbcType="VARCHAR"></result>
+            <result property="a_path" column="ma_path" jdbcType="VARCHAR"></result>
+        </association>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      mlr.id mlr_id, mlr.addTime mlr_addTime, mlr.title mlr_title, mlr.manager mlr_manager,mlr.password mlr_password
+      ,mlr.info mlr_info,mlr.telephone mlr_telephone, mlr.isEnable mlr_isEnable, mlr.onLine mlr_onLine,
+      mlr.maxOnline mlr_maxOnline, mlr.istalk mlr_istalk, mlr.isVip mlr_isVip,mlr.pushAddress mlr_pushAddress,
+      mlr.bindCode mlr_bindCode, mlr.rtmp mlr_rtmp, mlr.live mlr_live, mlr.isPlayback mlr_isPlayback,
+      mlr.type mlr_type, mlr.userId mlr_userId, mlr.username mlr_username, mlr.cover mlr_cover, mlr.obsRtmp mlr_obsRtmp,
+      ma.id ma_id, ma.`name` `ma_name`, ma.path ma_path
+    </sql>
+
+    <select id="getObjById" parameterType="java.lang.Long" resultType="com.metoo.nspm.entity.nspm.LiveRoom">
+        SELECT *
+        FROM metoo_live_room mlr
+        WHERE
+        id=#{id}
+    </select>
+
+    <select id="findAllLiveRoom" resultType="com.metoo.nspm.entity.nspm.LiveRoom">
+        SELECT *
+        FROM metoo_live_room
+    </select>
+
+    <resultMap id="LiveRoom_Unit_Program_Map" type="com.metoo.nspm.entity.nspm.LiveRoom">
+        <id column="mlr_id" property="id"></id>
+        <result column="mlr_addTime" property="addTime"></result>
+        <result column="mlr_title" property="title"></result>
+        <result column="mlr_info" property="info"></result>
+        <collection property="roomProgramList" ofType="com.metoo.nspm.entity.nspm.RoomProgram">
+            <id column="mrp_id" property="id"></id>
+            <result column="mrp_title" property="title"></result>
+            <result column="mrp_roomId" property="roomId"></result>
+            <result column="mrp_lecturer" property="lecturer"></result>
+            <association property="grade" column="grade_id" javaType="com.metoo.nspm.entity.nspm.Grade" resultMap="Base_Grade_Map">
+             </association>
+            <association property="course" column="course_id" javaType="com.metoo.nspm.entity.nspm.Course" resultMap="Base_Course_Map">
+            </association>
+        </collection>
+    </resultMap>
+
+    <resultMap id="Base_Grade_Map" type="com.metoo.nspm.entity.nspm.Grade">
+        <id column="mg_id" property="id" jdbcType="BIGINT"/>
+        <result column="mg_name" property="name"/>
+    </resultMap>
+
+    <resultMap id="Base_Course_Map" type="com.metoo.nspm.entity.nspm.Course">
+        <id column="mc_id" property="id"></id>
+        <result column="mc_name" property="name"></result>
+    </resultMap>
+
+
+    <resultMap id="Base_Dto_Map" type="com.metoo.nspm.vo.WebLiveRoomVo">
+        <id column="mlr_id" property="live_Room_id"></id>
+        <result column="mlr_addTime" property="live_Room_addTime"></result>
+        <result column="mlr_title" property="live_Room_title"></result>
+        <result column="mlr_info" property="live_Room_info"></result>
+        <result column="mlr_live" property="live_Room_live"></result>
+        <result column="mlr_obs" property="live_Room_obs"></result>
+        <result column="mrp_id" property="room_program_id"></result>
+        <result column="mrp_title" property="room_program_title"></result>
+        <result column="mrp_roomId" property="room_program_roomId"></result>
+        <result column="mrp_status" property="room_program_status"></result>
+        <result column="mg_id" property="grade_id" jdbcType="BIGINT"/>
+        <result column="mg_name" property="grade_name"/>
+        <result column="mc_id" property="course_id"></result>
+        <result column="mc_name" property="course_name"></result>
+        <result column="ma_id" property="ma_id"></result>
+        <result column="ma_name" property="ma_name"></result>
+        <result column="ma_path" property="ma_path"></result>
+    </resultMap>
+
+    <sql id="LiveRoom_Unit_Program">
+         SELECT mlr.id mlr_id, mlr.addTime mlr_addTime, mlr.title mlr_title,mlr.info mlr_info,
+        mrpgc.mrp_id mrp_id, mrpgc.mrp_title mrp_title, mrpgc.mrp_roomId mrp_roomId, mrpgc.mrp_lecturer mrp_lecturer,
+        mrpgc.mg_id mg_id, mrpgc.mg_name mg_name, mrpgc.mg_sequence mg_sequence,
+        mrpgc.mc_id mc_id, mrpgc.mc_name mc_name, mrpgc.mc_sequence mc_sequence,
+		CONCAT(ma.path, "/", ma.name) ma_path
+    </sql>
+
+    <select id="webLiveRoom" parameterType="map" resultMap="Base_Dto_Map">
+        SELECT mlr.id mlr_id, mlr.addTime mlr_addTime, mlr.lastTime mlr_lastTime, mlr.title mlr_title,mlr.info mlr_info,
+            mlr.live mlr_live, mlr.obs mlr_obs,
+            mrpgc.mrp_id mrp_id, mrpgc.mrp_title mrp_title, mrpgc.mrp_roomId mrp_roomId, mrpgc.mrp_lecturer mrp_lecturer,
+            mrpgc.mrp_status mrp_status,
+            mrpgc.mg_id mg_id, mrpgc.mg_name mg_name, mrpgc.mg_sequence mg_sequence,
+            mrpgc.mc_id mc_id, mrpgc.mc_name mc_name, mrpgc.mc_sequence mc_sequence,
+            CONCAT(ma.path, "/", ma.name) ma_path
+        FROM metoo_live_room mlr
+           LEFT JOIN (
+        SELECT mrp.id mrp_id, mrp.addTime mrp_addTime, mrp.title mrp_title, mrp.roomId mrp_roomId,
+                mrp.lecturer mrp_lecturer, mrp.status mrp_status,
+             mg.id mg_id, mg.name mg_name, mg.sequence mg_sequence,
+             mc.id mc_id, mc.name mc_name, mc.sequence mc_sequence
+        FROM metoo_room_program mrp
+            LEFT JOIN metoo_grade mg ON mg.id=mrp.grade_id
+            LEFT JOIN metoo_course mc ON mc.id=mrp.course_id
+        ) mrpgc
+          ON mrpgc.mrp_id=mlr.roomProgramId
+         LEFT JOIN metoo_accessory ma ON ma.id=mlr.cover
+            <where>
+                <if test = "mrp_status != null">
+                    AND mrpgc.mrp_status = #{mrp_status}
+                </if>
+                <if test = "isEnable != null">
+                    AND mlr.isEnable = #{isEnable}
+                </if>
+                <if test="grade != null and grade.length > 0 ">
+                    AND mrpgc.mg_id IN
+                    <foreach collection="grade" separator="," close=")" open="(" index="index" item="item">
+                        #{item}
+                    </foreach>
+                </if>
+                <if test="course != null and course.length > 0">
+                    AND mrpgc.mc_id IN
+                    <foreach collection="course" separator="," close=")" open="(" index="index" item="item">
+                        #{item}
+                    </foreach>
+                </if>
+                AND mlr.deleteStatus = 0
+            </where>
+            <if test = "orderBy != null and orderBy != ''">
+                ORDER BY ${orderBy}
+            </if>
+            <if test = "orderType != null and orderType != ''">
+                ${orderType}
+            </if>
+
+    </select>
+
+    <insert id="save" parameterType="com.metoo.nspm.entity.nspm.LiveRoom" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO metoo_live_room
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="addTime != null">
+                addTime,
+            </if>
+            <if test="deleteStatus != null">
+                deleteStatus,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="manager != null">
+                manager,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="info != null">
+                info,
+            </if>
+            <if test="telephone != null">
+                telephone,
+            </if>
+            <if test="isEnable != null">
+                isEnable,
+            </if>
+            <if test="onLine != null">
+                onLine,
+            </if>
+            <if test="maxOnline != null">
+                maxOnline,
+            </if>
+            <if test="istalk != null">
+                istalk,
+            </if>
+            <if test="isVip != null">
+                isVip,
+            </if>
+            <if test="pushAddress != null">
+                pushAddress,
+            </if>
+
+            <if test="bindCode != null">
+                bindCode,
+            </if>
+            <if test="rtmp != null">
+                rtmp,
+            </if>
+            <if test="flv != null">
+                flv,
+            </if>
+            <if test="websocketFlv != null">
+                websocketFlv,
+            </if>
+            <if test="ItemId != null">
+                ItemId,
+            </if>
+            <if test="deptId != null">
+                deptId,
+            </if>
+            <if test="isPlayback != null">
+                isPlayback,
+            </if>
+            <if test="live != null">
+                live,
+            </if>
+            <if test="obsRtmp != null">
+                obsRtmp,
+            </if>
+            <if test="user != null">
+                userId,
+            </if>
+            <if test="username != null">
+                username,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="cover != null">
+                cover,
+            </if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="addTime != null">
+                #{addTime},
+            </if>
+            <if test="deleteStatus != null">
+                #{deleteStatus},
+            </if>
+            <if test="title != null">
+               #{title},
+            </if>
+            <if test="manager != null">
+                #{manager},
+            </if>
+            <if test="password != null">
+               #{password},
+            </if>
+            <if test="info != null">
+                #{info},
+            </if>
+            <if test="telephone != null">
+               #{telephone},
+            </if>
+            <if test="isEnable != null">
+                #{isEnable},
+            </if>
+            <if test="onLine != null">
+                #{onLine},
+            </if>
+            <if test="maxOnline != null">
+                #{maxOnline},
+            </if>
+            <if test="istalk != null">
+                #{istalk},
+            </if>
+            <if test="isVip != null">
+                #{isVip},
+            </if>
+            <if test="pushAddress != null">
+               #{pushAddress},
+            </if>
+
+            <if test="bindCode != null">
+                #{bindCode},
+            </if>
+            <if test="rtmp != null">
+               #{rtmp},
+            </if>
+            <if test="flv != null">
+                #{flv},
+            </if>
+            <if test="websocketFlv != null">
+               #{websocketFlv},
+            </if>
+            <if test="ItemId != null">
+                #{ItemId},
+            </if>
+            <if test="deptId != null">
+                #{deptId},
+            </if>
+            <if test="isPlayback != null">
+                #{isPlayback},
+            </if>
+            <if test="live != null">
+                #{live},
+            </if>
+            <if test="obsRtmp != null">
+                #{obsRtmp},
+            </if>
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="username != null">
+                #{username},
+            </if>
+            <if test="type != null">
+                #{type},
+            </if>
+            <if test="cover != null">
+                #{cover},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.LiveRoom">
+      UPDATE metoo_live_room
+        <set>
+            <if test="deleteStatus != null">
+                deleteStatus=#{deleteStatus},
+            </if>
+            <if test="lastTime != null and title != ''">
+                lastTime=#{lastTime},
+            </if>
+            <if test="title != null and title != ''">
+                title=#{title},
+            </if>
+            <if test="manager != null and manager != ''">
+                manager=#{manager},
+            </if>
+            <if test="password != null">
+                password=#{password},
+            </if>
+            <if test="info != null">
+                info=#{info},
+            </if>
+            <if test="telephone != null">
+                telephone=#{telephone},
+            </if>
+            <if test="isEnable != null">
+                isEnable=#{isEnable},
+            </if>
+            <if test="onLine != null">
+                onLine=#{onLine},
+            </if>
+            <if test="maxOnline != null">
+                maxOnline=#{maxOnline},
+            </if>
+            <if test="istalk != null">
+                istalk=#{istalk},
+            </if>
+            <if test="isVip != null">
+                isVip=#{isVip},
+            </if>
+            <if test="pushAddress != null">
+                pushAddress=#{pushAddress},
+            </if>
+            <if test="bindCode != null">
+                bindCode=#{bindCode},
+            </if>
+            <if test="rtmp != null">
+                rtmp=#{rtmp},
+            </if>
+            <if test="obsRtmp != null">
+                obsRtmp=#{obsRtmp},
+            </if>
+            <if test="flv != null">
+                flv=#{flv},
+            </if>
+            <if test="websocketFlv != null">
+                websocketFlv=#{websocketFlv},
+            </if>
+            <if test="ItemId != null">
+                ItemId=#{ItemId},
+            </if>
+            <if test="deptId != null">
+                deptId=#{deptId},
+            </if>
+            <if test="isPlayback != null">
+                isPlayback=#{isPlayback},
+            </if>
+            <if test="live != null">
+                live=#{live},
+            </if>
+            <if test="obs != null">
+                obs=#{obs},
+             </if>
+            <if test="user != null">
+                `user` = #{user.id},
+            </if>
+            <if test="type != null">
+                `type` = #{type},
+            </if>
+            <if test="cover != null">
+                cover = #{cover},
+            </if>
+            <if test="roomProgramId != ''">
+                roomProgramId = #{roomProgramId},
+            </if>
+        </set>
+        <where>
+            id = #{id,jdbcType=BIGINT}
+        </where>
+    </update>
+
+    <delete id="delete" parameterType="Long">
+        DELETE FROM metoo_live_room
+        where id=#{id}
+    </delete>
+
+    <!--使用Limit实现分页-->
+    <select id="findObjByMap" parameterType="map" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM metoo_live_room mlr
+        LEFT JOIN metoo_accessory ma ON ma.id = mlr.cover
+        <where>
+            <if test="deleteStatus != null">
+                AND mlr.deleteStatus = #{deleteStatus}
+            </if>
+            <if test = "title != null and title != ''">
+                AND mlr.title LIKE CONCAT('%', #{title}, '%')
+            </if>
+            <if test = "isEnable != null">
+                AND mlr.isEnable = #{isEnable}
+            </if>
+            <if test="userId != null">
+                AND mlr.userId = #{userId, jdbcType=BIGINT}
+            </if>
+            <if test = "type != null">
+                AND mlr.type = #{type}
+            </if>
+            <if test = "id != null">
+                AND mlr.id = #{id}
+            </if>
+            <if test = "bindCode != null">
+                AND mlr.bindCode = #{bindCode}
+            </if>
+        </where>
+    </select>
+
+    <select id="query" parameterType="com.metoo.nspm.dto.LiveRoomDto" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM metoo_live_room mlr
+        LEFT JOIN metoo_accessory ma ON ma.id = mlr.cover
+        <where>
+            <if test = "title != null and title != ''">
+                AND mlr.title LIKE CONCAT('%', #{title}, '%')
+            </if>
+            <if test = "isEnable != null">
+                AND mlr.isEnable = #{isEnable}
+            </if>
+            <if test="userId != null">
+                AND mlr.userId = #{userId, jdbcType=BIGINT}
+            </if>
+            <if test = "id != null">
+                AND mlr.id = #{id}
+            </if>
+            AND mlr.deleteStatus = 0
+        </where>
+    </select>
+
+    <select id="getAccountByTotal" resultType="int">
+        SELECT COUNT(1)
+        FROM metoo_live_room
+    </select>
+
+    <select id="selectAll" resultType="com.metoo.nspm.entity.nspm.LiveRoom">
+        SELECT *
+        FROM metoo_live_room
+        <where>
+            <if test = "deleteStatus != null">
+                deleteStatus = #{deleteStatus}
+            </if>
+        </where>
+    </select>
+</mapper>

@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.NetworkElementMapper">
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.nspm.NetworkElement">
+        <id column="id" property="id" jdbcType="BIGINT" javaType="java.lang.Long"></id>
+        <result column="addTime" property="addTime"></result>
+        <result column="deleteStatus" property="deleteStatus"></result>
+        <result column="ip" property="ip"></result>
+        <result column="device_name" property="deviceName"></result>
+        <result column="interface_name" property="interfaceName"></result>
+        <result column="interface_names" property="interfaceNames"></result>
+        <result column="flux" property="flux"></result>
+        <result column="group_id" property="groupId"></result>
+        <result column="group_name" property="groupName"></result>
+        <result column="device_type_id" property="deviceTypeId"></result>
+        <result column="device_type_name" property="deviceTypeName"></result>
+        <result column="vendor_id" property="vendorId"></result>
+        <result column="vendor_name" property="vendorName"></result>
+        <result column="description" property="description"></result>
+        <result column="user_id" property="userId"></result>
+        <result column="user_name" property="userName"></result>
+        <result column="connect_type" property="connectType"></result>
+        <result column="port" property="port"></result>
+        <result column="credential_id" property="credentialId"></result>
+        <result column="web_url" property="webUrl"></result>
+        <result column="permit_connect" property="permitConnect"></result>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, addTime, deleteStatus, ip, device_name, group_id, group_name,
+         device_type_id, device_type_name, vendor_id, vendor_name, description, user_id, user_name,
+         uuid, interface_name, interface_names, flux, connect_type, port, credential_id, web_url, permit_connect
+    </sql>
+
+    <select id="selectObjById" parameterType="java.lang.Long" resultMap="Base_Result_Map">
+        SELECT *
+        FROM metoo_ne
+        WHERE id = #{id, jdbcType=BIGINT}
+    </select>
+
+    <select id="selectObjByUuid" parameterType="java.lang.String" resultMap="Base_Result_Map">
+        SELECT *
+        FROM metoo_ne
+        WHERE uuid = #{uuid, jdbcType=BIGINT}
+    </select>
+
+
+    <select id="selectConditionQuery" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM metoo_ne
+        <where>
+            <if test="id != null">
+                AND id != #{id}
+            </if>
+            <if test="filter != null and filter != ''">
+                AND ip = #{filter} or device_name = #{filter}
+            </if>
+            <if test="ip != null and ip != ''">
+                AND ip = #{ip}
+            </if>
+            <if test="deviceName != null and deviceName != ''">
+                AND device_name = #{deviceName}
+            </if>
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+            <if test="userName != null and userName != ''">
+                AND user_name = #{userName}
+            </if>
+            <if test="groupId != null and groupId != ''">
+                AND group_id = #{groupId}
+            </if>
+            <if test="groupIds != null and groupIds != ''">
+                AND group_id in
+                <foreach collection="groupIds" index = "index" item="item" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="deviceTypeId != null and deviceTypeId != ''">
+                AND device_type_id = #{deviceTypeId}
+            </if>
+        </where>
+        <if test = "orderBy != null and orderBy != ''">
+            ORDER BY ${orderBy}
+        </if>
+        <if test = "orderType != null and orderType != ''">
+            ${orderType}
+        </if>
+    </select>
+
+
+    <select id="selectObjByMap" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT *
+        FROM metoo_ne
+        <where>
+            <if test="id != null">
+                AND id = #{id}
+            </if>
+            <if test="ip != null and ip != ''">
+                AND ip = #{ip}
+            </if>
+            <if test="deviceName != null and deviceName != ''">
+                AND device_name = #{deviceName}
+            </if>
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+            <if test="userName != null and userName != ''">
+               AND user_name = #{userName}
+            </if>
+            <if test="neId != null">
+                AND id != #{neId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectObjAll" resultMap="Base_Result_Map">
+        SELECT id, device_name, ip, device_type_name, uuid, interface_name FROM metoo_ne
+    </select>
+
+    <insert id="save" parameterType="com.metoo.nspm.entity.nspm.NetworkElement" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO metoo_ne
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="addTime != null">
+                addTime,
+            </if>
+            <if test="ip != null and ip != ''">
+                ip,
+            </if>
+            <if test="deviceName != null and deviceName != ''">
+                device_name,
+            </if>
+            <if test="interfaceName != null and interfaceName != ''">
+                interface_name,
+            </if>
+            <if test="interfaceNames != null and interfaceNames != ''">
+                interface_names,
+            </if>
+            <if test="flux != null and flux != ''">
+                flux,
+            </if>
+            <if test="groupId != null and groupId != ''">
+                group_id,
+            </if>
+            <if test="groupName != null and groupName != ''">
+                group_name,
+            </if>
+            <if test="deviceTypeId != null and deviceTypeId != ''">
+                device_type_id,
+            </if>
+            <if test="deviceTypeName != null and deviceTypeName != ''">
+                device_type_name,
+            </if>
+            <if test="vendorId != null and vendorId != ''">
+                vendor_id,
+            </if>
+            <if test="vendorName != null and vendorName != ''">
+                vendor_name,
+            </if>
+            <if test="description != null and description != ''">
+                description,
+            </if>
+            <if test="userId != null and userId != ''">
+                user_id,
+            </if>
+            <if test="userName != null and userName != ''">
+                user_name,
+            </if>
+            <if test="sync_device != null">
+                sync_device,
+            </if>
+            <if test="uuid != null">
+                uuid,
+            </if>
+            <if test="connectType != null">
+                connect_type,
+            </if>
+            <if test="port != null">
+                port,
+            </if>
+            <if test="credentialId != null">
+                credential_id,
+            </if>
+            <if test="webUrl != null">
+                web_url,
+            </if>
+            <if test="permitConnect != null">
+                permit_connect,
+            </if>
+        </trim>
+            <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+                <if test="addTime != null">
+                    #{addTime},
+                </if>
+                <if test="ip != null and ip != ''">
+                    #{ip},
+                </if>
+                <if test="deviceName != null and deviceName != ''">
+                    #{deviceName},
+                </if>
+                <if test="interfaceName != null and interfaceName != ''">
+                    #{interfaceName},
+                </if>
+                <if test="flux != null and flux != ''">
+                    #{flux},
+                </if>
+                <if test="groupId != null and groupId != ''">
+                    #{groupId},
+                </if>
+                <if test="groupName != null and groupName != ''">
+                    #{groupName},
+                </if>
+                <if test="deviceTypeId != null and deviceTypeId != ''">
+                    #{deviceTypeId},
+                </if>
+                <if test="deviceTypeName != null and deviceTypeName != ''">
+                    #{deviceTypeName},
+                </if>
+                <if test="vendorId != null and vendorId != ''">
+                    #{vendorId},
+                </if>
+                <if test="vendorName != null and vendorName != ''">
+                    #{vendorName},
+                </if>
+                <if test="description != null and description != ''">
+                    #{description},
+                </if>
+                <if test="userId != null and userId != ''">
+                    #{userId},
+                </if>
+                <if test="userName != null and userName != ''">
+                    #{userName},
+                </if>
+                <if test="sync_device != null">
+                    #{sync_device},
+                </if>
+                <if test="uuid != null">
+                    #{uuid},
+                </if>
+                <if test="connectType != null">
+                    #{connectType},
+                </if>
+                <if test="port != null">
+                    #{port},
+                </if>
+                <if test="credentialId != null">
+                    #{credentialId},
+                </if>
+                <if test="webUrl != null">
+                    #{webUrl},
+                </if>
+                <if test="permitConnect != null">
+                    #{permitConnect},
+                </if>
+            </trim>
+    </insert>
+
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO metoo_ne(
+          addTime, uuid, device_name, interface_name, ip,
+          vendor_id, vendor_name,
+          device_type_id, device_type_name, description,
+          group_id, group_name, user_id, user_name)
+        VALUES
+        <foreach collection ="list" item="item" separator ="," >
+            ( #{item.addTime},
+            #{item.uuid},
+            #{item.deviceName},
+            #{item.interfaceName},
+            #{item.ip},
+            #{item.vendorId},
+            #{item.vendorName},
+            #{item.deviceTypeId},
+            #{item.deviceTypeName},
+            #{item.description},
+            #{item.groupId},
+            #{item.groupName},
+            #{item.userId},
+            #{item.userName}
+            )
+        </foreach>
+    </insert>
+
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.NetworkElement">
+        UPDATE metoo_ne
+        <set>
+            <if test="addTime != null">
+                addTime = #{addTime},
+            </if>
+            <if test="deleteStatus != null">
+                deleteStatus = #{deleteStatus},
+            </if>
+            <if test="ip != null and ip != ''">
+                ip = #{ip},
+            </if>
+            <if test="deviceName != null and deviceName != ''">
+                device_name = #{deviceName},
+            </if>
+            <if test="interfaceName != null and interfaceName != ''">
+                interface_name = #{interfaceName},
+            </if>
+            <if test="interfaceNames != null and interfaceNames != ''">
+                interface_names = #{interfaceNames},
+            </if>
+            <if test="flux != null and flux != ''">
+                flux = #{flux},
+            </if>
+            <if test="groupId != null and groupId != ''">
+                group_id = #{groupId},
+            </if>
+            <if test="groupName != null">
+                group_name = #{groupName},
+            </if>
+            <if test="deviceTypeId != null and deviceTypeId != ''">
+                device_type_id = #{deviceTypeId},
+            </if>
+            <if test="deviceTypeName != null and deviceTypeName != ''">
+                device_type_name = #{deviceTypeName},
+            </if>
+            <if test="vendorId != null and vendorId != ''">
+                vendor_id = #{vendorId},
+            </if>
+            <if test="vendorName != null and vendorName != ''">
+                vendor_name = #{vendorName},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description},
+            </if>
+            <if test="userId != null and userId != ''">
+                user_id = #{userId},
+            </if>
+            <if test="userName != null and userName != ''">
+                user_name = #{userName},
+            </if>
+            <if test="sync_device != null">
+                sync_device = #{sync_device},
+            </if>
+            <if test="connectType != null">
+                connect_type = #{connectType},
+            </if>
+            <if test="port != null">
+                port = #{port},
+            </if>
+            <if test="credentialId != ''">
+                credential_id = #{credentialId},
+            </if>
+            <if test="webUrl != null">
+                web_url = #{webUrl},
+            </if>
+            <if test="permitConnect != null">
+                permit_connect = #{permitConnect},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="del" parameterType="java.lang.Long">
+        DELETE FROM metoo_ne where id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.RoleGroupMapper">
+
+    <resultMap id="Base_RoleGroup_Map" type="com.metoo.nspm.entity.nspm.RoleGroup">
+        <id column="id" property="id"></id>
+        <result column="addTime" property="addTime"></result>
+        <result column="name" property="name"></result>
+        <result column="sequence" property="sequence"></result>
+        <result column="type" property="type"></result>
+        <result column="icon" property="icon"></result>
+  <!--     <association column="icon_id" property="icon" javaType="Accessory">
+           <id column="accessoryId" property="id"></id>
+           <result column="accessoryName" property="a_name"></result>
+           <result column="accessoryPath" property="a_path"></result>
+       </association>-->
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+       id, addTime, name, sequence, type, icon_id, icon, url
+    </sql>
+
+    <sql id="Unit_Accessory_Column_List">
+       mrg.id, mrg.addTime, mrg.name, mrg.sequence, mrg.type, mrg.icon_id,
+       ma.id accessoryId, ma.name accessoryName, ma.path accessoryPath
+    </sql>
+
+
+    <select id="query" resultType="com.metoo.nspm.entity.nspm.RoleGroup">
+        SELECT <include refid="Base_Column_List" />
+        FROM metoo_role_Group mrg
+        ORDER BY mrg.sequence
+        DESC
+    </select>
+
+    <resultMap id="unit_roleGroup_Map" type="com.metoo.nspm.entity.nspm.RoleGroup">
+        <id property="id" column="mrg_id"></id>
+        <result property="addTime" column="mrg_addTime"></result>
+        <result property="name" column="mrg_name"></result>
+        <result property="sequence" column="mrg_sequence"></result>
+        <collection property="roles" ofType="com.metoo.nspm.entity.nspm.Role">
+            <id property="id" column="mr_id"></id>
+            <result property="name" column="mr_name"></result>
+            <result property="info" column="mr_info"></result>
+        </collection>
+    </resultMap>
+
+    <sql id="unit_roleGroup_Lise">
+        mrg.id mrg_id, mrg.addTime mrg_addTime, mrg.name mrg_name, mrg.sequence mrg_sequence,
+        mr.id mr_id, mr.name mr_name, mr.type mr_info
+    </sql>
+
+    <select id="roleUnitGroup" resultMap="unit_roleGroup_Map">
+        SELECT <include refid="unit_roleGroup_Lise"></include>
+        FROM metoo_role_group mrg
+	     LEFT JOIN metoo_role mr on mrg.id=mr.rg_id
+        ORDER BY mrg.addTime
+        DESC
+    </select>
+
+    <select id="change" parameterType="java.lang.Long" resultMap="Base_RoleGroup_Map">
+        SELECT <include refid="Base_Column_List"></include>
+        FROM metoo_role_group mrg
+        WHERE mrg.id = #{id}
+        ORDER BY mrg.sequence
+        DESC
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultType="com.metoo.nspm.entity.nspm.RoleGroup">
+        SELECT <include refid="Base_Column_List" />
+        FROM metoo_role_group
+        WHERE id=#{id, jdbcType=BIGINT}
+    </select>
+
+    <select id="selectByPrimaryType" parameterType="java.lang.String" resultType="com.metoo.nspm.entity.nspm.RoleGroup">
+        SELECT <include refid="Base_Column_List" />
+        FROM metoo_role_group
+        WHERE type=#{type, jdbcType=BIGINT}
+    </select>
+
+    <select id="selectObjByNameCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+      SELECT COUNT(*)
+      FROM metoo_role_group mrg
+      WHERE mrg.name = #{name, jdbcType=VARCHAR}
+    </select>
+
+    <insert id="insert" parameterType="com.metoo.nspm.entity.nspm.RoleGroup" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO metoo_role_group
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="addTime != null">
+                addTime,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="sequence != null">
+                sequence,
+            </if>
+            <if test="type">
+                type,
+            </if>
+            <if test="icon != null">
+                icon,
+            </if>
+            <if test="url != null">
+                url,
+            </if>
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            <if test="addTime != null">
+                #{addTime},
+            </if>
+            <if test="name != null">
+                #{name},
+            </if>
+            <if test="sequence != null">
+                #{sequence},
+            </if>
+            <if test="type">
+                #{type},
+            </if>
+            <if test="icon != null">
+                #{icon},
+            </if>
+            <if test="url != null">
+                #{url},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.RoleGroup">
+        UPDATE metoo_role_group
+        <set>
+            <if test="addTime != null">
+                addTime = #{addTime},
+            </if>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="sequence != null">
+                sequence = #{sequence},
+            </if>
+            <if test="type">
+                type =  #{type},
+            </if>
+            <if test="icon != null">
+                icon = #{icon},
+          </if>
+            <if test="url != null">
+                url = #{url},
+            </if>
+        </set>
+        <where>
+            id=#{id, jdbcType=BIGINT}
+        </where>
+    </update>
+
+
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE
+        FROM metoo_role_group
+        WHERE id=#{id, jdbcType=BIGINT}
+    </delete>
+
+</mapper>

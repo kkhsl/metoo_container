@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.GroupMapper">
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.nspm.Group">
+        <id column="id" property="id"></id>
+        <result column="branchName" property="branchName"></result>
+        <result column="level" property="level"></result>
+        <result column="branchDesc" property="branchDesc"></result>
+        <result column="parentId" property="parentId"></result>
+        <result column="parentLevel" property="parentLevel"></result>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, `branchName`, `level`, `branchDesc`, parentId, parentLevel
+    </sql>
+
+    <select id="query" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List" />
+        FROM metoo_group
+    </select>
+
+
+    <select id="getObjByLevel" parameterType="String" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List" />
+            FROM metoo_group
+        WHERE
+          level=#{level}
+    </select>
+
+    <select id="getMaxBranch" parameterType="String" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List" />
+        FROM metoo_group
+        WHERE
+        parentLevel=#{level}
+        ORDER BY level
+        DESC
+        limit 1
+    </select>
+
+    <select id="selectObjById" parameterType="long" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM metoo_group obj
+        WHERE
+        id = #{id, jdbcType=BIGINT}
+    </select>
+
+    <select id="selectObjByName" parameterType="java.lang.String" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM metoo_group obj
+        WHERE
+        branchName = #{name}
+    </select>
+
+    <select id="queryChild" parameterType="long" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM metoo_group obj
+        <where>
+            <choose>
+                <when test="parentId != null">
+                    parentId = #{parentId}
+                </when>
+                <when test="parentId == null">
+                    parentId is null
+                </when>
+                <otherwise>
+
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="com.metoo.nspm.entity.nspm.Group" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO metoo_group
+        <trim prefix="("  suffixOverrides="," suffix=")">
+            <if test="addTime != null">
+                addTime,
+            </if>
+            <if test="deleteStatus != null">
+                deleteStatus,
+            </if>
+            <if test="branchName != null">
+                branchName,
+            </if>
+            <if test="level != null">
+                level,
+            </if>
+            <if test="branchDesc != null">
+                `branchDesc`,
+            </if>
+            <if test="parentId != null">
+                parentId,
+            </if>
+            <if test="parentLevel != null">
+                parentLevel,
+            </if>
+            <if test="updateTime != null">
+                updateTime,
+            </if>
+        </trim>
+        <trim prefix="VALUES(" suffixOverrides="," suffix=")">
+            <if test="addTime != null">
+                #{addTime},
+            </if>
+            <if test="deleteStatus != null">
+                #{deleteStatus},
+            </if>
+            <if test="branchName != null">
+                #{branchName},
+            </if>
+            <if test="level != null">
+                #{level},
+            </if>
+            <if test="branchDesc != null">
+                #{branchDesc},
+            </if>
+            <if test="parentId != null">
+                #{parentId},
+            </if>
+            <if test="parentLevel != null">
+                #{parentLevel},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.Group">
+        UPDATE metoo_group
+        <set>
+            <if test="addTime != null">
+                addTime = #{addTime},
+            </if>
+            <if test="deleteStatus != null">
+                deleteStatus = #{deleteStatus},
+            </if>
+            <if test="branchName != null">
+                `branchName` = #{branchName},
+            </if>
+            <if test="level != null">
+                `level` = #{level},
+            </if>
+            <if test="branchDesc != null">
+                `branchDesc` = #{branchDesc},
+            </if>
+            <if test="parentId != null">
+                parentId = #{parentId},
+            </if>
+            <if test="parentLevel != null">
+                parentLevel = #{parentLevel},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime},
+            </if>
+        </set>
+        <where>
+            <if test = "id != null">
+                id=#{id}
+            </if>
+        </where>
+    </update>
+
+    <delete id="del" parameterType="long">
+        DELETE FROM metoo_group WHERE id = #{id, jdbcType=BIGINT}
+    </delete>
+
+</mapper>

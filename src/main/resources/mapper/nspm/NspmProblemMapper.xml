@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.zabbix.NspmProblemMapper">
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.zabbix.Problem">
+        <id column="id" property="id"></id>
+        <result column="addTime" property="addTime"></result>
+        <result column="deleteStatus" property="deleteStatus"></result>
+        <result column="name" property="name"></result>
+        <result column="device_name" property="deviceName"></result>
+        <result column="interface_name" property="interfaceName"></result>
+        <result column="uuid" property="uuid"></result>
+        <result column="clock" property="clock"></result>
+        <result column="ip" property="ip"></result>
+        <result column="severity" property="severity"></result>
+        <result column="event" property="event"></result>
+        <result column="status" property="status"></result>
+        <result column="restoreTime" property="restoreTime"></result>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, addTime, deleteStatus, name, device_name, uuid, clock, ip, severity, event, status, restoreTime
+    </sql>
+
+    <select id="selectObjByMap" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM rsms_problem
+        <where>
+            <if test="ip != null and ip != ''">
+                AND ip = #{ip}
+            </if>
+            <if test="interfaceName != null and interfaceName != ''">
+                AND interface_name = #{interfaceName}
+            </if>
+            <if test="event != null and event != ''">
+                AND event is not null
+            </if>
+            <if test="objectid != null and objectid != ''">
+                AND objectid is not null
+            </if>
+        </where>
+        order by restoreTime desc, addTime desc
+        <if test="limit != null">
+            limit  ${limit}
+        </if>
+
+    </select>
+
+    <select id="selectObjConditionQuery" parameterType="com.metoo.nspm.dto.NspmProblemDTO" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM rsms_problem
+        <where>
+            <if test="ip != null and ip != ''">
+                AND ip = #{ip}
+            </if>
+            <if test="interfaceName != null and interfaceName != ''">
+                AND interface_name = #{interfaceName}
+            </if>
+            <if test="event != null and event != ''">
+                AND event is not null
+            </if>
+            <if test="objectid != null and objectid != ''">
+                AND objectid is not null
+            </if>
+        </where>
+        <if test = "orderBy != null and orderBy != ''">
+            ORDER BY ${orderBy}
+        </if>
+        <if test = "orderType != null and orderType != ''">
+            ${orderType}
+        </if>
+    </select>
+
+
+    <update id="truncateTable">
+        TRUNCATE TABLE rsms_problem;
+    </update>
+
+    <insert id="copyProblemTemp" parameterType="java.util.Map">
+        INSERT INTO rsms_problem
+        SELECT * FROM rsms_problem_temp
+    </insert>
+
+</mapper>

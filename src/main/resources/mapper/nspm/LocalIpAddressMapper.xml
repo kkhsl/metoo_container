@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.zabbix.LocalIpAddressMapper">
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.nspm.LocalIpAddress">
+        <id column="id" property="id"></id>
+        <result column="device_name" property="deviceName"></result>
+        <result column="ip" property="ip"></result>
+        <result column="ip_segment" property="ipSegment"></result>
+        <result column="sequence" property="sequence"></result>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, device_name, ip, sequence, ip_segment
+    </sql>
+
+    <select id="selectObjByMap" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT
+          <include refid="Base_Column_List" />
+        FROM
+          rsms_local_ip
+        <where>
+            <if test="deviceName != null and deviceName != ''">
+                AND device_name = #{deviceName}
+            </if>
+            <if test="ip != null and ip != ''">
+                AND ip = #{ip}
+            </if>
+            <if test="sequence != null and sequence != ''">
+                AND sequence = #{sequence}
+            </if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="com.metoo.nspm.entity.nspm.LocalIpAddress">
+        INSERT INTO rsms_local_ip
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="deviceName != null and deviceName != ''">
+                device_name,
+            </if>
+            <if test="ip != null and ip != ''">
+                ip,
+            </if>
+            <if test="ipSegment != null and ipSegment != ''">
+                ip_segment,
+            </if>
+            <if test="sequence != null and sequence != ''">
+                sequence,
+            </if>
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            <if test="deviceName != null and deviceName != ''">
+                 #{deviceName},
+            </if>
+            <if test="ip != null and ip != ''">
+                  #{ip},
+            </if>
+            <if test="ipSegment != null and ipSegment != ''">
+                #{ipSegment},
+            </if>
+            <if test="sequence != null and sequence != ''">
+                  #{sequence},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="truncateTable">
+        TRUNCATE TABLE rsms_local_ip
+    </update>
+
+</mapper>

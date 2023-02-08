@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.NodeMapper">
+
+    <select id="getObjById" parameterType="java.lang.Long" resultType="com.metoo.nspm.entity.nspm.TopoNode">
+        SELECT * FROM metoo_topo_node
+        WHERE id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="getObjByHostAddress" parameterType="java.lang.String" resultType="com.metoo.nspm.entity.nspm.TopoNode">
+        SELECT * FROM metoo_topo_node
+        WHERE hostAddress = #{hostAddress,jdbcType=VARCHAR}
+    </select>
+
+    <select id="query" parameterType="com.metoo.nspm.dto.TopoNodeDto" resultType="com.metoo.nspm.entity.nspm.TopoNode">
+        SELECT * FROM metoo_topo_node
+        <where>
+        <if test="type != null and type != '' ">
+            AND `type` = #{type}
+        </if>
+        <if test="filter != null and filter != '' ">
+            AND hostAddress = #{filter} or deviceName = #{filter}
+        </if>
+        <if test="origin != null and origin != 0 ">
+            AND origin = #{origin}
+        </if>
+        <!--<if test="branchLevel != null and branchLevel != '' ">-->
+            <!--AND branchLevel = #{branchLevel}-->
+        <!--</if>-->
+        <if test="state != null and state != '' ">
+            AND state = #{state}
+        </if>
+        <if test="vendor != null and vendor != '' ">
+            AND vendorName = #{vendor}
+        </if>
+        <if test="skipAnalysis != null and skipAnalysis != '' ">
+            AND skipAnalysis = #{skipAnalysis}
+        </if>
+        <if test="toSameInbound != null and toSameInbound != '' ">
+            AND toSameInbound = #{toSameInbound}
+        </if>
+        <if test="layerTwoDevice != null and layerTwoDevice != '' ">
+            AND layerTwoDevice = #{layerTwoDevice}
+        </if>
+        </where>
+    </select>
+
+    <insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.metoo.nspm.entity.nspm.TopoNode">
+        INSERT INTO metoo_topo_node
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="branchLevel != null">
+                  branchLevel,
+            </if>
+            <if test="branchId != null">
+                branchId,
+            </if>
+            <if test="branchName != null">
+                branchName,
+            </if>
+            <if test="hostAddress != null">
+                hostAddress,
+            </if>
+            <if test="deviceName != null">
+                deviceName,
+            </if>
+            <if test="vendorName != null">
+                vendorName,
+            </if>
+            <if test="type != null">
+                `type`,
+            </if>
+            <if test="origin != null">
+                origin,
+            </if>
+            <if test="gatherTime != null">
+                gatherTime,
+            </if>
+            <if test="skipAnalysis != null">
+                skipAnalysis,
+            </if>
+            <if test="toSameInbound != null">
+                toSameInbound,
+            </if>
+            <if test="layerTwoDevice != null">
+                layerTwoDevice,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+            <if test="uuid != null">
+                uuid,
+            </if>
+            <if test="vendorId != null">
+                vendorId,
+            </if>
+            <if test="version != null">
+                version,
+            </if>
+            <if test="errorMess != null">
+                errorMess,
+            </if>
+            <if test="stateDesc != null">
+                stateDesc,
+            </if>
+            <if test="charset != null">
+                charset,
+            </if>
+            <if test="credentialUuid != null">
+                credentialUuid,
+            </if>
+            <if test="pushCredentialUuid != null">
+                pushCredentialUuid,
+            </if>
+            <if test="taskType != null">
+                taskType,
+            </if>
+            <if test="taskUuid != null">
+                taskUuid,
+            </if>
+            <if test="timeout != null">
+                timeout,
+            </if>
+            <if test="webHref != null">
+                webHref,
+            </if>
+            <if test="modelNumber != null">
+                modelNumber,
+            </if>
+            <if test="nodeId != null ">
+                nodeId,
+            </if>
+            <if test="gatherId != null and gatherId != '' ">
+                gatherId,
+            </if>
+            <if test="gatherType != null">
+                gatherType,
+            </if>
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            <if test="branchLevel != null">
+                #{branchLevel},
+            </if>
+            <if test="branchId != null">
+                #{branchId},
+            </if>
+            <if test="branchName != null">
+                #{branchName},
+            </if>
+            <if test="hostAddress != null">
+                #{hostAddress},
+            </if>
+            <if test="deviceName != null">
+                #{deviceName},
+            </if>
+            <if test="vendorName != null">
+                #{vendorName},
+            </if>
+            <if test="type != null">
+                #{type},
+            </if>
+            <if test="origin != null">
+                #{origin},
+            </if>
+            <if test="gatherTime != null">
+                #{gatherTime},
+            </if>
+            <if test="skipAnalysis != null">
+                #{skipAnalysis},
+            </if>
+            <if test="toSameInbound != null">
+                #{toSameInbound},
+            </if>
+            <if test="layerTwoDevice != null">
+                #{layerTwoDevice},
+            </if>
+            <if test="description != null">
+                #{description},
+            </if>
+            <if test="state != null">
+                #{state},
+            </if>
+            <if test="uuid != null">
+                #{uuid},
+            </if>
+            <if test="vendorId != null">
+                #{vendorId},
+            </if>
+            <if test="version != null">
+                #{version},
+            </if>
+            <if test="errorMess != null">
+                #{errorMess},
+            </if>
+            <if test="stateDesc != null">
+                #{stateDesc},
+            </if>
+            <if test="charset != null">
+                #{charset},
+            </if>
+            <if test="credentialUuid != null">
+                #{credentialUuid},
+            </if>
+            <if test="pushCredentialUuid != null">
+                #{pushCredentialUuid},
+            </if>
+            <if test="taskType != null">
+                #{taskType},
+            </if>
+            <if test="taskUuid != null">
+                #{taskUuid},
+            </if>
+            <if test="timeout != null">
+                #{timeout},
+            </if>
+            <if test="webHref != null">
+                #{webHref},
+            </if>
+            <if test="modelNumber != null">
+                #{modelNumber},
+            </if>
+            <if test="nodeId != null">
+                #{nodeId},
+            </if>
+            <if test="gatherId != null and gatherId != '' ">
+                #{gatherId},
+            </if>
+            <if test="gatherType != null">
+                #{gatherType},
+            </if>
+        </trim>
+    </insert>
+
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.TopoNode">
+        UPDATE metoo_topo_node
+        <set>
+            <if test="branchLevel != null and branchLevel != '' ">
+                branchLevel = #{branchLevel},
+            </if>
+            <if test="branchId != null and branchId != '' ">
+                branchId = #{branchId},
+            </if>
+            <if test="branchName != null and branchName != '' ">
+                branchName = #{branchName},
+            </if>
+            <if test="hostAddress != null and hostAddress != '' ">
+                hostAddress = #{hostAddress},
+            </if>
+            <if test="deviceName != null and deviceName != '' ">
+                deviceName = #{deviceName},
+            </if>
+            <if test="vendorName != null and vendorName != '' ">
+                vendorName = #{vendorName},
+            </if>
+            <if test="type != null and type != '' ">
+                `type` = #{type},
+            </if>
+            <if test="origin != null and origin != '' ">
+                origin = #{origin},
+            </if>
+            <if test="gatherTime != null">
+                gatherTime = #{gatherTime},
+            </if>
+            <if test="skipAnalysis != null and skipAnalysis != '' ">
+                skipAnalysis =  #{skipAnalysis},
+            </if>
+            <if test="toSameInbound != null and toSameInbound != '' ">
+                toSameInbound = #{toSameInbound},
+            </if>
+            <if test="layerTwoDevice != null and layerTwoDevice != '' ">
+                layerTwoDevice = #{layerTwoDevice},
+            </if>
+            <if test="description != null and description != '' ">
+                description = #{description},
+            </if>
+            <if test="state != null and state != '' ">
+                state = #{state},
+            </if>
+            <if test="uuid != null and uuid != '' ">
+                uuid =  #{uuid},
+            </if>
+            <if test="vendorId != null and vendorId != '' ">
+                vendorId = #{vendorId},
+            </if>
+            <if test="version != null and version != '' ">
+                version = #{version},
+            </if>
+            <if test="errorMess != null and errorMess != '' ">
+                errorMess = #{errorMess},
+            </if>
+            <if test="stateDesc != null and stateDesc != '' ">
+                stateDesc = #{stateDesc},
+            </if>
+            <if test="charset != null and charset != '' ">
+                charset = #{charset},
+            </if>
+            <if test="credentialUuid != null and credentialUuid != '' ">
+                credentialUuid = #{credentialUuid},
+            </if>
+            <if test="pushCredentialUuid != null and pushCredentialUuid != '' ">
+                pushCredentialUuid = #{pushCredentialUuid},
+            </if>
+            <if test="taskType != null and taskType != '' ">
+                taskType = #{taskType},
+            </if>
+            <if test="taskUuid != null and taskUuid != '' ">
+                taskUuid = #{taskUuid},
+            </if>
+            <if test="timeout != null and timeout != '' ">
+                timeout = #{timeout},
+            </if>
+            <if test="webHref != null and webHref != '' ">
+                webHref = #{webHref},
+            </if>
+            <if test="modelNumber != null and modelNumber != '' ">
+                modelNumber = #{modelNumber},
+            </if>
+            <if test="gatherId != null and gatherId != '' ">
+                gatherId = #{gatherId},
+            </if>
+        </set>
+        where hostAddress = #{hostAddress}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE FROM metoo_topo_node
+        WHERE id = #{id}
+    </delete>
+</mapper>

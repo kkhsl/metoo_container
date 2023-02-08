@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.zabbix.InterfaceMapper">
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.zabbix.Interface">
+        <result column="hostid" property="hostid"></result>
+        <result column="ip" property="ip"></result>
+        <result column="available" property="available"></result>
+        <result column="error" property="error"></result>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        hostid, ip, available, error
+    </sql>
+
+    <select id="selectObjByIp" parameterType="java.lang.String" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List"/>
+        FROM interface where ip = #{ip}
+    </select>
+
+</mapper>

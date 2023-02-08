@@ -1,0 +1,670 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.zabbix.ArpMapper">
+
+    <resultMap id="Base_Result_Map"  type="com.metoo.nspm.entity.nspm.Arp">
+        <id column="id" property="id"></id>
+        <result column="device_ip" property="deviceIp"></result>
+        <result column="device_type" property="deviceType"></result>
+        <result column="device_name" property="deviceName"></result>
+        <result column="interface_name" property="interfaceName"></result>
+        <result column="ip" property="ip"></result>
+        <result column="uuid" property="uuid"></result>
+        <result column="mac" property="mac"></result>
+        <result column="mac_vendor" property="macVendor"></result>
+        <result column="tag" property="tag"></result>
+        <result column="remote_device" property="remoteDevice"></result>
+        <result column="remote_interface" property="remoteInterface"></result>
+        <result column="remote_device_ip" property="remoteDeviceIp"></result>
+        <result column="remote_uuid" property="remoteUuid"></result>
+        <result column="ip_address" property="ipAddress"></result>
+        <result column="remote_device_type" property="remoteDeviceType"></result>
+        <result column="remote_ip" property="remoteIp"></result>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, addTime, device_name, interface_name, ip, mac, mac_vendor, tag,
+        remote_device, remote_interface, remote_device_type, remote_device_ip, remote_ip, mask, uuid,
+        remote_uuid, ip_address, device_ip, device_type
+    </sql>
+
+    <sql id="Ntoa_Column_List">
+        id, addTime, device_name, interface_name, INET_NTOA(ip) AS ip, mac, mac_vendor, tag,
+        remote_device, remote_interface, remote_device_type, remote_device_ip, INET_NTOA(remote_ip) as remote_ip,
+        mask, uuid, remote_uuid, ip_address, device_ip, device_type
+    </sql>
+
+
+    <select id="selectObjByDistinct" resultMap="Base_Result_Map">
+        SELECT
+            DISTINCT interface_name, device_name
+        FROM
+        rsms_arp
+    </select>
+
+    <select id="selectOppositeByMap" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT
+            s.id id, l.device_name remote_device, l.interface_name remote_interface, l.uuid remote_uuid
+        FROM
+          (
+            SELECT
+              id, device_name, mac, tag
+            FROM
+             rsms_arp
+            WHERE
+             mac
+              in(
+                  SELECT
+                    mac
+                  FROM
+                   rsms_arp
+                    <where>
+                        <if test="tagU != null and tagU != ''">
+                            AND tag = #{tagU}
+                        </if>
+                        <if test="tagS != null and tagS != ''">
+                            AND tag = #{tagS}
+                        </if>
+                    </where>
+                    group by
+                      mac
+                     having
+                        <if test="tagU != null and tagU != ''">
+                            count(mac) = 1
+                        </if>
+                        <if test="tagS != null and tagS != ''">
+                            count(mac) >= 1
+                        </if>
+                    )
+                )as s
+        INNER join
+        (
+            SELECT
+                id,
+                device_name,
+                interface_name,
+                mac,
+                uuid
+            FROM rsms_arp
+            WHERE mac in
+            (
+                SELECT mac
+                FROM rsms_arp
+                WHERE tag = 'L'
+                GROUP BY  mac
+                HAVING count(mac) = 1
+            )
+        ) l
+            ON l.mac = s.mac
+          where s.device_name != l.device_name
+            and tag = 'U'
+    </select>
+
+    <select id="selectES" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT
+            s.id id, s.interface_name interface_name, l.device_name remote_device, l.device_ip remote_device_ip,
+            l.interface_name remote_interface
+        FROM(
+	        SELECT
+		      id, device_name, device_ip, interface_name, mac, mask, ip, tag
+	        FROM
+	         rsms_arp
+	        WHERE
+	          mac
+		        in(
+				  SELECT
+					mac
+				  FROM
+				    rsms_arp
+                  WHERE tag = 'S'
+                  GROUP BY
+                    mac
+                  HAVING
+                        count(mac) >= 1
+					)
+		        AND
+	              tag = 'S'
+              )s
+      INNER join (
+            SELECT
+	            *
+            FROM
+	          rsms_arp
+            WHERE
+              mac
+	           IN(
+		          SELECT
+				     mac
+                  FROM
+				    rsms_arp
+			      WHERE
+			    	tag = 'L'
+			      GROUP BY
+					mac
+			        HAVING
+			        COUNT(mac) >= 1
+	            )
+                AND
+	              tag = 'L'
+	          )l
+			    ON l.mac = s.mac
+             WHERE  s.mask = l.mask
+    </select>
+
+    <select id="selectEAndRemote" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT
+            <include refid="Ntoa_Column_List"/>
+        FROM
+            rsms_arp
+        where
+            tag = 'E' or tag = 'L'
+        AND
+            (device_name, interface_name, uuid)
+        in(
+                SELECT remote_device device_name, remote_interface interface_name, remote_uuid uuid
+                FROM
+                    rsms_arp
+                WHERE
+                    tag = 'E'
+            )
+    </select>
+
+    <select id="selectObjByGroupMap" parameterType="java.util.Map" resultMap="Base_Result_Map">
+       SELECT
+          id, device_name,mac, interface_name, mask, ip, tag, uuid
+        FROM
+          rsms_arp
+        WHERE
+          mac
+        in(
+          SELECT
+           mac
+         FROM
+            rsms_arp
+        <where>
+            <if test="tag != null and tag != ''">
+                tag = #{tag}
+            </if>
+            <if test="tagLS != null and tagLS != ''">
+                OR tag = #{tagLS}
+            </if>
+        </where>
+        GROUP BY
+        mac
+        HAVING
+        count(mac) >= 1
+        )
+        AND
+        <if test="tag != null and tag != ''">
+            tag = #{tag}
+        </if>
+    </select>
+
+    <select id="selectObjByGroupHavingInterfaceName" parameterType="java.util.Map" resultMap="Base_Result_Map">
+
+       SELECT * FROM rsms_arp arp4
+		join
+		(
+			SELECT arp1.* FROM rsms_arp arp1
+        join
+        (
+            SELECT
+            *
+            FROM
+            rsms_arp
+                <where>
+                    <if test="deviceName != null and deviceName != ''">
+                        AND device_name = #{deviceName}
+                    </if>
+                    <if test="tag != null and tag != ''">
+                        AND tag = #{tag}
+                    </if>
+                </where>
+            GROUP BY interface_name
+       )arp2
+        ON arp1.interface_name = arp2.interface_name
+        <where>
+            <if test="tag != null and tag != ''">
+                AND arp1.tag = #{tag}
+            </if>
+        </where>
+        GROUP BY arp1.mac, arp1.interface_name
+        HAVING count(arp1.mac) > 1
+		)arp3
+		 ON arp4.interface_name = arp3.interface_name
+        <where>
+            <if test="tag != null and tag != ''">
+                AND arp4.tag = #{tag}
+            </if>
+        </where>
+
+    </select>
+
+    <select id="selectObjByMac" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT
+          *
+        FROM
+          rsms_arp
+        WHERE
+          mac
+          in(
+            SELECT
+              mac
+            FROM
+              rsms_arp
+            WHERE
+             tag = 'S'
+             group by
+              mac
+              having
+              count(mac)
+                <if test="count > 1"> > 1</if>
+                <if test="count = 1"> = 1</if>
+          )
+          AND tag = 'S'
+    </select>
+
+    <select id="selectObjByIp" parameterType="java.lang.String" resultMap="Base_Result_Map">
+        SELECT
+         DISTINCT ip, mac
+        FROM
+          rsms_arp
+        WHERE
+          ip = #{ip}
+          AND
+          mac IS NOT NULL
+    </select>
+
+    <select id="selectObjByInterface" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT
+          *
+        FROM
+         rsms_arp
+        where
+          interface_name = (
+            SELECT
+               interface_name
+            FROM
+              rsms_arp
+            WHERE interface_name = #{interfaceName}
+            AND device_name = #{deviceName}
+            AND tag != 'V'
+            AND tag != 'L'
+            AND tag != 'LS'
+            group by
+               interface_name
+            having
+               count(interface_name)
+                   <if test="count = 1"> = #{count}</if>
+                   <if test="count > 2"> > #{count}</if>
+            )
+        AND device_name = #{deviceName}
+        AND tag != 'V'
+        AND tag != 'L'
+        AND tag != 'LS'
+    </select>
+
+    <select id="selectObjByMap" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT
+          <include refid="Ntoa_Column_List"/>
+        FROM
+        rsms_arp
+        <where>
+            <if test="deviceName != null and deviceName != ''">
+                AND device_name = #{deviceName}
+            </if>
+            <if test="uuid != null and uuid != ''">
+                AND uuid = #{uuid}
+            </if>
+            <if test="ip != null and ip != ''">
+                AND ip = #{ip}
+            </if>
+            <if test="interfaceName != null and interfaceName != ''">
+               AND interface_name = #{interfaceName}
+            </if>
+            <if test="tag != null and tag != ''">
+                AND tag = #{tag}
+            </if>
+            <if test="tagAndLS != null and tagAndLS != ''">
+                AND tag = #{tagAndLS}
+            </if>
+            <if test="tagL != null and tagL != ''">
+                AND tag = #{tagL}
+            </if>
+            <if test="tagLS != null and tagLS != ''">
+                OR tag = #{tagLS}
+            </if>
+            <if test="tagU != null and tagU != ''">
+                OR tag = #{tagU}
+            </if>
+            <if test="tagS != null and tagS != ''">
+                OR tag = #{tagS}
+            </if>
+            <if test="mac != null and mac != ''">
+                AND mac = #{mac}
+            </if>
+            <if test="unDeviceName != null and unDeviceName != ''">
+                AND device_name != #{unDeviceName}
+            </if>
+            <if test="like != null">
+                AND mac like "0:0:5e:0%"
+            </if>
+            <if test="other != null">
+                AND tag != #{other}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectObjConditionQuery" parameterType="com.metoo.nspm.dto.ArpDTO" resultMap="Base_Result_Map">
+        SELECT
+          <include refid="Ntoa_Column_List"/>
+        FROM
+         rsms_arp
+        <where>
+            <if test="deviceName != null and deviceName != ''">
+                AND device_name = #{deviceName}
+            </if>
+            <if test="uuid != null and uuid != ''">
+                AND uuid = #{uuid}
+            </if>
+            <if test="ip != null and ip != ''">
+                AND ip = #{ip}
+            </if>
+        </where>
+        <if test = "orderBy != null and orderBy != ''">
+            ORDER BY ${orderBy}
+        </if>
+        <if test = "orderType != null and orderType != ''">
+            ${orderType}
+        </if>
+    </select>
+
+    <select id="selectDistinctObjByMap" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT
+            <include refid="Ntoa_Column_List"/>
+        FROM
+            rsms_arp
+        <where>
+            <if test="acquisitionTime != null">
+                AND addTime = #{acquisitionTime}
+            </if>
+            <if test="ip != null and ip != ''">
+                AND ip = #{ip}
+            </if>
+            <if test="tag != null and tag != ''">
+                AND tag = #{tag}
+            </if>
+            <if test="mac != null and mac != ''">
+                AND mac = #{mac}
+            </if>
+            <if test="interfaceName != null and interfaceName != ''">
+                AND interface_name = #{interfaceName}
+            </if>
+            <if test="deviceName != null and deviceName != ''">
+                AND device_name = #{deviceName}
+            </if>
+            <if test="uuid != null and uuid != ''">
+                AND uuid = #{uuid}
+            </if>
+        </where>
+        GROUP BY
+            ip, mac
+    </select>
+
+    <select id="arpTag" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT
+            *
+        FROM
+            rsms_arp
+        WHERE
+            (device_name, interface_name , mac)
+        IN(
+            SELECT
+              device_name, interface_name, mac
+            FROM
+                rsms_arp
+            <where>
+                <if test="tag != null">
+                    AND tag = #{tag}
+                </if>
+                <if test="tag1 != null">
+                    AND tag != #{tag1}
+                </if>
+                <if test="tag2 != null">
+                    AND tag != #{tag2}
+                </if>
+            </where>
+            GROUP BY device_name,interface_name, mac
+            <if test="count != null">
+                HAVING COUNT(mac) >= #{count}
+            </if>
+        )
+    </select>
+
+    <select id="selectSubquery" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        SELECT
+            *
+        FROM
+            rsms_arp
+        <where>
+            <if test="tag1 != null">
+                AND tag = #{tag1}
+            </if>
+        </where>
+        AND
+            mac
+        IN(
+            SELECT
+              mac
+            FROM
+              rsms_arp
+            <where>
+                <if test="tag2 != null">
+                    AND tag = #{tag2}
+                </if>
+            </where>
+        )
+    </select>
+
+    <select id="selectGroupByHavingMac" parameterType="java.util.Map" resultMap="Base_Result_Map">
+        	SELECT
+                <include refid="Base_Column_List"/>
+            FROM
+                rsms_arp
+            <where>
+                <if test="tag != null">
+                    AND tag = #{tag}
+                </if>
+            </where>
+            GROUP BY
+                mac
+            <if test="count != null">
+                HAVING
+                COUNT(mac) = #{count}
+            </if>
+    </select>
+
+    <insert id="save" parameterType="com.metoo.nspm.entity.nspm.ArpTemp">
+        INSERT INTO rsms_arp
+        <trim prefix="(" suffixOverrides="," suffix=")">
+            <if test="addTime != null">
+                addTime,
+            </if>
+            <if test="deviceName != null">
+                device_name,
+            </if>
+            <if test="deviceIp != null">
+                device_ip,
+            </if>
+            <if test="deviceType != null">
+                device_type,
+            </if>
+            <if test="interfaceName != null">
+                interface_name,
+            </if>
+            <if test="ip != null">
+                ip,
+            </if>
+            <if test="mac != null">
+                mac,
+            </if>
+            <if test="macVendor != null">
+                mac_vendor,
+            </if>
+            <if test="tag != null">
+                tag,
+            </if>
+            <if test="remoteDevice != null">
+                remote_device,
+            </if>
+            <if test="remoteInterface != null">
+                remote_interface,
+            </if>
+            <if test="mask != null">
+                mask,
+            </if>
+            <if test="uuid != null">
+                uuid,
+            </if>
+            <if test="remoteUuid != null">
+                remote_uuid,
+            </if>
+            <if test="ipAddress != null">
+                ip_address,
+            </if>
+            <if test="index != null">
+                `index`,
+            </if>
+        </trim>
+        <trim prefix="VALUES(" suffixOverrides="," suffix=")">
+            <if test="addTime != null">
+                #{addTime},
+            </if>
+            <if test="deviceName != null">
+                #{deviceName},
+            </if>
+            <if test="deviceIp != null">
+                #{deviceIp},
+            </if>
+            <if test="deviceType != null">
+                #{deviceType},
+            </if>
+            <if test="interfaceName != null">
+                #{interfaceName},
+            </if>
+            <if test="ip != null">
+                #{ip},
+            </if>
+            <if test="mac != null">
+                #{mac},
+            </if>
+            <if test="macVendor != null">
+                #{macVendor},
+            </if>
+            <if test="tag != null">
+                #{tag},
+            </if>
+            <if test="remoteDevice != null">
+                #{remoteDevice},
+            </if>
+            <if test="remoteInterface != null">
+                #{remote_interface},
+            </if>
+            <if test="mask != null">
+                #{mask},
+            </if>
+            <if test="uuid != null">
+                #{uuid},
+            </if>
+            <if test="remoteUuid != null">
+                #{remoteUuid},
+            </if>
+            <if test="ipAddress != null">
+                #{ipAddress},
+            </if>
+            <if test="index != null">
+                #{index},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.ArpTemp">
+        UPDATE rsms_arp
+        <set>
+            <if test="addTime != null">
+                addTime = #{addTime},
+            </if>
+            <if test="deviceName != null">
+                device_name = #{deviceName},
+            </if>
+            <if test="deviceIp != null">
+                device_ip = #{deviceIp},
+            </if>
+            <if test="deviceType != null">
+                device_type = #{deviceType},
+            </if>
+            <if test="interfaceName != null">
+                interface_name = #{interfaceName},
+            </if>
+            <if test="ip != null and ip != ''">
+                ip = #{ip},
+            </if>
+            <if test="mac != null and mac != ''">
+                mac = #{mac},
+            </if>
+            <if test="macVendor != null">
+                mac_vendor = #{macVendor},
+            </if>
+            <if test="tag != null">
+                tag = #{tag},
+            </if>
+            <if test="remoteDevice != null">
+                remote_device = #{remoteDevice},
+            </if>
+            <if test="remoteInterface != null">
+                remote_interface = #{remoteInterface},
+            </if>
+            <if test="mask != null">
+                mask = #{mask},
+            </if>
+            <if test="uuid != null">
+                uuid = #{uuid},
+            </if>
+            <if test="remoteUuid != null">
+                remote_uuid = #{remoteUuid},
+            </if>
+            <if test="ipAddress != null">
+                ip_address = #{ipAddress},
+            </if>
+            <if test="index != null">
+                `index` = #{index},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="truncateTable">
+        TRUNCATE TABLE rsms_arp
+    </update>
+
+    <insert id="copyArpTemp">
+        INSERT INTO rsms_arp
+        SELECT * FROM rsms_arp_temp
+    </insert>
+
+
+    <select id="selectObjByMutual" resultMap="Base_Result_Map">
+        SELECT
+         *
+        FROM
+            rsms_arp arp1
+        JOIN
+            rsms_arp arp2
+        ON
+            arp1.device_name = arp2.remote_device AND arp1.interface_name = arp2.remote_interface
+        WHERE
+            arp1.tag = 'E'
+        AND
+            arp2.tag = 'E'
+    </select>
+</mapper>

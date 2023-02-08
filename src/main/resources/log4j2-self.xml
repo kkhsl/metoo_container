@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--日志门面 JCL vs slf4j JCL2014年已停更-->
+<!--日志级别：ALL < TRACE < DEBUG < INFO < WARN < ERROR < FATAL < OFF -->
+<!--Configuration后面Status用于设置Log4j2自身内部的信息，可以不设置，当设置为trace时，可以看到Log4j2内部各种详细输出-->
+<configuration status="INFO">
+    <!--全局通用属性-->
+    <properties>
+        <property name="file.path">/opt/nmap/service/nmap/logs</property>
+    </properties>
+
+    <appenders>
+        <!--输出信息到控制台-->
+            <console name="Console" target="SYSTEM_ERR"><!--SYSTEM_OUT-->
+                <!--控制日志输出的格式-->
+                <patternLayout pattern="%d{yyyy-MM-dd HH:mm:ss}[%t] [%-5level] %logger{36} - %msg%n" />
+            </console>
+        <!--文件位置-->
+        <!--<File name="nspm" fileName="/opt/nmap/service/nmap/logs/nmap.log" append="true">-->
+
+   <!--     <File name="nspm" fileName="./nmap.log" append="true">
+            <patternLayout pattern="%d{yyyy-MM-dd HH:mm}[%t]%-5level %logger{36} - %msg%n" />
+        </File>-->
+
+        <!--根据指定规则拆分日志
+              fileName：日志文件的名称
+              filepattern：日志文件拆分后文件的命名规则
+              $${date:yyyy-MM-dd}：根据日期当天，创建一个文件夹
+              rollog-%d{yyyy-MM-dd}-%i.log：为文件命名规则：%i表示序号、从0开始，目的是为了让每一份文件名字不会重复
+              -->
+        <RollingFile name="rollingFile" fileName="${file.path}/.log" filepattern="${file.path}/$${date:yyyy-MM-dd}/rollog-%d{yyyy-MM-dd}-%i.log">
+            <patternLayout pattern="%d{yyyy-MM-dd-HH:mm}[%t] [%-5level] %logger{36} - %msg%n"/>
+
+            <Policies>
+                <!--在系统启动是时，触发拆分规则，产生一个日志文件-->
+                <OnStartupTriggeringPolicy />
+                <!--按照文件的大小进行拆分-->
+                <SizeBasedTriggeringPolicy size="1MB" />
+                <!--按照时间节点进行拆分 拆分规则就是filepattern-->
+                <TimeBasedTriggeringPolicy />
+            </Policies>；p
+
+            <!--同一目录下，文件的个数限制，如果超出了设置的数值，则根据时间进行覆盖，新的覆盖旧的规则-->
+            <DefaultRolloverStrategy max="30" />
+        </RollingFile>
+
+        <!--配置异步-->
+        <!--<Async name="MyAsync">-->
+            <!--&lt;!&ndash;将控制台输出做异步操作&ndash;&gt;-->
+            <!--<Appender-ref ref="rollingFile"></Appender-ref>-->
+        <!--</Async>-->
+
+    </appenders>
+
+    <!--定义logger，只有定义了logger并引入的appender，appender才会生效-->
+    <!--root：用于指定项目的根日志，如果没有单独指定Logger，则会使用root作为默认的日志输出-->
+    <Loggers>
+
+        <!--自定义logger，让自定义的logger为异步logger
+        includeLocation="false" 去除日志记录的行号记录，影响效率
+        additivity="false" 表示不继承RootLogger-->
+        <!--<AsyncLogger name="com.metoo.nspm.core" level="trace"-->
+                        <!--includeLocation="false" additivity="false">-->
+            <!--&lt;!&ndash;将控制台输出 ConsoleAppender设置为异步打印&ndash;&gt;-->
+            <!--<Appender-ref ref="Console"></Appender-ref>-->
+        <!--</AsyncLogger>-->
+
+        <Root level="info">
+            <Appender-ref ref="Console"></Appender-ref>
+            <!--<Appender-ref ref="nspm"></Appender-ref>-->
+            <Appender-ref ref="rollingFile"></Appender-ref>
+            <!--异步日志-->
+            <!--<Appender-ref ref="MyAsync"></Appender-ref>-->
+        </Root>
+    </Loggers>
+
+</configuration>

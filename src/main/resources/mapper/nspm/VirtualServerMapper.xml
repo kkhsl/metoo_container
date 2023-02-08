@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.nspm.VirtualServerMapper">
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.nspm.VirtualServer">
+        <id column="id" property="id"></id>
+        <result column="addTime" property="addTime"></result>
+        <result column="name" property="name"></result>
+        <result column="host_name" property="host_name"></result>
+        <result column="ip" property="ip"></result>
+        <result column="status" property="status"></result>
+        <result column="virtual_type_id" property="virtual_type_id"></result>
+        <result column="virtual_type_name" property="virtual_type_name"></result>
+        <result column="device_id" property="device_id"></result>
+        <result column="device_name" property="device_name"></result>
+        <result column="cpu_model" property="cpuModel"></result>
+        <result column="cpu" property="cpu"></result>
+        <result column="memory" property="memory"></result>
+        <result column="hard_disk" property="hard_disk"></result>
+        <result column="operation_system_id" property="operation_system_id"></result>
+        <result column="operation_system_name" property="operation_system_name"></result>
+        <result column="version" property="version"></result>
+        <result column="remark" property="remark"></result>
+        <result column="change_reasons" property="changeReasons"></result>
+        <result column="user_id" property="userId"></result>
+        <result column="user_name" property="userName"></result>
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        id, addTime, `name`,host_name, ip, status, virtual_type_id,virtual_type_name, device_id, device_name, cpu_model,
+        cpu, memory, hard_disk, operation_system_id, operation_system_name, version, remark, change_reasons, user_id, user_name
+    </sql>
+
+    <select id="getObjById" parameterType="java.lang.Long" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List" />
+        FROM rsms_virtual_server
+        WHERE
+          id = #{id, jdbcType=BIGINT}
+    </select>
+
+    <select id="selectList" parameterType="com.metoo.nspm.dto.VirtualServerDto" resultMap="Base_Result_Map">
+        SELECT <include refid="Base_Column_List" />
+        FROM rsms_virtual_server
+        <where>
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+        </where>
+            <if test = "orderBy != null and orderBy != ''">
+                ORDER BY ${orderBy}
+            </if>
+            <if test = "orderType != null and orderType != ''">
+                ${orderType}
+            </if>
+    </select>
+
+    <insert id="insert" parameterType="com.metoo.nspm.entity.nspm.VirtualServer" >
+      INSERT INTO rsms_virtual_server
+      <trim prefix="(" suffixOverrides="," suffix=")">
+          <if test="addTime != null">
+              addTime,
+          </if>
+          <if test="name != null">
+              name,
+          </if>
+          <if test="host_name != null">
+              host_name,
+          </if>
+          <if test="ip != null">
+              ip,
+          </if>
+          <if test="status != null">
+              status,
+          </if>
+          <if test="virtual_type_id != null">
+              virtual_type_id,
+          </if>
+          <if test="virtual_type_name != null">
+              virtual_type_name,
+          </if>
+          <if test="device_id != null">
+              device_id,
+          </if>
+          <if test="device_name != null">
+              device_name,
+          </if>
+          <if test="cpuModel != null">
+              cpu_model,
+          </if>
+          <if test="cpu != null">
+              cpu,
+          </if>
+          <if test="memory != null">
+              memory,
+          </if>
+          <if test="hard_disk != null">
+              hard_disk,
+          </if>
+          <if test="operation_system_id != null">
+              operation_system_id,
+          </if>
+          <if test="operation_system_name != null">
+              operation_system_name,
+          </if>
+          <if test="version != null">
+              version,
+          </if>
+          <if test="remark != null">
+              remark,
+          </if>
+          <if test="changeReasons != null">
+              change_reasons,
+          </if>
+          <if test="userId != null">
+              user_id,
+          </if>
+          <if test="userName != null">
+              user_name,
+          </if>
+      </trim>
+        <trim prefix="VALUES(" suffixOverrides="," suffix=")">
+            <if test="addTime != null">
+                #{addTime},
+            </if>
+            <if test="name != null">
+                #{name},
+            </if>
+            <if test="host_name != null">
+                #{host_name},
+            </if>
+            <if test="ip != null">
+                #{ip},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+            <if test="virtual_type_id != null">
+                #{virtual_type_id},
+            </if>
+            <if test="virtual_type_name != null">
+                #{virtual_type_name},
+            </if>
+            <if test="device_id != null">
+                #{device_id},
+            </if>
+            <if test="device_name != null">
+                #{device_name},
+            </if>
+            <if test="cpuModel != null">
+                #{cpuModel},
+            </if>
+            <if test="cpu != null">
+                #{cpu},
+            </if>
+            <if test="memory != null">
+                #{memory},
+            </if>
+            <if test="hard_disk != null">
+                #{hard_disk},
+            </if>
+            <if test="operation_system_id != null">
+                #{operation_system_id},
+            </if>
+            <if test="operation_system_name != null">
+                #{operation_system_name},
+            </if>
+            <if test="version != null">
+                #{version},
+            </if>
+            <if test="remark != null">
+                #{remark},
+            </if>
+            <if test="changeReasons != null">
+                #{changeReasons},
+            </if>
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="userName != null">
+                #{userName},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.metoo.nspm.entity.nspm.VirtualServer">
+        UPDATE rsms_virtual_server
+        <set>
+            <if test="addTime != null">
+                addTime = #{addTime},
+            </if>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="host_name != null">
+                host_name = #{host_name},
+            </if>
+            <if test="ip != null">
+                ip = #{ip},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="virtual_type_id != null">
+                virtual_type_id = #{virtual_type_id},
+            </if>
+            <if test="virtual_type_name != null">
+                virtual_type_name = #{virtual_type_name},
+            </if>
+            <if test="device_id != null">
+                device_id = #{device_id},
+            </if>
+            <if test="device_name != null">
+                device_name = #{device_name},
+            </if>
+            <if test="cpuModel != null">
+                cpu_model = #{cpuModel},
+            </if>
+            <if test="cpu != null">
+                cpu = #{cpu},
+            </if>
+            <if test="memory != null">
+                memory = #{memory},
+            </if>
+            <if test="hard_disk != null">
+                hard_disk = #{hard_disk},
+            </if>
+            <if test="operation_system_id != null">
+                operation_system_id = #{operation_system_id},
+            </if>
+            <if test="operation_system_name != null">
+                operation_system_name = #{operation_system_name},
+            </if>
+            <if test="version != null">
+                version = #{version},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+            <if test="changeReasons != null">
+                change_reasons = #{changeReasons},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="userName != null">
+                user_name = #{userName},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    
+    <delete id="deleteById" parameterType="java.lang.Long">
+        DELETE FROM rsms_virtual_server where id = #{id}
+    </delete>
+
+    <delete id="deleteByMap" parameterType="java.lang.Long">
+        DELETE FROM rsms_virtual_server where id in (${ids})
+    </delete>
+
+</mapper>

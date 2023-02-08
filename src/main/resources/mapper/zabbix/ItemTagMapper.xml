@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metoo.nspm.core.mapper.zabbix.ItemTagMapper">
+
+    <resultMap id="Base_Result_Map" type="com.metoo.nspm.entity.zabbix.ItemTag">
+        <result column="itemtagid" property="itemtagid"></result>
+        <result column="itemid" property="itemid"></result>
+        <result column="tag" property="tag"></result>
+        <result column="value" property="value"></result>
+    </resultMap>
+
+    <resultMap id="Item_Tag_Board_Result_Map" type="com.metoo.nspm.vo.ItemTagBoardVO">
+        <result column="value" property="value"></result>
+        <collection property="items" javaType="list" ofType="com.metoo.nspm.entity.zabbix.Item">
+            <result column="itemid" property="itemid"></result>
+            <result column="boardType" property="boardType"></result>
+        </collection>
+    </resultMap>
+
+    <select id="selectItemTagMinIfIndex" parameterType="java.lang.String" resultType="com.metoo.nspm.entity.zabbix.ItemTag">
+         SELECT item_tag.*
+         FROM (
+             SELECT *
+             FROM item_tag
+             WHERE itemid
+             IN (
+               SELECT itemid
+               FROM interface
+               JOIN items
+               ON
+                 interface.hostid = items.hostid
+           WHERE interface.ip = #{ip})
+           AND `value` = 'ifbasic'
+           GROUP BY itemid
+         ) items
+         JOIN item_tag
+         ON item_tag.itemid = items.itemid
+         where item_tag.tag = 'ifindex'
+        and item_tag.itemid
+            NOT IN(
+                            SELECT DISTINCT(itemid) FROM item_tag
+                            WHERE
+                             item_tag.`value`
+                            IN('{#IFMASK}', '{#IFNAME}', '{#IFMAC}', '{#IFINDEX}', '{#IPADDR}','{#IPARP}', '{#IFOPERSTATUS}', '{#IFALIAS}', '{#IFRECEIVED}', '{#IFSPEED}', '{#RTIF}', '{#RTPROTO}','{#RTDEST}', '{#RTMETRIC}','{#RTNH}',
+                    '{#PORTINDEX}', '{#MAC}', '{#IFIPADDR}', '{#IFSENT}')
+                    )
+        order by itemid asc
+        limit 1
+    </select>
+
+    <select id="selectItemTagIfNameByIndex" parameterType="java.util.Map" resultType="com.metoo.nspm.entity.zabbix.ItemTag">
+         SELECT *
+			FROM item_tag tag_inner
+			WHERE itemid in (
+					SELECT item_tag.itemid
+					FROM (
+									SELECT *
+									FROM item_tag
+									WHERE itemid
+									IN (
+											SELECT itemid
+											FROM interface
+											JOIN items
+											ON
+													interface.hostid = items.hostid
+							WHERE interface.ip = #{ip})
+							AND `value` = 'ifbasic'
+							GROUP BY itemid
+							ORDER BY itemid
+							DESC
+					) items
+					JOIN item_tag
+					ON item_tag.itemid = items.itemid
+					WHERE item_tag.`value` = #{ifindex}
+					AND item_tag.tag = 'ifindex'
+	)
+	AND tag_inner.tag = 'ifname'
+    </select>
+
+
+    <select id="selectBoardByTag" parameterType="java.util.Map" resultMap="Item_Tag_Board_Result_Map">
+        select  item_tag1.*, item_tag.value boardType from(
+            select item.* from(
+                 SELECT item_external.* FROM (
+                                            SELECT *
+                                            FROM item_tag
+                                            WHERE itemid
+                                            IN (
+                                                    SELECT itemid
+                                                    FROM interface
+                                                    JOIN items
+                                                    ON
+                                                            interface.hostid = items.hostid
+                                    WHERE interface.ip = #{ip}	AND available = 1)
+                                    AND `value` in('BOARDCPU', 'BOARDMEM', 'BOARDTEMP')
+                                    GROUP BY itemid
+                                    ORDER BY itemid
+                                    DESC
+                            ) items
+                            JOIN item_tag item_external
+                            ON item_external.itemid = items.itemid
+
+            )item
+            join
+                ( SELECT item_external.* FROM (
+                                            SELECT *
+                                            FROM item_tag
+                                            WHERE itemid
+                                            IN (
+                                                    SELECT itemid
+                                                    FROM interface
+                                                    JOIN items
+                                                    ON
+                                                            interface.hostid = items.hostid
+                                    WHERE interface.ip = #{ip}	AND available = 1)
+                                    AND `value` in('BOARDCPU', 'BOARDMEM', 'BOARDTEMP')
+                                    GROUP BY itemid
+                                    ORDER BY itemid
+                                    DESC
+                            ) items
+                            JOIN item_tag item_external
+                            ON item_external.itemid = items.itemid
+                            WHERE item_external.tag = 'boardmodel'
+                            GROUP BY `value`
+                        )item2
+                    ON item.value = item2.value
+            )
+                item_tag1
+           JOIN item_tag  ON item_tag.itemid = item_tag1.itemid
+           WHERE  item_tag.tag = 'obj'
+           AND
+            item_tag.itemid
+                NOT IN(
+                        SELECT DISTINCT(itemid) FROM item_tag
+                        WHERE
+                         item_tag.`value`
+                        IN('{#BOARD}')
+                      )
+
+    </select>
+
+    <select id="queryBoard" parameterType="java.lang.String" resultMap="Base_Result_Map">
+         SELECT *
+        FROM item_tag
+        WHERE itemid
+        IN (
+                SELECT itemid
+                FROM interface
+                JOIN items
+                ON
+                  interface.hostid = items.hostid
+                WHERE interface.ip = #{ip}	AND available = 1
+            )
+        AND `value` in('BOARDCPU', 'BOARDMEM', 'BOARDTEMP')
+        GROUP BY itemid
+        ORDER BY itemid
+        DESC
+    </select>
+
+
+</mapper>
