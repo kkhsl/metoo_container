@@ -93,7 +93,7 @@ public class RsmsDeviceManagerController {
         Page<RsmsDevice> page = this.rsmsDeviceService.selectConditionQuery(dto);
             Map map = new HashMap();
             // 设备类型
-            List<DeviceType> deviceTypeList = this.deviceTypeService.selectConditionQuery();
+            List<DeviceType> deviceTypeList = this.deviceTypeService.selectObjByMap(null);
             map.put("deviceTypeList", deviceTypeList);
             // 分组
             Group parent = this.groupService.selectObjById(user.getGroupId());
@@ -156,7 +156,7 @@ public class RsmsDeviceManagerController {
         Map map = new HashMap();
         List<Rack> rackList = this.rackService.query(null);
         // 设备类型
-        List<DeviceType> deviceTypeList = this.deviceTypeService.selectConditionQuery();
+        List<DeviceType> deviceTypeList = this.deviceTypeService.selectObjByMap(null);
         map.put("deviceTypeList", deviceTypeList);
         PlantRoomDTO dto = new PlantRoomDTO();
         dto.setCurrentPage(1);
@@ -194,7 +194,7 @@ public class RsmsDeviceManagerController {
             Rack rack = this.rackService.getObjById(rsmsDevice.getRackId());
 //            List<Rack> rackList = this.rackService.query(null);
             // 设备类型
-            List<DeviceType> deviceTypeList = this.deviceTypeService.selectConditionQuery();
+            List<DeviceType> deviceTypeList = this.deviceTypeService.selectObjByMap(null);
             PlantRoomDTO dto = new PlantRoomDTO();
             dto.setCurrentPage(1);
             dto.setPageSize(100000);

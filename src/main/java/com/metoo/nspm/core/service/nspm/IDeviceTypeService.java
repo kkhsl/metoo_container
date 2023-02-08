@@ -1,5 +1,6 @@
 package com.metoo.nspm.core.service.nspm;
 
+import com.metoo.nspm.dto.DeviceTypeDTO;
 import com.metoo.nspm.entity.nspm.DeviceType;
 import com.metoo.nspm.vo.DeviceTypeVO;
 
@@ -12,7 +13,7 @@ public interface IDeviceTypeService {
 
     DeviceType selectObjByName(String name);
 
-    List<DeviceType> selectConditionQuery();
+    List<DeviceType> selectConditionQuery(DeviceTypeDTO dto);
 
     List<DeviceType> selectObjByMap(Map params);
 

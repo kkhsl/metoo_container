@@ -1,5 +1,6 @@
 package com.metoo.nspm.core.mapper.nspm;
 
+import com.metoo.nspm.dto.DeviceTypeDTO;
 import com.metoo.nspm.entity.nspm.DeviceType;
 import com.metoo.nspm.vo.DeviceTypeVO;
 import org.apache.ibatis.annotations.Mapper;
@@ -14,7 +15,7 @@ public interface DeviceTypeMapper {
 
     DeviceType selectObjByName(String name);
 
-    List<DeviceType> selectConditionQuery();
+    List<DeviceType> selectConditionQuery(DeviceTypeDTO dto);
 
     List<DeviceType> selectObjByMap(Map params);
 

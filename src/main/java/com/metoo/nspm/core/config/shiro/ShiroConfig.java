@@ -1,7 +1,7 @@
 //package com.metoo.nspm.core.config.shiro;
 //
 ////import com.metoo.nspm.core.config.global.LicenseFilter;
-//import com.metoo.nspm.core.config.shiro.JwtRealm;
+//import com.metoo.nspm.core.jwt.config.JwtRealm;
 //import com.metoo.nspm.core.jwt.util.JwtCredentialsMatcher;
 //import com.metoo.nspm.core.jwt.util.MultiRealmAuthenticator;
 //import com.metoo.nspm.core.shiro.filter.MyAccessControlFilter;
@@ -77,23 +77,24 @@
 //
 //        // websocket
 //        filterChainDefinitionMap.put("/websocket/api/**", "anon");
-//        filterChainDefinitionMap.put("/notice/**", "anon");
-//        filterChainDefinitionMap.put("/webssh", "anon");
+//        filterChainDefinitionMap.put("/notice/**", "anon");// 放行WebSocekt
+//        filterChainDefinitionMap.put("/webssh", "anon");// 放行WebSocket SSH
 //
-//        filterChainDefinitionMap.put("/user/register", "anon");
-//        filterChainDefinitionMap.put("/swagger-ui.html", "anon");
-//        filterChainDefinitionMap.put("/web/**", "anon");
+//        filterChainDefinitionMap.put("/user/register", "anon");// 放行注册
+//        filterChainDefinitionMap.put("/swagger-ui.html", "anon");// 放行文档UI
+//        filterChainDefinitionMap.put("/web/**", "anon");// 放行首页API
 //
-//        filterChainDefinitionMap.put("/buyer/captcha", "anon");
-//        filterChainDefinitionMap.put("/buyer/login", "anon");// 设置所有资源都受限；避免登录资源受限，设置登录为公共资源
-//        filterChainDefinitionMap.put("/buyer/logout", "anon");
-//        filterChainDefinitionMap.put("/buyer/register", "anon");
-//        filterChainDefinitionMap.put("/admin/auth/401", "anon");
+           // 设置所有资源都受限；避免登录资源受限，设置登录为公共资源
+//        filterChainDefinitionMap.put("/buyer/captcha", "anon");// 放行验证码
+//        filterChainDefinitionMap.put("/buyer/login", "anon");// 放行登录
+//        filterChainDefinitionMap.put("/buyer/logout", "anon");// 放行登出
+//        filterChainDefinitionMap.put("/buyer/register", "anon");// 放行注册
+//        filterChainDefinitionMap.put("/admin/auth/401", "anon");//
 //        filterChainDefinitionMap.put("/admin/auth/403", "anon");
 //        filterChainDefinitionMap.put("/admin/auth/404", "anon");
-//        filterChainDefinitionMap.put("/rtmp/**", "anon");
+//        filterChainDefinitionMap.put("/rtmp/**", "anon");// 放行推流链接
 //
-//        filterChainDefinitionMap.put("/**", "rmb");
+//        filterChainDefinitionMap.put("/**", "rmb");// 拦截所有请求
 //
 //        //filterChainDefinitionMap.put("/buyer/**", "authc");
 //        filterChainDefinitionMap.put("/license/**", "authc");

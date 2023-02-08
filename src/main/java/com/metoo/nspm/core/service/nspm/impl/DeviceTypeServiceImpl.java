@@ -1,8 +1,12 @@
 package com.metoo.nspm.core.service.nspm.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.metoo.nspm.core.mapper.nspm.DeviceTypeMapper;
 import com.metoo.nspm.core.service.nspm.IDeviceTypeService;
+import com.metoo.nspm.dto.DeviceTypeDTO;
 import com.metoo.nspm.entity.nspm.DeviceType;
+import com.metoo.nspm.entity.nspm.Domain;
 import com.metoo.nspm.vo.DeviceTypeVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,8 +34,10 @@ public class DeviceTypeServiceImpl implements IDeviceTypeService {
     }
 
     @Override
-    public List<DeviceType> selectConditionQuery() {
-        return this.deviceTypeMapper.selectConditionQuery();
+    public List<DeviceType> selectConditionQuery(DeviceTypeDTO dto) {
+        Page<DeviceType> page = PageHelper.startPage(dto.getCurrentPage(), dto.getPageSize());
+        this.deviceTypeMapper.selectConditionQuery(dto);
+        return page;
     }
 
     @Override

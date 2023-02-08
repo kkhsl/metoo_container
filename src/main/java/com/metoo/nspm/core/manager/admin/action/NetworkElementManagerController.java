@@ -178,7 +178,7 @@ public class NetworkElementManagerController {
 //        params.put("types", Arrays.asList(0,1,2,5));
 //        List<DeviceType> deviceTypeList = this.deviceTypeService.selectObjByMap(params);
 //        map.put("device", deviceTypeList);
-        List<DeviceType> deviceTypeList = this.deviceTypeService.selectConditionQuery();
+        List<DeviceType> deviceTypeList = this.deviceTypeService.selectObjByMap(null);
         map.put("device", deviceTypeList);
         // 凭据列表
         List<Credential> credentials = this.credentialService.getAll();

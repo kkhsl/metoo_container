@@ -1,10 +1,8 @@
-package com.metoo.nspm.core.config.shiro;
+package com.metoo.nspm.core.jwt.config;
 
 import com.metoo.nspm.core.jwt.filter.JwtFilter;
-import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
-import org.apache.shiro.realm.Realm;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
@@ -20,26 +18,33 @@ import java.util.Map;
 @Configuration
 public class JwtShiroConfig {
 
+    /**
+     *  配置过滤器
+     * @param defaultWebSecurityManager
+     * @return
+     */
     @Bean
     public ShiroFilterFactoryBean shiroFilterFactoryBean(DefaultWebSecurityManager defaultWebSecurityManager) {
+
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
+
         shiroFilterFactoryBean.setSecurityManager(defaultWebSecurityManager);
-        // 添加自己的过滤器
+
+        // 自定义过滤器，配置系统受限资源
         Map<String, Filter> filterMap = new HashMap<>();
         filterMap.put("jwt", new JwtFilter());
         shiroFilterFactoryBean.setFilters(filterMap);
-
         // 编写过滤规则
         Map<String, String> filterRuleMap = new HashMap<>();
-        // 访问 /unauthorized/**时直接放行
 
-        filterRuleMap.put("/jwt/login", "anon");
+        // 访问 /unauthorized/**时直接放行
+        filterRuleMap.put("/jwt/login", "anon");// 放行登录
+        // 放行认证授权异常路径
         filterRuleMap.put("/admin/auth/401", "anon");
         filterRuleMap.put("/admin/auth/403", "anon");
 
         // 其他所有请求通过我们自己的JWT Filter
         filterRuleMap.put("/**", "jwt");
-
 
         // 设置无权限时跳转url
         shiroFilterFactoryBean.setLoginUrl("/admin/auth/401");
@@ -47,9 +52,15 @@ public class JwtShiroConfig {
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterRuleMap);
 
+
         return shiroFilterFactoryBean;
     }
 
+    /**
+     * 禁用Session，使用Jwt代替
+     * @param jwtRealm
+     * @return
+     */
     @Bean
     public DefaultWebSecurityManager defaultWebSecurityManager(JwtRealm jwtRealm) {
         DefaultWebSecurityManager defaultWebSecurityManager = new DefaultWebSecurityManager();

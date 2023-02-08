@@ -16,12 +16,12 @@ public class JwtToken implements AuthenticationToken {
     }
 
     @Override
-    public Object getPrincipal() {
+    public String getPrincipal() {
         return this.userName;
     }
 
     @Override
-    public Object getCredentials() {
+    public String getCredentials() {
         return token;
     }
 }

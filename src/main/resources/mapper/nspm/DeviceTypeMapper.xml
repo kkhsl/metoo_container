@@ -46,11 +46,11 @@
         where name = #{name}
     </select>
 
-    <select id="selectConditionQuery" resultType="com.metoo.nspm.entity.nspm.DeviceType">
+    <select id="selectConditionQuery" parameterType="com.metoo.nspm.dto.DeviceTypeDTO" resultType="com.metoo.nspm.entity.nspm.DeviceType">
         select * from rsms_device_type
     </select>
 
-    <select id="selectObjByMap" resultType="com.metoo.nspm.entity.nspm.DeviceType">
+    <select id="selectObjByMap"  resultType="com.metoo.nspm.entity.nspm.DeviceType">
         SELECT *
         FROM rsms_device_type
         <where>

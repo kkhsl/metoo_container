@@ -1,4 +1,4 @@
-package com.metoo.nspm.core.config.shiro;
+package com.metoo.nspm.core.jwt.config;
 
 import com.metoo.nspm.core.jwt.util.JwtToken;
 import com.metoo.nspm.core.service.nspm.IRegisterService;
@@ -90,7 +90,8 @@ public class JwtRealm extends AuthorizingRealm {
             throw new LockedAccountException("该用户已被锁定,暂时无法登录！");
         }
 
-        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, username, getName());
+        String token = jwtToken.getCredentials();
+        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(jwtToken, token, getName());
 //        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(username, user.getPassword(),  new MyByteSource(user.getSalt()), this.getName());
         return info;
     }
