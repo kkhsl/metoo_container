@@ -1,5 +1,6 @@
 package com.metoo.nspm.core.service.nspm.impl;
 
+import com.metoo.nspm.core.jwt.util.JwtUserHolder;
 import com.metoo.nspm.core.manager.admin.tools.ShiroUserHolder;
 import com.metoo.nspm.core.mapper.nspm.PlantRoomMapper;
 import com.metoo.nspm.core.mapper.nspm.UserMapper;
@@ -50,7 +51,7 @@ public class PlantRoomServiceImpl implements IPlantRoomService {
 
     @Override
     public Page<PlantRoom> selectConditionQuery(PlantRoomDTO instance) {
-        User user = ShiroUserHolder.currentUser();
+        User user = JwtUserHolder.currentUser();
         instance.setUserId(user.getId());
         Page<PlantRoom> page = PageHelper.startPage(instance.getCurrentPage(), instance.getPageSize());
         this.plantRoomMapper.selectConditionQuery(instance);

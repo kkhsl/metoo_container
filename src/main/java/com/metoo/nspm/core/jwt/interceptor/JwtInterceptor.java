@@ -19,7 +19,7 @@ import java.util.Map;
  * </p>
  *
  * <p>
- *     Description: JWT 登录拦截器
+ *     Description: JWT 登录拦截器,拦截所有请求
  * </p>
  *
  * <author>

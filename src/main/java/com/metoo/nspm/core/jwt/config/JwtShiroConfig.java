@@ -15,8 +15,35 @@ import javax.servlet.Filter;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @description
+ *
+ * @author HKK
+ *
+ * @create 2023-02-09 15:39
+ *
+ */
 @Configuration
 public class JwtShiroConfig {
+
+    /**
+     * 禁用Session，设置JwrReam代替shiroReam
+     * @param jwtRealm
+     * @return
+     */
+    @Bean
+    public DefaultWebSecurityManager defaultWebSecurityManager(JwtRealm jwtRealm) {
+        DefaultWebSecurityManager defaultWebSecurityManager = new DefaultWebSecurityManager();
+        defaultWebSecurityManager.setRealm(jwtRealm);
+        // 关闭shiro自带的session
+        DefaultSubjectDAO defaultSubjectDAO = new DefaultSubjectDAO();
+        DefaultSessionStorageEvaluator sessionStorageEvaluator = new DefaultSessionStorageEvaluator();
+        sessionStorageEvaluator.setSessionStorageEnabled(false);
+        defaultSubjectDAO.setSessionStorageEvaluator(sessionStorageEvaluator);
+        defaultWebSecurityManager.setSubjectDAO(defaultSubjectDAO);
+
+        return defaultWebSecurityManager;
+    }
 
     /**
      *  配置过滤器
@@ -30,10 +57,11 @@ public class JwtShiroConfig {
 
         shiroFilterFactoryBean.setSecurityManager(defaultWebSecurityManager);
 
-        // 自定义过滤器，配置系统受限资源
+        // 自定义过滤器组，配置系统受限资源
         Map<String, Filter> filterMap = new HashMap<>();
         filterMap.put("jwt", new JwtFilter());
         shiroFilterFactoryBean.setFilters(filterMap);
+
         // 编写过滤规则
         Map<String, String> filterRuleMap = new HashMap<>();
 
@@ -56,23 +84,7 @@ public class JwtShiroConfig {
         return shiroFilterFactoryBean;
     }
 
-    /**
-     * 禁用Session，使用Jwt代替
-     * @param jwtRealm
-     * @return
-     */
-    @Bean
-    public DefaultWebSecurityManager defaultWebSecurityManager(JwtRealm jwtRealm) {
-        DefaultWebSecurityManager defaultWebSecurityManager = new DefaultWebSecurityManager();
-        defaultWebSecurityManager.setRealm(jwtRealm);
-        // 关闭session
-        DefaultSubjectDAO defaultSubjectDAO = new DefaultSubjectDAO();
-        DefaultSessionStorageEvaluator sessionStorageEvaluator = new DefaultSessionStorageEvaluator();
-        sessionStorageEvaluator.setSessionStorageEnabled(false);
-        defaultSubjectDAO.setSessionStorageEvaluator(sessionStorageEvaluator);
-        defaultWebSecurityManager.setSubjectDAO(defaultSubjectDAO);
-        return defaultWebSecurityManager;
-    }
+
 
     /**
      * 添加注解支持，如果不加的话很有可能注解失效
@@ -96,19 +108,5 @@ public class JwtShiroConfig {
     public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
         return new LifecycleBeanPostProcessor();
     }
-
-    //    // 3, 自定义realm
-//    @Bean
-//    public Realm getRealm() {
-//        JwtRealm myRealm = new JwtRealm();
-//        // 设置Realm使用hash凭证校验匹配器; 问：Realm 不设置hash凭证器会出现什么
-//        HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher();
-//        // 设置加密算法 SHA-1、md5
-//        hashedCredentialsMatcher.setHashAlgorithmName("md5");
-//        // 设置加密次数（散列次数）
-//        hashedCredentialsMatcher.setHashIterations(1024);
-//        myRealm.setCredentialsMatcher(hashedCredentialsMatcher);
-//        return myRealm;
-//    }
 
 }

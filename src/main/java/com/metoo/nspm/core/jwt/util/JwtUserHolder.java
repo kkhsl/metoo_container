@@ -1,4 +1,4 @@
-package com.metoo.nspm.core.manager.admin.tools;
+package com.metoo.nspm.core.jwt.util;
 
 import com.metoo.nspm.core.service.nspm.IUserService;
 import com.metoo.nspm.core.shiro.tools.ApplicationContextUtils;
@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ShiroUserHolder {
+public class JwtUserHolder {
 
     @Autowired
     private IUserService userService;
@@ -18,10 +18,9 @@ public class ShiroUserHolder {
         if (SecurityUtils.getSubject() != null){
             Subject subject = SecurityUtils.getSubject();
             if(subject.getPrincipal() != null && subject.isAuthenticated()){
-                String userName = SecurityUtils.getSubject().getPrincipal().toString();
-
+                String token = SecurityUtils.getSubject().getPrincipal().toString();
                 IUserService userService = (IUserService) ApplicationContextUtils.getBean("userServiceImpl");
-                  User user = userService.findByUserName(userName);
+                User user = userService.findByUserName(JwtUtil.getClaimFiled(token, "username"));
                 if(user != null){
                     return user;
                 }

@@ -1,6 +1,7 @@
 package com.metoo.nspm.core.jwt.config;
 
 import com.metoo.nspm.core.jwt.util.JwtToken;
+import com.metoo.nspm.core.jwt.util.JwtUtil;
 import com.metoo.nspm.core.service.nspm.IRegisterService;
 import com.metoo.nspm.core.service.nspm.IResService;
 import com.metoo.nspm.core.service.nspm.IRoleService;
@@ -10,12 +11,15 @@ import com.metoo.nspm.core.shiro.tools.ApplicationContextUtils;
 import com.metoo.nspm.entity.nspm.Res;
 import com.metoo.nspm.entity.nspm.Role;
 import com.metoo.nspm.entity.nspm.User;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -27,6 +31,8 @@ import java.util.List;
  */
 @Component
 public class JwtRealm extends AuthorizingRealm {
+
+    Logger log = LoggerFactory.getLogger(JwtRealm.class);
 
     @Autowired
     private IRoleService roleService;
@@ -45,8 +51,18 @@ public class JwtRealm extends AuthorizingRealm {
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        String username = (String) principalCollection.getPrimaryPrincipal();
-        System.out.println("userName：" + username);
+
+        String token = principalCollection.toString();
+        String username = JwtUtil.getClaimFiled(token,"username");
+
+        String token1 = principalCollection.toString();
+        log.info("token1：" + token1);
+        Object usernamet =  principalCollection.getPrimaryPrincipal();
+        log.info("username：" + username);
+        if (StringUtils.isBlank(username)) {
+            throw new AuthenticationException("token认证失败");
+        }
+
         IUserService userService = (IUserService) ApplicationContextUtils.getBean("userServiceImpl");
         User user = userService.findByUserName(username);
         List<Role> roles = this.roleService.findRoleByUserId(user.getId());//user.getRoles();
@@ -75,7 +91,7 @@ public class JwtRealm extends AuthorizingRealm {
             throw new AccountException("JWT token参数异常！");
         }
         // 从 JwtToken 中获取当前用户
-        String username = jwtToken.getPrincipal().toString();
+        String username = jwtToken.getPrincipal();
         // 查询数据库获取用户信息
         IUserService userService = (IUserService) ApplicationContextUtils.getBean("userServiceImpl");
         User user = userService.findByUserName(username);
@@ -91,7 +107,7 @@ public class JwtRealm extends AuthorizingRealm {
         }
 
         String token = jwtToken.getCredentials();
-        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(jwtToken, token, getName());
+        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(token, token, getName());
 //        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(username, user.getPassword(),  new MyByteSource(user.getSalt()), this.getName());
         return info;
     }

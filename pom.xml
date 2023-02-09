@@ -219,7 +219,7 @@
             <!--<version>8.5.16</version>-->
         </dependency>
 
-        <!--  引入 JWT https://mvnrepository.com/artifact/com.auth0/java-jwt -->
+        <!--  引入 JWT 实现Token认证 https://mvnrepository.com/artifact/com.auth0/java-jwt -->
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>

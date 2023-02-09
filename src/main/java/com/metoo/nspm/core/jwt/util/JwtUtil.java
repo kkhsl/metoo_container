@@ -230,4 +230,9 @@ public class JwtUtil {
         return DeCodeJWT;
     }
 
+    public static void main(String[] args) {
+        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NzY1MzQ0MzksInVzZXJuYW1lIjoiYWRtaW4ifQ.kZYjxV9XcjmunebPd2N_m_ZpMTBaP1zFlFClSiCCC0U";
+        String username = JwtUtil.getClaimFiled(token, "username");
+        System.out.println(username);
+    }
 }
